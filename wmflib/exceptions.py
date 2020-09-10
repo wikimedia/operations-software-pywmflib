@@ -2,7 +2,7 @@
 
 
 class WmflibError(Exception):
-    """Parent exception class for all Spicerack exceptions."""
+    """Parent exception class for all wmflib exceptions."""
 
 
 class WmflibCheckError(WmflibError):
