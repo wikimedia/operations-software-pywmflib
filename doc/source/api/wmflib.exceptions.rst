@@ -1,0 +1,4 @@
+exceptions
+==========
+
+.. automodule:: wmflib.exceptions
