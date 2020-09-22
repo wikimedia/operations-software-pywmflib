@@ -1,4 +1,4 @@
-Source: python3-wmflib
+Source: python-wmflib
 Section: python
 Priority: optional
 Maintainer: Luca Toscano <ltoscano@wikimedia.org>
@@ -26,5 +26,5 @@ Package: python3-wmflib
 Architecture: any
 Depends: ${python3:Depends}, ${misc:Depends}
 Description: Generic Python library for common tasks in the WMF production infrastructure
- This Python3 library provides an easy API to automate common tasks executed in the
- WMF production infrastructure.
+ This Python3 library provides an easy API to automate common tasks executed
+ in the WMF production infrastructure.
