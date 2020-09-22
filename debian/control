@@ -1,0 +1,30 @@
+Source: python3-wmflib
+Section: python
+Priority: optional
+Maintainer: Luca Toscano <ltoscano@wikimedia.org>
+Uploaders: Riccardo Coccioli <rcoccioli@wikimedia.org>
+Standards-Version: 4.5.0
+Build-Depends:
+  debhelper (>= 12),
+  dh-python (>= 2.20160609~),
+  python3,
+  python3-dnspython,
+  python3-flake8,
+  python3-mock (>= 2.0.0),
+  python3-pytest,
+  python3-pytest-cov,
+  python3-pytest-runner,
+  python3-setuptools,
+  python3-setuptools-scm,
+  python3-sphinx,
+  python3-sphinx-argparse,
+  python3-sphinx-rtd-theme,
+Homepage: https://github.com/wikimedia/operations-software-pywmflib
+X-Python3-Version: >= 3.7
+
+Package: python3-wmflib
+Architecture: any
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: Generic Python library for common tasks in the WMF production infrastructure
+ This Python3 library provides an easy API to automate common tasks executed in the
+ WMF production infrastructure.

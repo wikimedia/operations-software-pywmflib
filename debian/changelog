@@ -1,0 +1,11 @@
+python3-wmflib (0.0.2-1) buster-wikimedia; urgency=medium
+
+  * Remove spurious Spicerack references.
+
+ -- Luca Toscano <ltoscano@wikimedia.org>  Tue, 22 Sep 2020 15:56:33 +0200
+
+ python3-wmflib (0.0.1-1) buster-wikimedia; urgency=medium
+
+  * Initial packaging (containing the dns lib only).
+
+ -- Luca Toscano <ltoscano@wikimedia.org>  Thu, 10 Sep 2020 15:26:33 +0200
