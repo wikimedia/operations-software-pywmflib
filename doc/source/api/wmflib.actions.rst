@@ -1,0 +1,4 @@
+actions
+=======
+
+.. automodule:: wmflib.actions
