@@ -14,4 +14,5 @@ wmflib Python API autodoc.
     wmflib.dns
     wmflib.actions
     wmflib.config
+    wmflib.phabricator
     wmflib.exceptions

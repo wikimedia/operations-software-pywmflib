@@ -1,0 +1,4 @@
+phabricator
+===========
+
+.. automodule:: wmflib.phabricator
