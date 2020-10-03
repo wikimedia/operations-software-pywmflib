@@ -4,7 +4,7 @@ import logging
 from textwrap import dedent
 
 from wmflib import actions
-from wmflib.tests import require_caplog
+from wmflib.tests import check_logs, require_caplog
 
 
 def test_actionsdict_string_representation():
@@ -30,16 +30,6 @@ class TestActions:
         # pylint: disable=attribute-defined-outside-init
         self.actions = actions.Actions('name1')
 
-    def _check_logs(self, logs, message, level):  # pylint: disable=no-self-use
-        """Assert that a log record with the given message and level is present."""
-        for record in logs.records:
-            if message in record.getMessage():
-                assert record.levelno == level
-                break
-        else:
-            raise RuntimeError("{level} log record with message '{msg}' not found".format(
-                level=logging.getLevelName(level), msg=message))
-
     def test_default_status(self):
         """It should return a successful default status with no actions."""
         assert self.actions.status == 'PASS'
@@ -54,7 +44,7 @@ class TestActions:
         assert not self.actions.has_warnings
         assert not self.actions.has_failures
         assert len(self.actions.actions) == 1
-        self._check_logs(caplog, 'success1', logging.INFO)
+        check_logs(caplog, 'success1', logging.INFO)
 
     @require_caplog
     def test_warning(self, caplog):
@@ -65,7 +55,7 @@ class TestActions:
         assert self.actions.has_warnings
         assert not self.actions.has_failures
         assert len(self.actions.actions) == 2
-        self._check_logs(caplog, 'warning1', logging.WARNING)
+        check_logs(caplog, 'warning1', logging.WARNING)
 
     @require_caplog
     def test_failure(self, caplog):
@@ -76,7 +66,7 @@ class TestActions:
         assert not self.actions.has_warnings
         assert self.actions.has_failures
         assert len(self.actions.actions) == 2
-        self._check_logs(caplog, 'failure1', logging.ERROR)
+        check_logs(caplog, 'failure1', logging.ERROR)
 
     def test_failure_and_warning(self):
         """With a failure and a warning it should have a failed status but also report warnings."""
