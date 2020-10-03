@@ -9,6 +9,7 @@ with open('README.rst', 'r') as readme:
 
 INSTALL_REQUIRES = [
     'dnspython>=1.15.0',
+    'pyyaml>=3.11',
 ]
 
 # Extra dependencies
