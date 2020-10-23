@@ -1,3 +1,10 @@
+python-wmflib (0.0.3-1) buster-wikimedia; urgency=medium
+
+  * v0.0.3 upstream release.
+  * Add python3-phabricator and python3-yaml as Build-Depends.
+
+ -- Riccardo Coccioli <rcoccioli@wikimedia.org>  Fri, 23 Oct 2020 11:49:57 +0200
+
 python-wmflib (0.0.2-1) buster-wikimedia; urgency=medium
 
   * Remove spurious Spicerack references.
