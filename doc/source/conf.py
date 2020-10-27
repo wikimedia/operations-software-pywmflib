@@ -125,6 +125,7 @@ htmlhelp_basename = 'wmflibdoc'
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'dnspython': ('https://dnspython.readthedocs.io/en/stable/', None),
+    'requests': ('https://requests.readthedocs.io/en/master/', None),
 }
 
 # Napoleon settings

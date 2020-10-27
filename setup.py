@@ -11,6 +11,7 @@ INSTALL_REQUIRES = [
     'dnspython>=1.15.0',
     'pyyaml>=3.11',
     'phabricator>=0.7.0',
+    'requests',
 ]
 
 # Extra dependencies
@@ -25,7 +26,6 @@ EXTRAS_REQUIRE = {
         'prospector[with_everything]>=0.12.4,<=1.2.0',
         'pytest-cov>=1.8.0',
         'pytest-xdist>=1.15.0',
-        'requests-mock>=1.3.0',
         'sphinx_rtd_theme>=0.1.9',
         'sphinx-argparse>=0.1.15',
         'Sphinx>=1.4.9',
