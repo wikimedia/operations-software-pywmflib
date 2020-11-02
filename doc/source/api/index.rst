@@ -11,8 +11,9 @@ wmflib Python API autodoc.
 
 .. toctree::
 
-    wmflib.dns
     wmflib.actions
     wmflib.config
-    wmflib.phabricator
+    wmflib.dns
     wmflib.exceptions
+    wmflib.phabricator
+    wmflib.requests
