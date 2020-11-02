@@ -15,6 +15,7 @@ Build-Depends:
   python3-pytest,
   python3-pytest-cov,
   python3-pytest-runner,
+  python3-requests,
   python3-setuptools,
   python3-setuptools-scm,
   python3-sphinx,

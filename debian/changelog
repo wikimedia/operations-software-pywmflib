@@ -1,3 +1,10 @@
+python-wmflib (0.0.4-1) buster-wikimedia; urgency=medium
+
+  * v0.0.4 upstream release.
+  * Add python3-requests as Build-Depends.
+
+ -- Riccardo Coccioli <rcoccioli@wikimedia.org>  Mon, 02 Nov 2020 11:44:53 -0000
+
 python-wmflib (0.0.3-1) buster-wikimedia; urgency=medium
 
   * v0.0.3 upstream release.
