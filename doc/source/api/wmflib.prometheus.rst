@@ -1,0 +1,4 @@
+prometheus
+==========
+
+.. automodule:: wmflib.prometheus

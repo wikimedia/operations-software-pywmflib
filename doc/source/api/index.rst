@@ -13,7 +13,9 @@ wmflib Python API autodoc.
 
     wmflib.actions
     wmflib.config
+    wmflib.constants
     wmflib.dns
     wmflib.exceptions
     wmflib.phabricator
+    wmflib.prometheus
     wmflib.requests

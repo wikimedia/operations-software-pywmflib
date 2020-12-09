@@ -22,10 +22,10 @@ EXTRAS_REQUIRE = {
         'flake8>=3.2.1',
         'flake8-import-order>=0.18.1',
         'mypy>=0.470',
-        # Temporary upper constraint until https://github.com/PyCQA/prospector/issues/389 is fixed
-        'prospector[with_everything]>=0.12.4,<=1.2.0',
+        'prospector[with_everything]>=0.12.4',
         'pytest-cov>=1.8.0',
         'pytest-xdist>=1.15.0',
+        'requests-mock>=1.5.2',
         'sphinx_rtd_theme>=0.1.9',
         'sphinx-argparse>=0.1.15',
         'Sphinx>=1.4.9',
