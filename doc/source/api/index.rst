@@ -16,6 +16,7 @@ wmflib Python API autodoc.
     wmflib.constants
     wmflib.dns
     wmflib.exceptions
+    wmflib.interactive
     wmflib.phabricator
     wmflib.prometheus
     wmflib.requests
