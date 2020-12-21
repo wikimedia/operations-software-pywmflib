@@ -1,0 +1,4 @@
+irc
+===
+
+.. automodule:: wmflib.irc

@@ -1,6 +1,30 @@
 wmflib Changelog
 ----------------
 
+`v0.0.5`_ (2020-12-21)
+^^^^^^^^^^^^^^^^^^^^^^
+
+New features
+""""""""""""
+* Port the decorators module from Spicerack (`T257905`_).
+* Port the interactive module from Spicerack (`T257905`_).
+* Port the prometheus module from Spicerack (`T257905`_).
+* Port the IRC logger handler from Spickerack into an irc module (`T257905`_).
+* interactive: improve confirmation capabilities
+
+  * Add a ``ask_input()`` generic function to ask the user for input and check that the answer is among a list of
+    allowed choices, returning the user's choice.
+  * Convert ``ask_confirmation()`` to use the ``ask_input()`` function.
+  * Add an ``InputError`` and ``AbortError`` excaption classes.
+  * Add a ``confirm_on_failure()`` function to run any callable, and on failure ask the user to either retry, skip the
+    step or abort the whole execution.
+
+Miscellanea
+"""""""""""
+
+* docs: fix link to pywmflib Gerrit project.
+* tests: fix deprecated pytest argument.
+
 `v0.0.4`_ (2020-11-02)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -38,8 +62,10 @@ New features
 * Initial version of the package.
 * Import the dns module and tests from Spicerack.
 
+.. _`T257905`: https://phabricator.wikimedia.org/T257905
 
 .. _`v0.0.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.1
 .. _`v0.0.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.2
 .. _`v0.0.3`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.3
 .. _`v0.0.4`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.4
+.. _`v0.0.5`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.5

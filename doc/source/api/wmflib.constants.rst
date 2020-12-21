@@ -1,0 +1,4 @@
+constants
+=========
+
+.. automodule:: wmflib.constants

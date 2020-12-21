@@ -1,0 +1,4 @@
+interactive
+===========
+
+.. automodule:: wmflib.interactive

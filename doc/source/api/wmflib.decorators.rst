@@ -1,0 +1,4 @@
+decorators
+==========
+
+.. automodule:: wmflib.decorators

@@ -12,6 +12,6 @@ on `GitHub`_. To install it, from the ``master`` branch run:
 
     python setup.py install
 
-.. _`Wikimedia's Gerrit`: https://gerrit.wikimedia.org/r/admin/projects/operations/software/wmflib
+.. _`Wikimedia's Gerrit`: https://gerrit.wikimedia.org/r/admin/repos/operations/software/pywmflib
 .. _`GitHub`: https://github.com/wikimedia/operations-software-wmflib
 .. _`Release page`: https://github.com/wikimedia/operations-software-wmflib/releases
