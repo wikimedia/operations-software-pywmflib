@@ -1,10 +1,65 @@
 """Interactive module tests."""
+import logging
+
 from unittest import mock
 
 import pytest
 
 from wmflib import interactive
 from wmflib.exceptions import WmflibError
+from wmflib.tests import check_logs, require_caplog
+
+
+def example_division(positional: int, *, keyword: int = 1) -> int:
+    """Example function to be used in the confirm_on_failure() tests.
+
+    - When passing keyword=0 will raise a ZeroDivisionError
+    - When passing 0 to the positional argument will raise a wmflib.interactive.AbortError
+    - In all other cases will return positional divided by keyword
+
+    """
+    if positional == 0:
+        raise interactive.AbortError('Test aborted')
+
+    return positional / keyword
+
+
+@mock.patch('builtins.input')
+@mock.patch('wmflib.interactive.sys.stdout.isatty')
+def test_ask_input_ok(mocked_isatty, mocked_input, capsys):
+    """Calling ask_input() should return the user input if valid."""
+    valid_answer = 'valid'
+    mocked_isatty.return_value = True
+    mocked_input.return_value = valid_answer
+    message = 'Test message'
+    choice = interactive.ask_input(message, [valid_answer, 'other'])
+    assert choice == valid_answer
+    out, _ = capsys.readouterr()
+    assert message in out
+    assert 'Invalid response' not in out
+
+
+@mock.patch('builtins.input')
+@mock.patch('wmflib.interactive.sys.stdout.isatty')
+def test_ask_input_ko(mocked_isatty, mocked_input, capsys):
+    """Calling ask_input() should raise InputError if the correct answer is not provided."""
+    mocked_isatty.return_value = True
+    mocked_input.return_value = 'invalid'
+    message = 'Test message'
+    with pytest.raises(interactive.InputError, match='Too many invalid answers'):
+        interactive.ask_input(message, ['go'])
+
+    out, _ = capsys.readouterr()
+    assert message in out
+    assert out.count('Invalid response') == 3
+
+
+@mock.patch('wmflib.interactive.sys.stdout.isatty')
+def test_ask_input_no_tty(mocked_isatty):
+    """It should raise InputError if not in a TTY."""
+    mocked_isatty.return_value = False
+    with pytest.raises(interactive.InputError, match='Not in a TTY, unable to ask for input'):
+        interactive.ask_input('message', [])
 
 
 @mock.patch('builtins.input')
@@ -22,35 +77,83 @@ def test_ask_confirmation_go(mocked_isatty, mocked_input, capsys):
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
 def test_ask_confirmation_abort(mocked_isatty, mocked_input):
-    """Calling ask_confirmation() should raise an exception if 'abort' is provided."""
+    """Calling ask_confirmation() should raise AbortError if 'abort' is provided."""
     mocked_isatty.return_value = True
     mocked_input.return_value = 'abort'
     message = 'Test message'
-    with pytest.raises(WmflibError, match=('Confirmation manually aborted.')):
+    with pytest.raises(interactive.AbortError, match='Confirmation manually aborted'):
         interactive.ask_confirmation(message)
 
 
+def test_confirm_on_failure_ok():
+    """Calling confirm_on_failure() should run the given function and return its value if no exception is raised."""
+    ret = interactive.confirm_on_failure(example_division, 4, keyword=2)
+    assert ret == 2
+
+
+@require_caplog
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
-def test_ask_confirmation_ko(mocked_isatty, mocked_input, capsys):
-    """Calling ask_confirmation() should raise if the correct answer is not provided."""
+def test_confirm_on_failure_abort(mocked_isatty, mocked_input, capsys, caplog):
+    """It should ask for input if the called function raises an exception and allow to abort it."""
+    caplog.set_level(logging.INFO)
     mocked_isatty.return_value = True
-    mocked_input.return_value = 'invalid'
-    message = 'Test message'
-    with pytest.raises(WmflibError, match='Too many invalid confirmation answers'):
-        interactive.ask_confirmation(message)
+    mocked_input.return_value = 'abort'
+    with pytest.raises(interactive.AbortError, match='Task manually aborted'):
+        interactive.confirm_on_failure(example_division, 1, keyword=0)
 
     out, _ = capsys.readouterr()
-    assert message in out
-    assert out.count('Invalid response') == 3
+    assert 'What do you want to do' in out
+    check_logs(caplog, 'Failed to run wmflib.tests.unit.test_interactive.example_division', logging.ERROR)
 
 
+@require_caplog
+def test_confirm_on_failure_func_abort(capsys, caplog):
+    """It should let an AbortError exception raised in the called function pass through, not asking the user twice."""
+    caplog.set_level(logging.INFO)
+    with pytest.raises(interactive.AbortError, match='Test aborted'):
+        interactive.confirm_on_failure(example_division, 0, keyword=1)
+
+    out, _ = capsys.readouterr()
+    assert 'What do you want to do' not in out
+    log_message = 'Failed to run wmflib.tests.unit.test_interactive.example_division'
+    try:
+        check_logs(caplog, log_message, logging.ERROR)
+        raise AssertionError('Found unexpected message in logs: {msg}'.format(msg=log_message))
+    except RuntimeError:
+        pass  # No log message found, as expected
+
+
+@require_caplog
+@mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
-def test_ask_confirmation_no_tty(mocked_isatty):
-    """It should raise WmflibError if not in a TTY."""
-    mocked_isatty.return_value = False
-    with pytest.raises(WmflibError, match='Not in a TTY, unable to ask for confirmation'):
-        interactive.ask_confirmation('message')
+def test_confirm_on_failure_skip(mocked_isatty, mocked_input, capsys, caplog):
+    """It should ask for input if the called function raises an exception and allow to skip it returning None."""
+    mocked_isatty.return_value = True
+    mocked_input.return_value = 'skip'
+
+    ret = interactive.confirm_on_failure(example_division, 1, keyword=0)
+
+    assert ret is None
+    out, _ = capsys.readouterr()
+    assert 'What do you want to do' in out
+    check_logs(caplog, 'Failed to run wmflib.tests.unit.test_interactive.example_division', logging.ERROR)
+
+
+@require_caplog
+@mock.patch('builtins.input')
+@mock.patch('wmflib.interactive.sys.stdout.isatty')
+def test_confirm_on_failure_retry(mocked_isatty, mocked_input, capsys, caplog):
+    """It should ask for input if the called function raises an exception and allow to skip it returning None."""
+    mocked_isatty.return_value = True
+    mocked_input.side_effect = ('retry', 'retry', 'skip')
+
+    ret = interactive.confirm_on_failure(example_division, 1, keyword=0)
+
+    assert ret is None
+    out, _ = capsys.readouterr()
+    assert 'What do you want to do' in out
+    check_logs(caplog, 'Failed to run wmflib.tests.unit.test_interactive.example_division', logging.ERROR)
 
 
 def test_get_username_no_env(monkeypatch):
