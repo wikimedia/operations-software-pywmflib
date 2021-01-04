@@ -1,6 +1,16 @@
 wmflib Changelog
 ----------------
 
+`v0.0.6`_ (2021-01-04)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Miscellanea
+"""""""""""
+
+* doc: improve installation and introduction documentation pages and some modules documentation.
+* type hints: mark the package as type hinted so that mypy can recognize its type hints when imported in other
+  projects.
+
 `v0.0.5`_ (2020-12-21)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -69,3 +79,4 @@ New features
 .. _`v0.0.3`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.3
 .. _`v0.0.4`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.4
 .. _`v0.0.5`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.5
+.. _`v0.0.6`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.6
