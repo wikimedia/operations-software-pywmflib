@@ -63,6 +63,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/x-rst',
     name='wmflib',
+    package_data={'wmflib': ['py.typed']},
     packages=find_packages(exclude=['*.tests', '*.tests.*']),
     platforms=['GNU/Linux'],
     setup_requires=SETUP_REQUIRES,

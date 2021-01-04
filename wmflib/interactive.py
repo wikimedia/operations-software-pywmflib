@@ -21,12 +21,12 @@ class AbortError(WmflibError):
     """Custom exception class raised when an action is manually aborted."""
 
 
-def ask_input(message: str, choices: Sequence) -> str:
+def ask_input(message: str, choices: Sequence[str]) -> str:
     """Ask the user for input in interactive mode.
 
     Arguments:
         message (str): the message to be printed before asking for confirmation.
-        choices (sequence): the available choices of possible answers that the user can give.
+        choices (sequence): the available choices of possible answers that the user can give. Values must be strings.
 
     Returns:
         str: the selected choice.
