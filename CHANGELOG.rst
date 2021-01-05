@@ -25,7 +25,7 @@ New features
   * Add a ``ask_input()`` generic function to ask the user for input and check that the answer is among a list of
     allowed choices, returning the user's choice.
   * Convert ``ask_confirmation()`` to use the ``ask_input()`` function.
-  * Add an ``InputError`` and ``AbortError`` excaption classes.
+  * Add an ``InputError`` and ``AbortError`` exception classes.
   * Add a ``confirm_on_failure()`` function to run any callable, and on failure ask the user to either retry, skip the
     step or abort the whole execution.
 
