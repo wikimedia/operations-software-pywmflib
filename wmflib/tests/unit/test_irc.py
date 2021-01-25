@@ -9,11 +9,14 @@ from wmflib.irc import SALSocketHandler
 GENERIC_LOG_RECORD = logging.LogRecord('module', logging.DEBUG, '/source/file.py', 1, 'message', [], None)
 
 
-def test_irc_socket_handler_init():
+@mock.patch('socket.gethostname', return_value='current-hostname')
+def test_irc_socket_handler_init(mocked_hostname):
     """An instance of SALSocketHandler should set the address for the socket and the user."""
     handler = SALSocketHandler('host', 123, 'user')
     assert handler.addr == ('host', 123)
     assert handler.username == 'user'
+    assert handler.hostname == 'current-hostname'
+    mocked_hostname.assert_called_once_with()
 
 
 @mock.patch('wmflib.irc.socket')
