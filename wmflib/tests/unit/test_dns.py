@@ -5,7 +5,8 @@ from unittest import mock
 import dns
 import pytest
 
-from wmflib.dns import Dns, DnsError, DnsNotFound
+from wmflib.constants import PUBLIC_AUTHDNS
+from wmflib.dns import Dns, DnsError, DnsNotFound, PublicAuthDns
 
 
 # TODO: convert the mocked objects using dnspython objects. It requires quite some code given the structure of
@@ -92,7 +93,7 @@ class TestDns:
     @mock.patch('wmflib.dns.resolver.Resolver')
     def test_init_with_nameserver(self, mocked_resolver):
         """When passing a nameserver address, this should be set in the dns Resolver too."""
-        Dns(nameserver_address='127.0.0.1')
+        Dns(nameserver_addresses=['127.0.0.1'])
         mocked_resolver.assert_called_once_with(configure=False)
         assert mocked_resolver.return_value.nameservers == ['127.0.0.1']
         self.mocked_resolver.assert_called_once_with()
@@ -100,7 +101,7 @@ class TestDns:
     @mock.patch('wmflib.dns.resolver.Resolver')
     def test_init_with_nameserver_and_port(self, mocked_resolver):
         """A non-standard port should be set in the dns Resolver if a nameserver is set."""
-        Dns(nameserver_address='127.0.0.1', port=5353)
+        Dns(nameserver_addresses=['127.0.0.1'], port=5353)
         mocked_resolver.assert_called_once_with(configure=False)
         assert mocked_resolver.return_value.nameservers == ['127.0.0.1']
         assert mocked_resolver.return_value.port == 5353
@@ -169,3 +170,11 @@ class TestDns:
         with pytest.raises(DnsError, match='Unable to resolve {record_type} record for {qname}'.format(
                 record_type=record_type, qname=qname)):
             self.dns.resolve(qname, record_type)
+
+
+@mock.patch('wmflib.dns.resolver.Resolver')
+def test_public_auth_dns_init(mocked_resolver):
+    """The Production nameservers should be set on the resolver."""
+    PublicAuthDns()
+    mocked_resolver.assert_called_once_with(configure=False)
+    assert mocked_resolver.return_value.nameservers == PUBLIC_AUTHDNS
