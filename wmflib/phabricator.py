@@ -7,7 +7,7 @@ import phabricator
 from wmflib.exceptions import WmflibError
 
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 def create_phabricator(

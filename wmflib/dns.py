@@ -11,7 +11,7 @@ from wmflib.constants import PUBLIC_AUTHDNS
 from wmflib.exceptions import WmflibError
 
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 class DnsError(WmflibError):
