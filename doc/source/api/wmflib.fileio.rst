@@ -1,0 +1,4 @@
+fileio
+======
+
+.. automodule:: wmflib.fileio
