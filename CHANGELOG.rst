@@ -1,6 +1,37 @@
 wmflib Changelog
 ----------------
 
+`v0.0.7`_ (2021-02-18)
+^^^^^^^^^^^^^^^^^^^^^^
+
+New features
+""""""""""""
+
+* dns: update DNS to support multiple namservers.
+
+  * This allows cookbooks to configure the Dns with multiple nameservers, for example:
+
+    .. code-block:: python
+
+        dns = Dns(nameserver_address=['91.198.174.239', '208.80.153.231'])
+
+    and thus allow users to get authoritative answers whiles also making use of DNS failover to account for any on
+    going work on a specific nameserver while the cookbook is running.
+
+    The ``PUBLIC_AUTHDNS`` constant holds the auth server ips, given that they change very infrequently.
+
+* fileio: add new module to manage file I/O operations.
+
+  * Add a ``locked_open()`` context manager to open a file with an exclusive lock to be used like the buil-in
+    ``open()``.
+
+Miscellanea
+"""""""""""
+
+* tests: cover untested property in the irc module.
+* CHANGELOG: fix typo.
+* tests: pylint, remove unnecessary disable comments.
+
 `v0.0.6`_ (2021-01-04)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -80,3 +111,4 @@ New features
 .. _`v0.0.4`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.4
 .. _`v0.0.5`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.5
 .. _`v0.0.6`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.6
+.. _`v0.0.7`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.7
