@@ -1,16 +1,17 @@
 """DNS module."""
 import logging
 
-from typing import cast, List, Optional, Union
+from typing import cast, List, Optional, Sequence, Union
 
 from dns import resolver, reversename, rrset
 from dns.exception import DNSException
 from dns.name import Name
 
+from wmflib.constants import PUBLIC_AUTHDNS
 from wmflib.exceptions import WmflibError
 
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 class DnsError(WmflibError):
@@ -27,20 +28,21 @@ class DnsNotFound(DnsError):
 class Dns:
     """Class to interact with the DNS."""
 
-    def __init__(self, *, nameserver_address: Optional[str] = None, port: Optional[int] = None) -> None:
+    def __init__(self, *, nameserver_addresses: Optional[Sequence] = None, port: Optional[int] = None) -> None:
         """Initialize the instance.
 
         Arguments:
-            nameserver_address (str, optional): the nameserver address to use, if not set uses the OS configuration.
-            port (int, optional): the port the ``nameserver_address`` nameserver is listening to, if different from
-                the default 53. This applies only if a nameserver is explicitely specified.
+            nameserver_addresses (Sequence, optional): the nameserveres address to use, if not set uses the OS
+                configuration.
+            port (int, optional): the port the ``nameserver_addresses`` nameserveres is listening to, if different from
+                the default 53. This applies only if a nameserveres is explicitelyes specified.
 
         """
-        if nameserver_address is not None:
+        if nameserver_addresses is not None:
             self._resolver = resolver.Resolver(configure=False)
             if port is not None:
                 self._resolver.port = port
-            self._resolver.nameservers = [nameserver_address]
+            self._resolver.nameservers = nameserver_addresses
         else:
             self._resolver = resolver.Resolver()
 
@@ -186,3 +188,11 @@ class Dns:
             targets.append(target[:-1])
 
         return targets
+
+
+class PublicAuthDns(Dns):
+    """Class to interact with the DNS using the wikimedia foundation authoritative servers."""
+
+    def __init__(self) -> None:
+        """Initialize the instance."""
+        super().__init__(nameserver_addresses=PUBLIC_AUTHDNS)
