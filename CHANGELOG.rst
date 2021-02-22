@@ -13,7 +13,7 @@ New features
 
     .. code-block:: python
 
-        dns = Dns(nameserver_address=['91.198.174.239', '208.80.153.231'])
+        dns = Dns(nameserver_addresses=['91.198.174.239', '208.80.153.231'])
 
     and thus allow users to get authoritative answers whiles also making use of DNS failover to account for any on
     going work on a specific nameserver while the cookbook is running.
