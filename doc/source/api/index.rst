@@ -18,6 +18,7 @@ wmflib Python API autodoc.
     wmflib.dns
     wmflib.exceptions
     wmflib.fileio
+    wmflib.idm
     wmflib.interactive
     wmflib.irc
     wmflib.phabricator
