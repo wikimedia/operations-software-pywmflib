@@ -200,6 +200,7 @@ def test_ensure_shell_is_durable_non_interactive(mocked_isatty):
     ('STY', '12345.pts-1.host'),
     ('TMUX', '/tmux-1001/default,12345,0'),
     ('TERM', 'screen-example'),
+    ('TERM', 'tmux-example'),
 ))
 def test_ensure_shell_is_durable_sty(mocked_isatty, env_name, env_value, monkeypatch):
     """Should not raise if in an interactive shell with STY set, TMUX set or a screen-line TERM."""

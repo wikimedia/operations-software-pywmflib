@@ -32,6 +32,9 @@ pep257:
 pylint:
   disable:
     - pointless-string-statement  # used as documentation for class attributes
+    # The pylint version of Prospector causes false positives for unsubscriptable-object on Python 3.9
+    # TODO: to be removed once https://github.com/PyCQA/prospector/pull/406 is merged and released
+    - unsubscriptable-object
   options:
     good-names: handleError  # From logging.Handler, inline disable doesn't work, used in test_log.py
     ignore: vulture_whitelist.py

@@ -50,7 +50,7 @@ def locked_open(file_path: Path, file_mode: str = 'r', *, timeout: int = 10) -> 
                 backoff_mode='constant',
                 exceptions=(OSError, BlockingIOError)
             )(fcntl.flock)(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            logger.debug("Acquired exclusive lock on %s", file_path)
+            logger.debug('Acquired exclusive lock on %s', file_path)
         except OSError as e:
             raise LockError('Unable to acquire exclusive lock on {name}'.format(name=file_path)) from e
 
@@ -58,4 +58,4 @@ def locked_open(file_path: Path, file_mode: str = 'r', *, timeout: int = 10) -> 
             yield fd
         finally:
             fcntl.flock(fd, fcntl.LOCK_UN)
-            logger.debug("Released exclusive lock on %s", file_path)
+            logger.debug('Released exclusive lock on %s', file_path)
