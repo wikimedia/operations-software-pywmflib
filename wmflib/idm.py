@@ -15,7 +15,14 @@ class IdmValueError(WmflibError):
 # We make the description optional to deal with the following issue
 # https://github.com/python/mypy/issues/9170
 def logoutd_args(description: Optional[str] = None, args: Optional[List] = None) -> Namespace:
-    """Parse arguments.
+    """Logout scripts common CLI for parsing the command line arguments.
+
+    When not using the higher level API :py:class:`wmflib.idm.LogoutdBase`, a user could just implement their own
+    script still using the same command line arguments processing, of the form::
+
+        from wmflib.logoutd import logoutd_args
+        args = logoutd_args()
+        # write your own script
 
     Arguments:
         description (str): the description to use
@@ -52,7 +59,27 @@ def logoutd_args(description: Optional[str] = None, args: Optional[List] = None)
 
 
 class LogoutdBase(ABC):
-    """Base class."""
+    """Base class for a standardized API for logout scripts.
+
+    A simple logout.d python script would then be of the form::
+
+        from wmflib.idm import LogoutdBase
+
+        class MyLogoutd(LogoutdBase):
+
+            def logout_user(self, user):
+                # logout the given user
+
+            def query_user(self, user):
+                # check the login status of a given user
+
+            def list(self):
+                # list all active login sessions
+
+        logoutd = MyLogoutd()
+        raise SystemExit(logoutd.run())  # This includes the parsing of command line arguments.
+
+    """
 
     user_identifier: str = 'cn'
 
