@@ -1,6 +1,39 @@
 wmflib Changelog
 ----------------
 
+`v0.0.8`_ (2021-06-23)
+^^^^^^^^^^^^^^^^^^^^^^
+
+New features
+""""""""""""
+
+* idm: add a new ``idm`` module with support for global logout (`T283242`_):
+
+  * To ensure that all Python logout scripts will have the same set of arguments and to reduce everyone repeating
+    the same argparse block, a ``LogoutdBase`` abstract class was added.
+  * It features also a ``logoutd_args()`` function that provides the common argparse setup for all the logoutd scripts.
+  * See the module's documentation for example usages.
+
+Minor improvements
+""""""""""""""""""
+
+* constants: add ``DATACENTER_NUMBERING_PREFIX`` constant to map datacenter names to their numbering prefix used in
+  hostnames.
+
+Bug fixes
+"""""""""
+
+* interactive: also check term for tmux in ``ensure_shell_is_durable()``.
+* tests: fix pip backtracking moving prospector tests to their own virtual environments.
+
+Miscellanea
+"""""""""""
+
+* Add official support for Python 3.9
+* fileio: uniform quotes used in the file.
+* setup.py: add types dependencies for mypy for the dependencies that don't have yet type hints.
+* CHANGELOG: fix typo in the v0.0.7 release notes.
+
 `v0.0.7`_ (2021-02-18)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -104,6 +137,7 @@ New features
 * Import the dns module and tests from Spicerack.
 
 .. _`T257905`: https://phabricator.wikimedia.org/T257905
+.. _`T283242`: https://phabricator.wikimedia.org/T283242
 
 .. _`v0.0.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.1
 .. _`v0.0.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.2
@@ -112,3 +146,4 @@ New features
 .. _`v0.0.5`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.5
 .. _`v0.0.6`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.6
 .. _`v0.0.7`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.7
+.. _`v0.0.8`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.8
