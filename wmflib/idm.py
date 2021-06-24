@@ -20,8 +20,8 @@ def logoutd_args(description: Optional[str] = None, args: Optional[List] = None)
     When not using the higher level API :py:class:`wmflib.idm.LogoutdBase`, a user could just implement their own
     script still using the same command line arguments processing, of the form::
 
-        from wmflib.logoutd import logoutd_args
-        args = logoutd_args()
+        from wmflib.idm import logoutd_args
+        args = logoutd_args('Some description')
         # write your own script
 
     Arguments:
@@ -58,7 +58,7 @@ def logoutd_args(description: Optional[str] = None, args: Optional[List] = None)
     return parser.parse_args(args)
 
 
-class LogoutdBase(ABC):
+class LogoutdBase(ABC):  # noqa: D300,D301 See https://github.com/PyCQA/pydocstyle/issues/542
     """Base class for a standardized API for logout scripts.
 
     A simple logout.d python script would then be of the form::
@@ -66,6 +66,7 @@ class LogoutdBase(ABC):
         from wmflib.idm import LogoutdBase
 
         class MyLogoutd(LogoutdBase):
+            \"\"\"Some description.\"\"\"
 
             def logout_user(self, user):
                 # logout the given user
