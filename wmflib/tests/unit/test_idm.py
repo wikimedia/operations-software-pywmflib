@@ -21,14 +21,14 @@ def test_logoutd_args_list():
 
 def test_logoutd_args_logout():
     """Test the argparsing function for the query action."""
-    args = logoutd_args('foo', ['-vv', 'query', '--cn', 'bill'])
-    assert args == Namespace(command='query', uid=None, verbose=2, cn='bill')
+    args = logoutd_args('foo', ['-vv', 'query', '--cn', 'bill', '--uid', 'Bill'])
+    assert args == Namespace(command='query', verbose=2, cn='bill', uid='Bill')
 
 
 def test_logoutd_args():
     """Test the argparsing function for the logout action."""
-    args = logoutd_args('foo', ['logout', '-u', 'bob'])
-    assert args == Namespace(command='logout', uid='bob', verbose=0, cn=None)
+    args = logoutd_args('foo', ['logout', '-u', 'bob', '--cn', 'Bob'])
+    assert args == Namespace(command='logout', uid='bob', verbose=0, cn='Bob')
 
 
 class ConcreteLogoutdBase(LogoutdBase):

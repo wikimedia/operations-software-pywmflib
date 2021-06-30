@@ -42,9 +42,10 @@ def logoutd_args(description: Optional[str] = None, args: Optional[List] = None)
     query.add_argument(
         '-u',
         '--uid',
+        required=True,
         help='The uid of the user to use',
     )
-    query.add_argument('-c', '--cn', help='The cn of the user to use')
+    query.add_argument('-c', '--cn', required=True, help='The cn of the user to use')
 
     sub.add_parser(
         'logout',
