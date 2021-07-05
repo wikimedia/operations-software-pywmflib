@@ -2,14 +2,47 @@
 import logging
 import time
 
+from dataclasses import dataclass
 from datetime import timedelta
 from functools import wraps
-from typing import Any, Callable, cast, Optional, Tuple, Type, Union
+from typing import Any, Callable, cast, Dict, Optional, Tuple, Type, Union
 
 from wmflib.exceptions import WmflibError
 
 
 logger = logging.getLogger(__name__)
+
+
+# TODO: use TypedDict once Python 3.7 support is removed
+@dataclass
+class RetryParams:
+    """Retry decorator parameters object."""
+
+    tries: int
+    delay: timedelta
+    backoff_mode: str
+    exceptions: Tuple[Type[Exception], ...]
+    failure_message: str
+
+    def validate(self) -> None:
+        """Validate the consistency of the current field values.
+
+        Raises:
+            wmflib.exceptions.WmflibError: if any field has an invalid value.
+
+        """
+        if self.backoff_mode not in ('constant', 'linear', 'power', 'exponential'):
+            raise WmflibError('Invalid backoff_mode: {mode}'.format(mode=self.backoff_mode))
+
+        if self.backoff_mode == 'exponential' and self.delay.total_seconds() < 1:
+            raise WmflibError('Delay must be greater than 1 if backoff_mode is exponential, got {delay}'.format(
+                delay=self.delay))
+
+        if self.tries < 1:
+            raise WmflibError('Tries must be a positive integer, got {tries}'.format(tries=self.tries))
+
+        if not self.failure_message:
+            raise WmflibError('A failure_message must be set.')
 
 
 def ensure_wrap(func: Callable) -> Callable:
@@ -31,18 +64,16 @@ def ensure_wrap(func: Callable) -> Callable:
     return wrapper
 
 
-# TODO: 'func=None' is a workaround for https://github.com/PyCQA/pylint/issues/259
-# It was fixed in https://github.com/PyCQA/pylint/pull/2926 but the current Prospector doesn't include yet a recent
-# enough version of pylint that has the fix.
-# Once fixed restore the signature to 'func: Callable, *' and remove the type: ignore comments.
 @ensure_wrap
-def retry(
-    func: Optional[Callable] = None,
+def retry(  # pylint: disable=too-many-arguments
+    func: Callable,
+    *,
     tries: int = 3,
     delay: timedelta = timedelta(seconds=3),
     backoff_mode: str = 'exponential',
     exceptions: Tuple[Type[Exception], ...] = (WmflibError,),
     failure_message: Optional[str] = None,
+    dynamic_params_callbacks: Tuple[Callable[[RetryParams, Callable, Tuple, Dict[str, Any]], None], ...] = (),
 ) -> Callable:
     """Decorator to retry a function or method if it raises certain exceptions with customizable backoff.
 
@@ -67,6 +98,28 @@ def retry(
             or `tries` attempts are reached. A retryable failure is defined as raising any of the exceptions listed.
         failure_message (str, optional): the message to log each time there's a retryable failure. Retry information
             and exception message are also included. Default: "Attempt to run '<fully qualified function>' raised"
+        dynamic_params_callbacks (tuple): a tuple of callbacks that will be called at runtime to allow to modify the
+            decorator's parameters. Each callable must adhere to the following interface::
+
+                def adjust_some_parameter(retry_params: RetryParams, func: Callable, args: Tuple, kwargs: Dict) -> None
+                    # Modify the retry_params parameter possibly using the decorated function object or its parameters
+                    # that are passed as tuple for the positional arguments and a dictionary for the keyword arguments
+
+            This is a practical example that defines a callback that doubles the delay parameter of the ``@retry``
+            decorator if the decorated function/method has a 'slow' keyword argument that is to True::
+
+                def double_delay(retry_params, func, args, kwargs):
+                    if kwargs.get('slow', False):
+                        retry_params.delay = retry_params.delay * 2
+
+                @retry(delay=timedelta(seconds=10), dynamic_params_callbacks=(double_delay,))
+                def do_something(slow=False):
+                    # This method will be retried using 10 seconds as delay parameter in the ``@retry`` decorator, but
+                    # if the 'slow' parameter is set to True it will use a delay of 20 seconds instead.
+                    # Do something here.
+
+            **While the callbacks will have access to the parameters passed to the decorated function, they should be
+            treated as read-only variables.**
 
     Returns:
         function: the decorated function.
@@ -74,34 +127,37 @@ def retry(
     """
     if not failure_message:
         failure_message = "Attempt to run '{module}.{qualname}' raised".format(
-            module=func.__module__, qualname=func.__qualname__)  # type: ignore
+            module=func.__module__, qualname=func.__qualname__)
 
-    @wraps(func)  # type: ignore
+    static_params: Dict[str, Any] = {
+        'tries': tries,
+        'delay': delay,
+        'backoff_mode': backoff_mode,
+        'exceptions': exceptions,
+        'failure_message': failure_message,
+    }
+
+    @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
-        """Decorator."""
-        if backoff_mode not in ('constant', 'linear', 'power', 'exponential'):
-            raise ValueError('Invalid backoff_mode: {mode}'.format(mode=backoff_mode))
+        """Decorated function."""
+        params = RetryParams(**static_params)
+        for dynamic_params_callback in dynamic_params_callbacks:
+            dynamic_params_callback(params, func, args, kwargs)
 
-        if backoff_mode == 'exponential' and delay.total_seconds() < 1:
-            raise ValueError(
-                'Delay must be greater than 1 if backoff_mode is exponential, got {delay}'.format(delay=delay))
-
-        if tries < 1:
-            raise ValueError('Tries must be a positive integer, got {tries}'.format(tries=tries))
-
+        params.validate()
         attempt = 0
-        while attempt < tries - 1:
+        while attempt < params.tries - 1:
             attempt += 1
             try:
                 # Call the decorated function or method
-                return func(*args, **kwargs)  # type: ignore
+                return func(*args, **kwargs)
             except exceptions as e:
-                sleep = get_backoff_sleep(backoff_mode, delay.total_seconds(), attempt)
+                sleep = get_backoff_sleep(params.backoff_mode, params.delay.total_seconds(), attempt)
                 logger.warning("[%d/%d, retrying in %.2fs] %s: %s",
-                               attempt, tries, sleep, failure_message, _exception_message(e))
+                               attempt, params.tries, sleep, params.failure_message, _exception_message(e))
                 time.sleep(sleep)
 
-        return func(*args, **kwargs)  # type: ignore
+        return func(*args, **kwargs)
 
     return wrapper
 

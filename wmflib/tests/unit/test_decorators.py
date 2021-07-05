@@ -4,14 +4,47 @@ from unittest import mock
 
 import pytest
 
-from wmflib.decorators import get_backoff_sleep, retry
+from wmflib.decorators import get_backoff_sleep, retry, RetryParams
 from wmflib.exceptions import WmflibError
+
+
+class TestRetryParams:
+    """Test class for the RetryParams dataclass."""
+
+    def setup_method(self):
+        """Initialize the test instance."""
+        # pylint: disable=attribute-defined-outside-init
+        self.base_params = {
+            'tries': 3,
+            'delay': timedelta(seconds=10),
+            'backoff_mode': 'constant',
+            'exceptions': (WmflibError,),
+            'failure_message': 'failed',
+        }
+
+    def test_validate_ok(self):
+        """It should validate the parameters if they are correct."""
+        params = RetryParams(**self.base_params)
+        params.validate()  # Will raise if invalid
+
+    @pytest.mark.parametrize('modified, expected', (
+        ({'backoff_mode': 'invalid'}, 'Invalid backoff_mode: invalid'),
+        ({'backoff_mode': 'exponential', 'delay': timedelta(seconds=0.5)},
+         'Delay must be greater than 1 if backoff_mode is exponential'),
+        ({'tries': 0}, 'Tries must be a positive integer, got 0'),
+        ({'failure_message': ''}, 'A failure_message must be set.'),
+    ))
+    def test_validate_invalid_params(self, modified, expected):
+        """It should raise WmflibError if the parameters are invalid."""
+        params = RetryParams(**{**self.base_params, **modified})
+        with pytest.raises(WmflibError, match=expected):
+            params.validate()
 
 
 def _generate_mocked_function(calls):
     func = mock.Mock()
     func.side_effect = calls
-    func.__qualname__ = 'mocked'
+    func.__qualname__ = 'mocked.func'
     return func
 
 
@@ -56,9 +89,9 @@ def test_retry_fail_no_args(mocked_sleep, exc, calls, sleep_calls):
 ))
 @mock.patch('wmflib.decorators.time.sleep', return_value=None)
 def test_retry_pass_args(mocked_sleep, calls, sleep_calls, kwargs):
-    """Using @retry with arguments should use the soecified values."""
+    """Using @retry with arguments should use the specified values."""
     func = _generate_mocked_function(calls)
-    ret = retry(**kwargs)(func)()
+    ret = retry(**kwargs)(func)()  # pylint: disable=no-value-for-parameter
 
     assert ret
     func.assert_has_calls([mock.call()] * len(calls))
@@ -82,14 +115,14 @@ def test_retry_fail_args(mocked_sleep, exc, kwargs):
 
 
 @pytest.mark.parametrize('failure_message, expected_log', (
-    (None, "Attempt to run 'unittest.mock.mocked' raised:"),
+    (None, "Attempt to run 'unittest.mock.mocked.func' raised:"),
     ('custom failure message', 'custom failure message'),
 ))
 @mock.patch('wmflib.decorators.time.sleep', return_value=None)
 def test_retry_failure_message(mocked_sleep, failure_message, expected_log, caplog):
     """Using @retry with a failure_message should log that message when an exception is caught."""
     func = _generate_mocked_function([WmflibError('error1'), True])
-    ret = retry(failure_message=failure_message)(func)()
+    ret = retry(failure_message=failure_message)(func)()  # pylint: disable=no-value-for-parameter
 
     assert ret
     assert expected_log in caplog.text
@@ -113,16 +146,18 @@ def test_retry_fail_chained_exceptions(mocked_sleep, caplog):
     assert mocked_sleep.call_count == 2
 
 
-@pytest.mark.parametrize('kwargs, message', (
-    ({'tries': 0}, 'Tries must be a positive integer, got 0'),
-    ({'backoff_mode': 'invalid'}, 'Invalid backoff_mode: invalid'),
-    ({'backoff_mode': 'exponential', 'delay': timedelta(milliseconds=500)},
-     'Delay must be greater than 1 if backoff_mode is exponential'),
-))
-def test_retry_invalid(kwargs, message):
-    """Using @retry with invalid arguments should raise ValueError."""
-    with pytest.raises(ValueError, match=message):
-        retry(**kwargs)(lambda: True)()  # pylint: disable=not-callable
+@mock.patch('wmflib.decorators.time.sleep', return_value=None)
+def test_retry_dynamic_params_callback(mocked_sleep):
+    """It should execute the given callback and use the new parameters."""
+    def callback(params, _func, _args, _kwargs):
+        """Alter the tries value."""
+        params.tries = 2
+
+    func = _generate_mocked_function([WmflibError('error1'), True])
+    ret = retry(tries=1, dynamic_params_callbacks=(callback,))(func)()  # pylint: disable=no-value-for-parameter
+
+    assert ret
+    assert mocked_sleep.call_count == 1
 
 
 @pytest.mark.parametrize('mode, base, values', (
