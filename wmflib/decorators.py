@@ -114,7 +114,7 @@ def retry(  # pylint: disable=too-many-arguments
 
                 @retry(delay=timedelta(seconds=10), dynamic_params_callbacks=(double_delay,))
                 def do_something(slow=False):
-                    # This method will be retried using 10 seconds as delay parameter in the ``@retry`` decorator, but
+                    # This method will be retried using 10 seconds as delay parameter in the @retry decorator, but
                     # if the 'slow' parameter is set to True it will use a delay of 20 seconds instead.
                     # Do something here.
 
