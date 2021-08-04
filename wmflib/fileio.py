@@ -44,7 +44,8 @@ def locked_open(file_path: Path, file_mode: str = 'r', *, timeout: int = 10) -> 
         try:
             # Decorate the call to the locking function to retry acquiring the lock:
             # decorator(decorator_args)(function)(function_args)
-            retry(
+            # no-value-for-parameter is needed because pylint is confused by @ensure_wraps
+            retry(  # pylint: disable=no-value-for-parameter
                 tries=tries,
                 delay=timedelta(seconds=timeout / tries),
                 backoff_mode='constant',
