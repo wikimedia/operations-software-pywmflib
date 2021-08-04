@@ -1,6 +1,29 @@
 wmflib Changelog
 ----------------
 
+`v0.0.9`_ (2021-08-04)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Minor improvements
+""""""""""""""""""
+
+* decorators: improve the ``@retry`` decorator.
+
+  * Add a new optional ``dynamic_params_callbacks`` parameter to the ``@retry`` decorator.
+  * This parameter accepts a tuple of callbacks that will be called by the decorator and allow them to modify the
+    parameters of the decorator itself at runtime.
+  * Fix the signature of retry now that the upstream bug in pylint has been fixed and the newer version is included in
+    prospector. This allows to remove some type ingore that were required before.
+
+* idm: make the ``cn`` and ``uid`` arguments of ``logoutd_args()`` both required so that the logoutd scripts that
+  adhere to this API can safely rely on both being present. The logout cookbook is already passing both parameters
+  anyway.
+
+Miscellanea
+"""""""""""
+
+* idm: fix typo in docstring.
+
 `v0.0.8`_ (2021-06-23)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -147,3 +170,4 @@ New features
 .. _`v0.0.6`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.6
 .. _`v0.0.7`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.7
 .. _`v0.0.8`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.8
+.. _`v0.0.9`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.9
