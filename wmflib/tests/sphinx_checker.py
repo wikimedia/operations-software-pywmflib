@@ -25,7 +25,7 @@ def main(base_path):
                       if not ispkg and name not in EXCLUDED_NAMES}
 
     doc_path = os.path.join(base_path, DOC_API_INDEX_PATH)
-    with open(doc_path) as f:
+    with open(doc_path, encoding='utf-8') as f:
         api_index_lines = f.readlines()
 
     doc_api_lines = [line.strip() for line in api_index_lines if line.startswith(API_INDEX_PREFIX)]
@@ -56,9 +56,9 @@ def main(base_path):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(  # pylint: disable=invalid-name
+    parser = argparse.ArgumentParser(
         description='Check that all wmflib modules are documented')
     parser.add_argument('base_path', help='Path to the root of the wmflib repository')
-    args = parser.parse_args()  # pylint: disable=invalid-name
+    args = parser.parse_args()
 
     sys.exit(main(args.base_path))

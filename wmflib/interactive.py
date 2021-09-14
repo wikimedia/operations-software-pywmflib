@@ -101,7 +101,7 @@ def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
             if response == 'skip':
                 return None
             if response == 'abort':
-                raise AbortError('Task manually aborted')
+                raise AbortError('Task manually aborted') from e
         else:
             return ret
 

@@ -40,7 +40,7 @@ def locked_open(file_path: Path, file_mode: str = 'r', *, timeout: int = 10) -> 
 
     """
     tries = 10
-    with open(file_path, file_mode) as fd:
+    with open(file_path, file_mode, encoding='utf-8') as fd:
         try:
             # Decorate the call to the locking function to retry acquiring the lock:
             # decorator(decorator_args)(function)(function_args)

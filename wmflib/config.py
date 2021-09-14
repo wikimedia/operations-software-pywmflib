@@ -29,7 +29,7 @@ def load_yaml_config(config_file: str, raises: bool = True) -> Dict:
     """
     config = {}
     try:
-        with open(config_file, 'r') as fh:
+        with open(config_file, 'r', encoding='utf-8') as fh:
             config = yaml.safe_load(fh)
 
     except Exception as e:  # pylint: disable=broad-except

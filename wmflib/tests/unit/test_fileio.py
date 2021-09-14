@@ -10,7 +10,7 @@ from wmflib.fileio import locked_open, LockError
 
 def try_lock_file(test_file):
     """Try to get an exclusive lock in the given file. Return True on success, False on failure."""
-    with open(test_file) as fd:
+    with open(test_file, encoding='utf-8') as fd:
         try:
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             fcntl.flock(fd, fcntl.LOCK_UN)

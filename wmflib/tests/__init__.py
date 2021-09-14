@@ -24,7 +24,7 @@ def get_fixture_path(*paths):
     return os.path.join(TESTS_BASE_PATH, 'fixtures', *paths)
 
 
-require_caplog = pytest.mark.skipif(  # pylint: disable=invalid-name
+require_caplog = pytest.mark.skipif(
     parse_version(pytest.__version__) < parse_version(CAPLOG_MIN_VERSION), reason='Requires caplog fixture')
 
 

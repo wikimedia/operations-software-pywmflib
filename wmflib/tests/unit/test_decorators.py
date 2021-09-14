@@ -91,7 +91,7 @@ def test_retry_fail_no_args(mocked_sleep, exc, calls, sleep_calls):
 def test_retry_pass_args(mocked_sleep, calls, sleep_calls, kwargs):
     """Using @retry with arguments should use the specified values."""
     func = _generate_mocked_function(calls)
-    ret = retry(**kwargs)(func)()  # pylint: disable=no-value-for-parameter
+    ret = retry(**kwargs)(func)()
 
     assert ret
     func.assert_has_calls([mock.call()] * len(calls))
@@ -137,7 +137,7 @@ def test_retry_fail_chained_exceptions(mocked_sleep, caplog):
         try:
             raise WmflibError('error2') from WmflibError('error3')
         except WmflibError:
-            raise WmflibError('error1')
+            raise WmflibError('error1')  # pylint: disable=raise-missing-from
     func = _generate_mocked_function(side_effect)
     with pytest.raises(WmflibError, match='error1'):
         retry(func)()
