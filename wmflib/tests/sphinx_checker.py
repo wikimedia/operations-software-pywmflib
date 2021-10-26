@@ -6,15 +6,16 @@
   Sphinx would raise a warning but not fail in this case.
 """
 import argparse
-import os
 import pkgutil
 import sys
+
+from pathlib import Path
 
 import wmflib
 
 
-DOC_API_BASE_PATH = 'doc/source/api'
-DOC_API_INDEX_PATH = os.path.join(DOC_API_BASE_PATH, 'index.rst')
+DOC_API_BASE_PATH = Path('doc/source/api')
+DOC_API_INDEX_PATH = DOC_API_BASE_PATH / 'index.rst'
 API_INDEX_PREFIX = '    wmflib.'
 EXCLUDED_NAMES = ()
 
@@ -24,7 +25,7 @@ def main(base_path):
     wmflib_modules = {name for _, name, ispkg in pkgutil.iter_modules(wmflib.__path__)
                       if not ispkg and name not in EXCLUDED_NAMES}
 
-    doc_path = os.path.join(base_path, DOC_API_INDEX_PATH)
+    doc_path = base_path / DOC_API_INDEX_PATH
     with open(doc_path, encoding='utf-8') as f:
         api_index_lines = f.readlines()
 
@@ -42,7 +43,7 @@ def main(base_path):
 
     doc_api_files = [f'wmflib.{name}.rst' for name in doc_api_modules]
     missing_doc_api_files = [file for file in doc_api_files
-                             if not os.path.isfile(os.path.join(DOC_API_BASE_PATH, file))]
+                             if not (DOC_API_BASE_PATH / file).is_file]
     if missing_doc_api_files:
         print(f'Missing documentation files in {DOC_API_BASE_PATH}: {missing_doc_api_files}')
         ret += 1

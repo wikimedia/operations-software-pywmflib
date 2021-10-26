@@ -3,7 +3,8 @@
 import configparser
 import logging
 
-from typing import Dict
+from os import PathLike
+from typing import Dict, Union
 
 import yaml
 
@@ -13,7 +14,7 @@ from wmflib.exceptions import WmflibError
 logger = logging.getLogger(__name__)
 
 
-def load_yaml_config(config_file: str, raises: bool = True) -> Dict:
+def load_yaml_config(config_file: Union[str, PathLike], raises: bool = True) -> Dict:
     """Parse a YAML config file and return it, optionally not failing on error.
 
     Arguments:
@@ -45,7 +46,7 @@ def load_yaml_config(config_file: str, raises: bool = True) -> Dict:
     return config
 
 
-def load_ini_config(config_file: str, raises: bool = True) -> configparser.ConfigParser:
+def load_ini_config(config_file: Union[str, PathLike], raises: bool = True) -> configparser.ConfigParser:
     """Parse an INI config file and return it.
 
     Arguments:

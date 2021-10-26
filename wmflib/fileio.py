@@ -4,7 +4,7 @@ import logging
 
 from contextlib import contextmanager
 from datetime import timedelta
-from pathlib import Path
+from os import PathLike
 from typing import Generator, IO
 
 from wmflib.decorators import retry
@@ -23,11 +23,11 @@ class LockError(FileIOError):
 
 
 @contextmanager
-def locked_open(file_path: Path, file_mode: str = 'r', *, timeout: int = 10) -> Generator[IO, None, None]:
+def locked_open(file_path: PathLike, file_mode: str = 'r', *, timeout: int = 10) -> Generator[IO, None, None]:
     """Context manager to open a file with an exclusive lock on it and a retry logic.
 
     Arguments:
-        file_path (pathlib.Path): the file path to open.
+        file_path (os.PathLike): the file path to open.
         file_mode (str, optional): the mode in which the file is opened, see :py:func:`open` for details.
         timeout (int, optional): the total timeout in seconds to wait to acquire the exclusive lock before giving up.
             Ten tries will be attempted to acquire the lock within the timeout.
