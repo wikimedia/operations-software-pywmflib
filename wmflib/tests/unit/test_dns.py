@@ -167,8 +167,7 @@ class TestDns:
     ))
     def test_resolve_raise(self, qname, record_type):
         """Should raise DnsError if the qname is not defined."""
-        with pytest.raises(DnsError, match='Unable to resolve {record_type} record for {qname}'.format(
-                record_type=record_type, qname=qname)):
+        with pytest.raises(DnsError, match=f'Unable to resolve {record_type} record for {qname}'):
             self.dns.resolve(qname, record_type)
 
 

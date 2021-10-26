@@ -33,20 +33,18 @@ def main(base_path):
 
     ret = 0
     if wmflib_modules - doc_api_modules:
-        print('wmflib modules that are not listed in {doc}: {modules}'.format(
-            doc=DOC_API_INDEX_PATH, modules=wmflib_modules - doc_api_modules))
+        print(f'wmflib modules that are not listed in {DOC_API_INDEX_PATH}: {wmflib_modules - doc_api_modules}')
         ret += 1
     if doc_api_modules - wmflib_modules:
-        print('Documented modules in {doc} that are missing in wmflib: {modules}'.format(
-            doc=DOC_API_INDEX_PATH, modules=doc_api_modules - wmflib_modules))
+        print(f'Documented modules in {DOC_API_INDEX_PATH} that are missing in wmflib: '
+              f'{doc_api_modules - wmflib_modules}')
         ret += 1
 
-    doc_api_files = ['wmflib.{name}.rst'.format(name=name) for name in doc_api_modules]
+    doc_api_files = [f'wmflib.{name}.rst' for name in doc_api_modules]
     missing_doc_api_files = [file for file in doc_api_files
                              if not os.path.isfile(os.path.join(DOC_API_BASE_PATH, file))]
     if missing_doc_api_files:
-        print('Missing documentation files in {doc}: {files}'.format(
-            doc=DOC_API_BASE_PATH, files=missing_doc_api_files))
+        print(f'Missing documentation files in {DOC_API_BASE_PATH}: {missing_doc_api_files}')
         ret += 1
 
     if ret == 0:

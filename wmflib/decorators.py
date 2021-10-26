@@ -32,14 +32,13 @@ class RetryParams:
 
         """
         if self.backoff_mode not in ('constant', 'linear', 'power', 'exponential'):
-            raise WmflibError('Invalid backoff_mode: {mode}'.format(mode=self.backoff_mode))
+            raise WmflibError(f'Invalid backoff_mode: {self.backoff_mode}')
 
         if self.backoff_mode == 'exponential' and self.delay.total_seconds() < 1:
-            raise WmflibError('Delay must be greater than 1 if backoff_mode is exponential, got {delay}'.format(
-                delay=self.delay))
+            raise WmflibError(f'Delay must be greater than 1 if backoff_mode is exponential, got {self.delay}')
 
         if self.tries < 1:
-            raise WmflibError('Tries must be a positive integer, got {tries}'.format(tries=self.tries))
+            raise WmflibError(f'Tries must be a positive integer, got {self.tries}')
 
         if not self.failure_message:
             raise WmflibError('A failure_message must be set.')
@@ -126,8 +125,7 @@ def retry(
 
     """
     if not failure_message:
-        failure_message = "Attempt to run '{module}.{qualname}' raised".format(
-            module=func.__module__, qualname=func.__qualname__)
+        failure_message = f"Attempt to run '{func.__module__}.{func.__qualname__}' raised"
 
     static_params: Dict[str, Any] = {
         'tries': tries,
@@ -179,10 +177,10 @@ def _exception_message(exception: BaseException) -> str:
         # reverse order from the built-in handler (i.e. newest exception first) since we aren't following a
         # traceback.
         if exception.__cause__ is not None:
-            message_parts.append('Caused by: {chained_exc}'.format(chained_exc=exception.__cause__))
+            message_parts.append(f'Caused by: {exception.__cause__}')
             exception = exception.__cause__
         else:  # e.__context__ is not None, due to the while condition.
-            message_parts.append('Raised while handling: {chained_exc}'.format(chained_exc=exception.__context__))
+            message_parts.append(f'Raised while handling: {exception.__context__}')
             exception = cast(BaseException, exception.__context__)  # Casting away the Optional.
     return '\n'.join(message_parts)
 
@@ -208,6 +206,6 @@ def get_backoff_sleep(backoff_mode: str, base: Union[int, float], index: int) ->
     elif backoff_mode == 'exponential':
         sleep = base ** index
     else:
-        raise ValueError('Invalid backoff_mode: {mode}'.format(mode=backoff_mode))
+        raise ValueError(f'Invalid backoff_mode: {backoff_mode}')
 
     return sleep

@@ -94,8 +94,7 @@ def http_session(name: str, *, timeout: float = DEFAULT_TIMEOUT, tries: int = 3,
     retry_strategy = Retry(total=tries, backoff_factor=backoff, status_forcelist=[429, 500, 502, 503, 504])
     adapter = TimeoutHTTPAdapter(timeout=timeout, max_retries=retry_strategy)
     session = Session()
-    user_agent = 'pywmflib/{version} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib'.format(
-        version=__version__, name=name)
+    user_agent = f'pywmflib/{__version__} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib'
     session.headers.update({'User-Agent': user_agent})
     session.mount('http://', adapter)
     session.mount('https://', adapter)

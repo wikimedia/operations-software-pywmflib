@@ -41,8 +41,8 @@ class Actions:
             str: the string representation.
 
         """
-        actions = '\n'.join('  - {action}'.format(action=action) for action in self.actions)
-        return '{name} (**{status}**)\n{actions}'.format(name=self.name, status=self.status, actions=actions)
+        actions = '\n'.join(f'  - {action}' for action in self.actions)
+        return f'{self.name} (**{self.status}**)\n{actions}'
 
     @property
     def status(self) -> str:
@@ -128,4 +128,4 @@ class ActionsDict(dict):
             str: the string representation.
 
         """
-        return '\n'.join('- {actions}\n'.format(actions=value) for key, value in self.items())
+        return '\n'.join(f'- {value}\n' for value in self.values())

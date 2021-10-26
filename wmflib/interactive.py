@@ -39,15 +39,15 @@ def ask_input(message: str, choices: Sequence[str]) -> str:
     if not sys.stdout.isatty():
         raise InputError('Not in a TTY, unable to ask for input')
 
-    print('{prefix} {message}'.format(prefix=prefix, message=message))
+    print(f'{prefix} {message}')
 
     for _ in range(3):
         response = input('> ')
         if response in choices:
             return response
 
-        print('{prefix} Invalid response, please type one of: {choices}. '
-              'After 3 wrong answers the task will be aborted.'.format(prefix=prefix, choices=','.join(choices)))
+        print(f'{prefix} Invalid response, please type one of: {",".join(choices)}. '
+              'After 3 wrong answers the task will be aborted.')
 
     raise InputError('Too many invalid answers')
 
@@ -150,13 +150,13 @@ def get_secret(title: str, *, confirm: bool = False) -> str:
         str: the secret.
 
     """
-    new_secret = getpass.getpass(prompt='{}: '.format(title))
+    new_secret = getpass.getpass(prompt=f'{title}: ')
 
     while len(new_secret) < MIN_SECRET_SIZE:
         new_secret = getpass.getpass(
-            prompt='Secret must be at least {} characters. try again: '.format(MIN_SECRET_SIZE))
+            prompt=f'Secret must be at least {MIN_SECRET_SIZE} characters. try again: ')
 
     if confirm and new_secret != getpass.getpass(prompt='Again, just to be sure: '):
-        raise WmflibError('{}: Passwords did not match'.format(title))
+        raise WmflibError(f'{title}: Passwords did not match')
 
     return new_secret

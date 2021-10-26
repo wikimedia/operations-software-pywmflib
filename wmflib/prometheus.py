@@ -46,21 +46,19 @@ class Prometheus:
 
         """
         if site not in ALL_DATACENTERS:
-            msg = 'site ({site}) must be one of wmflib.constants.ALL_DATACENTERS {dcs}'.format(
-                site=site, dcs=ALL_DATACENTERS)
+            msg = f'site ({site}) must be one of wmflib.constants.ALL_DATACENTERS {ALL_DATACENTERS}'
             raise PrometheusError(msg)
 
         url = self._prometheus_api.format(site=site)
         response = self._http_session.get(url, params={'query': query}, timeout=timeout)
         if response.status_code != requests.codes['ok']:
-            msg = 'Unable to get metric: HTTP {code}: {text}'.format(
-                code=response.status_code, text=response.text)
+            msg = f'Unable to get metric: HTTP {response.status_code}: {response.text}'
             raise PrometheusError(msg)
 
         result = response.json()
 
         if result.get('status', 'error') == 'error':
-            msg = 'Unable to get metric: {error}'.format(error=result.get('error', 'unknown'))
+            msg = f'Unable to get metric: {result.get("error", "unknown")}'
             raise PrometheusError(msg)
 
         return result['data']['result']

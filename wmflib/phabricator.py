@@ -47,12 +47,10 @@ def create_phabricator(
         for option in required_options:
             params[option] = parser.get(section, option)
     except configparser.NoSectionError as e:
-        raise PhabricatorError('Unable to find section {section} in config file {file}'.format(
-            section=section, file=bot_config_file)) from e
+        raise PhabricatorError(f'Unable to find section {section} in config file {bot_config_file}') from e
     except configparser.NoOptionError as e:
-        raise PhabricatorError(
-            'Unable to find all required options {options} in section {section} of config file {file}'.format(
-                options=required_options, section=section, file=bot_config_file)) from e
+        raise PhabricatorError(f'Unable to find all required options {required_options} in section {section} of config '
+                               f'file {bot_config_file}') from e
 
     try:
         client = phabricator.Phabricator(**params)
@@ -100,4 +98,4 @@ class Phabricator:
             self._client.maniphest.edit(objectIdentifier=task_id, transactions=transactions)
             logger.info('Updated Phabricator task %s', task_id)
         except Exception as e:
-            raise PhabricatorError('Unable to update Phabricator task {id}'.format(id=task_id)) from e
+            raise PhabricatorError(f'Unable to update Phabricator task {task_id}') from e

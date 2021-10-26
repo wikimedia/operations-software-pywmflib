@@ -35,5 +35,4 @@ def check_logs(logs, message, level):
             assert record.levelno == level
             break
     else:
-        raise RuntimeError("{level} log record with message '{msg}' not found".format(
-            level=logging.getLevelName(level), msg=message))
+        raise RuntimeError(f"{logging.getLevelName(level)} log record with message '{message}' not found")

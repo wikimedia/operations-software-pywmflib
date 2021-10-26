@@ -91,7 +91,7 @@ class Dns:
                 pass  # Allow single stack answers
 
         if not addresses:
-            raise DnsNotFound('Record A or AAAA not found for {name}'.format(name=name))
+            raise DnsNotFound(f'Record A or AAAA not found for {name}')
 
         return addresses
 
@@ -120,7 +120,7 @@ class Dns:
         """
         targets = self._parse_targets(cast(rrset.RRset, self.resolve(name, 'CNAME').rrset))
         if len(targets) != 1:
-            raise DnsError('Found multiple CNAMEs target for {name}: {targets}'.format(name=name, targets=targets))
+            raise DnsError(f'Found multiple CNAMEs target for {name}: {targets}')
 
         return targets[0]
 
@@ -144,11 +144,9 @@ class Dns:
             response = self._resolver.query(qname, record_type)
             logger.debug('Resolved %s record for %s: %s', record_type, qname, response.rrset)
         except (resolver.NoAnswer, resolver.NXDOMAIN) as e:
-            raise DnsNotFound('Record {record_type} not found for {qname}'.format(
-                record_type=record_type, qname=qname)) from e
+            raise DnsNotFound(f'Record {record_type} not found for {qname}') from e
         except DNSException as e:
-            raise DnsError('Unable to resolve {record_type} record for {qname}'.format(
-                record_type=record_type, qname=qname)) from e
+            raise DnsError(f'Unable to resolve {record_type} record for {qname}') from e
 
         return response
 
@@ -183,7 +181,7 @@ class Dns:
         for rdata in response_set:
             target = rdata.target.to_text()
             if target[-1] != '.':
-                raise DnsError('Unsupported relative target {target} found'.format(target=target))
+                raise DnsError(f'Unsupported relative target {target} found')
 
             targets.append(target[:-1])
 

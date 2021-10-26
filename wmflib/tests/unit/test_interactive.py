@@ -119,7 +119,7 @@ def test_confirm_on_failure_func_abort(capsys, caplog):
     log_message = 'Failed to run wmflib.tests.unit.test_interactive.example_division'
     try:
         check_logs(caplog, log_message, logging.ERROR)
-        raise AssertionError('Found unexpected message in logs: {msg}'.format(msg=log_message))
+        raise AssertionError(f'Found unexpected message in logs: {log_message}')
     except RuntimeError:
         pass  # No log message found, as expected
 

@@ -60,7 +60,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'wmflib'
-title = u'{project} Documentation'.format(project=project)
+title = f'{project} Documentation'
 copyright = (u'2018-2020, Riccardo Coccioli <rcoccioli@wikimedia.org>, '
               'Luca Toscano <ltoscano@wikimedia.org>, Wikimedia Foundation, Inc.')
 author = u'Riccardo Coccioli'
