@@ -1,7 +1,12 @@
 """Constants module."""
 
+
 ALL_DATACENTERS = ('eqiad', 'codfw', 'esams', 'ulsfo', 'eqsin', 'drmrs')
 """tuple: all WMF datacenters."""
+
+
+CORE_DATACENTERS = ("eqiad", "codfw")
+"""tuple: WMF core datacenters."""
 
 
 PUBLIC_AUTHDNS = ('208.80.154.238', '208.80.153.231', '91.198.174.239')
