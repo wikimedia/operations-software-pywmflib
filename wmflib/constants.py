@@ -1,6 +1,6 @@
 """Constants module."""
 
-ALL_DATACENTERS = ('eqiad', 'codfw', 'esams', 'ulsfo', 'eqsin')
+ALL_DATACENTERS = ('eqiad', 'codfw', 'esams', 'ulsfo', 'eqsin', 'drmrs')
 """tuple: list of all datacenters."""
 
 PUBLIC_AUTHDNS = ('208.80.154.238', '208.80.153.231', '91.198.174.239')
@@ -12,5 +12,6 @@ DATACENTER_NUMBERING_PREFIX = {
     'esams': '3',
     'ulsfo': '4',
     'eqsin': '5',
+    'drmrs': '6',
 }
 """dict: prefix for numbered servers in each datacenter."""
