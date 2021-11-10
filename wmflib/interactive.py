@@ -35,7 +35,7 @@ def ask_input(message: str, choices: Sequence[str]) -> str:
         wmflib.interactive.InputError: if not in a TTY or on too many invalid answers.
 
     """
-    prefix = '\x1b[36m>>>\x1b[39m'  # Cyan >>> prefix
+    prefix = '\x1b[36m==>\x1b[39m'  # Cyan ==> prefix
     if not sys.stdout.isatty():
         raise InputError('Not in a TTY, unable to ask for input')
 
