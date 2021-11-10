@@ -5,7 +5,7 @@ Debian package
 --------------
 
 Wmflib is distributed as a Debian binary package ``python3-wmflib`` from `apt.wikimedia.org`_. The source package name
-is ``python-wmflib``. It is currently built only for Debian Buster but can be build for Debian Stretch upon request.
+is ``python-wmflib``. It is built only for Debian Buster and newer Debian versions.
 
 PyPI
 ----

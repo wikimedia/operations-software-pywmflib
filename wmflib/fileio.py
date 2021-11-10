@@ -26,6 +26,16 @@ class LockError(FileIOError):
 def locked_open(file_path: PathLike, file_mode: str = 'r', *, timeout: int = 10) -> Generator[IO, None, None]:
     """Context manager to open a file with an exclusive lock on it and a retry logic.
 
+    Examples:
+        ::
+
+            from wmflib.fileio import locked_open
+            with locked_open('existing.file') as f:
+                text = f.read()
+
+            with locked_open('new.out', 'w') as f:
+                f.write('Some text')
+
     Arguments:
         file_path (os.PathLike): the file path to open.
         file_mode (str, optional): the mode in which the file is opened, see :py:func:`open` for details.

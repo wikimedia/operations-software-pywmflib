@@ -23,11 +23,39 @@ class Prometheus:
     _prometheus_api: str = 'http://prometheus.svc.{site}.wmnet/ops/api/v1/query'
 
     def __init__(self) -> None:
-        """Initialize the instance."""
+        """Initialize the instance.
+
+        Examples:
+            ::
+
+                >>> from wmflib.prometheus import Prometheus
+                >>> prometheus = Prometheus()
+
+        """
         self._http_session = http_session('.'.join((self.__module__, self.__class__.__name__)))
 
     def query(self, query: str, site: str, *, timeout: Optional[Union[float, int]] = 10) -> List[Dict]:
         """Perform a generic query.
+
+        Examples:
+            ::
+
+                results = prometheus.query('node_memory_MemTotal_bytes{instance=~"host1001:.*"}', 'eqiad')
+
+            The results will be something like::
+
+                [
+                    {
+                        'metric': {
+                            '__name__': 'node_memory_MemTotal_bytes',
+                            'cluster': 'management',
+                            'instance': 'host1001:9100',
+                            'job': 'node',
+                            'site': 'eqiad'
+                        },
+                        'value': [1636569623.988, '67225329664']
+                    }
+                ]
 
         Arguments:
             query (str): a prometheus query

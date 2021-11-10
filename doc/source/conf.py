@@ -147,7 +147,6 @@ autodoc_default_options = {
     # Using None as value instead of True to support the version of Sphinx used in Buster
     'members': None,
     'member-order': 'bysource',
-    'private-members': None,
     'show-inheritance': None,
 }
 autoclass_content = 'both'

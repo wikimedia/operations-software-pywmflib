@@ -16,7 +16,14 @@ logger = logging.getLogger(__name__)
 # TODO: use TypedDict once Python 3.7 support is removed
 @dataclass
 class RetryParams:
-    """Retry decorator parameters object."""
+    """Retry decorator parameters class.
+
+    This class represents the parameters that the :py:func:`wmflib.decorators.retry` decorator accepts and allow
+    to validate them.
+
+    It is also used for the `dynamic_params_callbacks` parameter of the same retry decorator to allow the callback to
+    safely modify the decorator's parameters at runtime.
+    """
 
     tries: int
     delay: timedelta
@@ -25,7 +32,7 @@ class RetryParams:
     failure_message: str
 
     def validate(self) -> None:
-        """Validate the consistency of the current field values.
+        """Validate the consistency of the current values of the instance properties.
 
         Raises:
             wmflib.exceptions.WmflibError: if any field has an invalid value.
@@ -79,6 +86,51 @@ def retry(
     Note:
         The decorated function or method must be idempotent to avoid unwanted side effects.
         It can be called with or without arguments, in the latter case all the default values will be used.
+
+    Examples:
+        Define a function that polls for the existence of a file, retrying with the default parameters::
+
+            >>> from pathlib import Path
+            >>> from wmflib.decorators import retry
+            >>> from wmflib.exceptions import WmflibError
+            >>> @retry
+            ... def poll_file(path: Path):
+            ...     if not path.exists():
+            ...         raise WmflibError(f'File {path} not found')
+            ...
+            >>> poll_file(Path('/tmp'))
+            >>> poll_file(Path('/tmp/nonexistent'))
+            [1/3, retrying in 3.00s] Attempt to run '__main__.poll_file' raised: File /tmp/nonexistent not found
+            [2/3, retrying in 9.00s] Attempt to run '__main__.poll_file' raised: File /tmp/nonexistent not found
+            Traceback (most recent call last):
+              File "<stdin>", line 1, in <module>
+              File "/usr/lib/python3/dist-packages/wmflib/decorators.py", line 160, in wrapper
+                return func(*args, **kwargs)
+              File "<stdin>", line 4, in poll_file
+            wmflib.exceptions.WmflibError: File /tmp/nonexistent not found
+            >>>
+
+        Same example, but customizing the decorator parameters::
+
+            >>> from datetime import timedelta
+            >>> from pathlib import Path
+            >>> from wmflib.decorators import retry
+            >>> @retry(tries=5, delay=timedelta(seconds=30), backoff_mode='constant', failure_message='File not found',
+            ...        exceptions=(RuntimeError,))
+            ... def poll_file(path: Path):
+            ...     if not path.exists():
+            ...         raise RuntimeError(path)
+            ...
+            [1/5, retrying in 30.00s] File not found: /tmp/nonexistent
+            [2/5, retrying in 30.00s] File not found: /tmp/nonexistent
+            [3/5, retrying in 30.00s] File not found: /tmp/nonexistent
+            [4/5, retrying in 30.00s] File not found: /tmp/nonexistent
+            Traceback (most recent call last):
+              File "<stdin>", line 1, in <module>
+              File "/usr/lib/python3/dist-packages/wmflib/decorators.py", line 160, in wrapper
+                return func(*args, **kwargs)
+              File "<stdin>", line 5, in poll_file
+            RuntimeError: /tmp/nonexistent
 
     Arguments:
         func (function, method): the decorated function.

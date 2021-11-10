@@ -17,6 +17,13 @@ def create_phabricator(
 ) -> phabricator.Phabricator:
     """Initialize the Phabricator client from the bot config file.
 
+    Examples:
+        ::
+
+            from wmflib.phabricator import create_phabricator
+            phab_client = create_phabricator('/path/to/config.ini')
+            phab_client.task_comment('T12345', 'Message')
+
     Arguments:
         bot_config_file (str): the path to the configuration file for the Phabricator bot, with the following
             structure::

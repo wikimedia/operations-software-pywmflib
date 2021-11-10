@@ -16,6 +16,22 @@ class SocketHandler(logging.Handler):
     send traffic to tcpircbot, so follow up with them in case you have
     doubts or special requests.
     For more info, please check the tcpircbot config in puppet.
+
+    Examples:
+        ::
+
+            >>> import logging
+            >>> from wmflib.interactive import get_username
+            >>> from wmflib.irc import SocketHandler
+            >>> irc_logger = logging.getLogger('irc_logger')
+            >>> irc_logger.setLevel(logging.INFO)
+            >>> irc_logger.addHandler(SocketHandler('irchost.domain', 1234, get_username()))
+            >>> irc_logger.info('Message')
+
+        The tcpircbot that received the message will then send it to the configured IRC channel::
+
+            logmsgbot: user@host1001.domain Message
+
     """
 
     prefix = '{s.username}@{s.hostname}'
@@ -59,7 +75,10 @@ class SocketHandler(logging.Handler):
 
 
 class SALSocketHandler(SocketHandler):
-    """Log handler to !log on a SAL."""
+    """Log handler to !log on a SAL.
+
+    See the parent class for usage examples.
+    """
 
     # Stashbot expects !log messages relayed by logmsgbot to have the
     # format: "!log <nick> <msg>". The <nick> is parsed out and used as
