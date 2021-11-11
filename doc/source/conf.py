@@ -9,12 +9,13 @@
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
+# documentation root, use pathlib's resolve() to make it absolute, like shown here.
 #
 import importlib
-import os
 import sys
 import types
+
+from pathlib import Path
 
 from pkg_resources import get_distribution
 
@@ -23,8 +24,7 @@ import sphinx_rtd_theme
 from sphinx import __version__ as sphinx_version
 
 # Adjust path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-
+sys.path.insert(0, Path(__file__).parent.parent.resolve())
 
 # -- General configuration ------------------------------------------------
 
@@ -60,7 +60,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'wmflib'
-title = u'{project} Documentation'.format(project=project)
+title = f'{project} Documentation'
 copyright = (u'2018-2020, Riccardo Coccioli <rcoccioli@wikimedia.org>, '
               'Luca Toscano <ltoscano@wikimedia.org>, Wikimedia Foundation, Inc.')
 author = u'Riccardo Coccioli'
@@ -147,7 +147,6 @@ autodoc_default_options = {
     # Using None as value instead of True to support the version of Sphinx used in Buster
     'members': None,
     'member-order': 'bysource',
-    'private-members': None,
     'show-inheritance': None,
 }
 autoclass_content = 'both'

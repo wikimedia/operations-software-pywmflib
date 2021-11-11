@@ -72,6 +72,17 @@ def http_session(name: str, *, timeout: float = DEFAULT_TIMEOUT, tries: int = 3,
     The timeout functionality is provided via the :py:class:`wmflib.requests.TimeoutHTTPAdapter` and individual request
     can override the session timeout by specifying a ``timeout`` parameter.
 
+    Examples:
+        With default parameters::
+
+            from wmflib.requests import http_session
+            session = http_session('AppName')  # The given name will be used in the User-Agent header, see below
+            # At this point the session can be used as a normal requests session
+
+        With customized parameters::
+
+            session = http_session('AppName', timeout=10.0, tries=5, backoff=2.0)
+
     See Also:
         https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry
 
@@ -94,8 +105,7 @@ def http_session(name: str, *, timeout: float = DEFAULT_TIMEOUT, tries: int = 3,
     retry_strategy = Retry(total=tries, backoff_factor=backoff, status_forcelist=[429, 500, 502, 503, 504])
     adapter = TimeoutHTTPAdapter(timeout=timeout, max_retries=retry_strategy)
     session = Session()
-    user_agent = 'pywmflib/{version} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib'.format(
-        version=__version__, name=name)
+    user_agent = f'pywmflib/{__version__} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib'
     session.headers.update({'User-Agent': user_agent})
     session.mount('http://', adapter)
     session.mount('https://', adapter)

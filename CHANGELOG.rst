@@ -1,6 +1,34 @@
 wmflib Changelog
 ----------------
 
+`v1.0.0`_ (2021-11-11)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Minor improvements
+""""""""""""""""""
+
+* constants: add the new ``drmrs`` datacenter to existing constants.
+* constants: add ``CORE_DATACENTERS`` constant currently defined in Spicerack.
+* Adopt ``pathlib.Path`` everywhere in the project:
+
+  * Accept both ``str`` and ``os.PathLike`` objects in the ``config`` and ``fileio`` modules for file name parameters.
+  * Use ``pathlib.Path`` instead of the ``os.path`` functions across the project.
+
+* style: adopt f-strings, converting all ``format()`` calls to f-strings when feasible.
+
+* interactive: change input prefix to ``==>``:
+
+  * Change the input prefix from ``>>>`` to ``==>`` to allow for code examples in an interactive Python console to be
+    used in docstrings as documentation without having issues with the syntax highlighter.
+
+* docs: add usage examples to all modules.
+
+Miscellanea
+"""""""""""
+
+* versioning: fully adopt semantic versioning starting with this release.
+* pylint: fix newly reported issues.
+
 `v0.0.9`_ (2021-08-04)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -171,3 +199,4 @@ New features
 .. _`v0.0.7`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.7
 .. _`v0.0.8`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.8
 .. _`v0.0.9`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.9
+.. _`v1.0.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.0

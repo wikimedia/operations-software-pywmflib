@@ -1,10 +1,17 @@
 """Constants module."""
 
-ALL_DATACENTERS = ('eqiad', 'codfw', 'esams', 'ulsfo', 'eqsin')
-"""tuple: list of all datacenters."""
+
+ALL_DATACENTERS = ('eqiad', 'codfw', 'esams', 'ulsfo', 'eqsin', 'drmrs')
+"""tuple: all WMF datacenters."""
+
+
+CORE_DATACENTERS = ("eqiad", "codfw")
+"""tuple: WMF core datacenters."""
+
 
 PUBLIC_AUTHDNS = ('208.80.154.238', '208.80.153.231', '91.198.174.239')
-"""tuple: list of publicly Authorative DNS servers for the wikimedia foundation domain portfolio"""
+"""tuple: publicly Authorative DNS servers for the WMF domains."""
+
 
 DATACENTER_NUMBERING_PREFIX = {
     'eqiad': '1',
@@ -12,5 +19,6 @@ DATACENTER_NUMBERING_PREFIX = {
     'esams': '3',
     'ulsfo': '4',
     'eqsin': '5',
+    'drmrs': '6',
 }
-"""dict: prefix for numbered servers in each datacenter."""
+"""dict: mapping of hostname prefix for numbered servers for each WMF datacenter."""

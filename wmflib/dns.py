@@ -21,7 +21,7 @@ class DnsError(WmflibError):
 class DnsNotFound(DnsError):
     """Custom exception class to indicate the record was not found.
 
-    One or more resource records exist for this domain but there isn’t a record matching the resource record type.
+    One or more resource records might exist for this domain but no record matches the resource record type requested.
     """
 
 
@@ -29,7 +29,18 @@ class Dns:
     """Class to interact with the DNS."""
 
     def __init__(self, *, nameserver_addresses: Optional[Sequence] = None, port: Optional[int] = None) -> None:
-        """Initialize the instance.
+        """Initialize the instance optionally specifying the nameservers to use.
+
+        Examples:
+            Using the host's default DNS resolvers::
+
+                >>> from wmflib.dns import Dns
+                >>> dns = Dns()
+
+            Using a specific set of resolvers and port::
+
+                >>> from wmflib.dns import Dns
+                >>> dns = Dns(nameserver_addresses=['10.0.0.1', '10.0.0.2'], port=5353)
 
         Arguments:
             nameserver_addresses (Sequence, optional): the nameserveres address to use, if not set uses the OS
@@ -49,6 +60,12 @@ class Dns:
     def resolve_ipv4(self, name: str) -> List[str]:
         """Perform a DNS lookup for an A record for the given name.
 
+        Examples:
+            ::
+
+                >>> dns.resolve_ipv4('api.svc.eqiad.wmnet')
+                ['10.2.2.22']
+
         Arguments:
             name (str): the name to resolve.
 
@@ -61,6 +78,12 @@ class Dns:
     def resolve_ipv6(self, name: str) -> List[str]:
         """Perform a DNS lookup for an AAAA record for the given name.
 
+        Examples:
+            ::
+
+                >>> dns.resolve_ipv6('wikimedia.org')
+                ['2620:0:861:ed1a::1']
+
         Arguments:
             name (str): the name to resolve.
 
@@ -72,6 +95,12 @@ class Dns:
 
     def resolve_ips(self, name: str) -> List[str]:
         """Perform a DNS lookup for A and AAAA records for the given name.
+
+        Examples:
+            ::
+
+                >>> dns.resolve_ips('wikimedia.org')
+                ['208.80.154.224', '2620:0:861:ed1a::1']
 
         Arguments:
             name (str): the name to resolve.
@@ -91,12 +120,18 @@ class Dns:
                 pass  # Allow single stack answers
 
         if not addresses:
-            raise DnsNotFound('Record A or AAAA not found for {name}'.format(name=name))
+            raise DnsNotFound(f'Record A or AAAA not found for {name}')
 
         return addresses
 
     def resolve_ptr(self, address: str) -> List[str]:
         """Perform a DNS lookup for PTR record for the given address.
+
+        Examples:
+            ::
+
+                >>> dns.resolve_ptr('208.80.154.224')
+                ['text-lb.eqiad.wikimedia.org']
 
         Arguments:
             address (str): the IPv4 or IPv6 address to resolve.
@@ -111,6 +146,12 @@ class Dns:
     def resolve_cname(self, name: str) -> str:
         """Perform a DNS lookup for CNAME record for the given name.
 
+        Examples:
+            ::
+
+                >>> dns.resolve_cname('puppet.codfw.wmnet')
+                'puppetmaster2001.codfw.wmnet'
+
         Arguments:
             name (str): the name to resolve.
 
@@ -120,12 +161,19 @@ class Dns:
         """
         targets = self._parse_targets(cast(rrset.RRset, self.resolve(name, 'CNAME').rrset))
         if len(targets) != 1:
-            raise DnsError('Found multiple CNAMEs target for {name}: {targets}'.format(name=name, targets=targets))
+            raise DnsError(f'Found multiple CNAMEs target for {name}: {targets}')
 
         return targets[0]
 
     def resolve(self, qname: Union[str, Name], record_type: str) -> resolver.Answer:
         """Perform a DNS lookup for the given qname and record type.
+
+        Examples:
+            ::
+
+                >>> response = dns.resolve('wikimedia.org', 'MX')
+                >>> [rdata.to_text() for rdata in response.rrset]
+                ['10 mx1001.wikimedia.org.', '50 mx2001.wikimedia.org.']
 
         Arguments:
             qname (str): the name or address to resolve.
@@ -144,11 +192,9 @@ class Dns:
             response = self._resolver.query(qname, record_type)
             logger.debug('Resolved %s record for %s: %s', record_type, qname, response.rrset)
         except (resolver.NoAnswer, resolver.NXDOMAIN) as e:
-            raise DnsNotFound('Record {record_type} not found for {qname}'.format(
-                record_type=record_type, qname=qname)) from e
+            raise DnsNotFound(f'Record {record_type} not found for {qname}') from e
         except DNSException as e:
-            raise DnsError('Unable to resolve {record_type} record for {qname}'.format(
-                record_type=record_type, qname=qname)) from e
+            raise DnsError(f'Unable to resolve {record_type} record for {qname}') from e
 
         return response
 
@@ -183,7 +229,7 @@ class Dns:
         for rdata in response_set:
             target = rdata.target.to_text()
             if target[-1] != '.':
-                raise DnsError('Unsupported relative target {target} found'.format(target=target))
+                raise DnsError(f'Unsupported relative target {target} found')
 
             targets.append(target[:-1])
 
@@ -194,5 +240,15 @@ class PublicAuthDns(Dns):
     """Class to interact with the DNS using the wikimedia foundation authoritative servers."""
 
     def __init__(self) -> None:
-        """Initialize the instance."""
+        """Initialize the instance with the WMF public authoritative namerservers.
+
+        It uses the nameservers defined in :py:const:`wmflib.constants.PUBLIC_AUTHDNS`.
+
+        Examples:
+            ::
+
+                >>> from wmflib.dns import PublicAuthDns
+                >>> dns = PublicAuthDns()
+
+        """
         super().__init__(nameserver_addresses=PUBLIC_AUTHDNS)

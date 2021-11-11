@@ -23,11 +23,39 @@ class Prometheus:
     _prometheus_api: str = 'http://prometheus.svc.{site}.wmnet/ops/api/v1/query'
 
     def __init__(self) -> None:
-        """Initialize the instance."""
+        """Initialize the instance.
+
+        Examples:
+            ::
+
+                >>> from wmflib.prometheus import Prometheus
+                >>> prometheus = Prometheus()
+
+        """
         self._http_session = http_session('.'.join((self.__module__, self.__class__.__name__)))
 
     def query(self, query: str, site: str, *, timeout: Optional[Union[float, int]] = 10) -> List[Dict]:
         """Perform a generic query.
+
+        Examples:
+            ::
+
+                results = prometheus.query('node_memory_MemTotal_bytes{instance=~"host1001:.*"}', 'eqiad')
+
+            The results will be something like::
+
+                [
+                    {
+                        'metric': {
+                            '__name__': 'node_memory_MemTotal_bytes',
+                            'cluster': 'management',
+                            'instance': 'host1001:9100',
+                            'job': 'node',
+                            'site': 'eqiad'
+                        },
+                        'value': [1636569623.988, '67225329664']
+                    }
+                ]
 
         Arguments:
             query (str): a prometheus query
@@ -46,21 +74,19 @@ class Prometheus:
 
         """
         if site not in ALL_DATACENTERS:
-            msg = 'site ({site}) must be one of wmflib.constants.ALL_DATACENTERS {dcs}'.format(
-                site=site, dcs=ALL_DATACENTERS)
+            msg = f'site ({site}) must be one of wmflib.constants.ALL_DATACENTERS {ALL_DATACENTERS}'
             raise PrometheusError(msg)
 
         url = self._prometheus_api.format(site=site)
         response = self._http_session.get(url, params={'query': query}, timeout=timeout)
         if response.status_code != requests.codes['ok']:
-            msg = 'Unable to get metric: HTTP {code}: {text}'.format(
-                code=response.status_code, text=response.text)
+            msg = f'Unable to get metric: HTTP {response.status_code}: {response.text}'
             raise PrometheusError(msg)
 
         result = response.json()
 
         if result.get('status', 'error') == 'error':
-            msg = 'Unable to get metric: {error}'.format(error=result.get('error', 'unknown'))
+            msg = f'Unable to get metric: {result.get("error", "unknown")}'
             raise PrometheusError(msg)
 
         return result['data']['result']

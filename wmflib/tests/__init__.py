@@ -1,14 +1,15 @@
 """Tests package for wmflib."""
 
 import logging
-import os
+
+from pathlib import Path
 
 import pytest
 
 from pkg_resources import parse_version
 
 CAPLOG_MIN_VERSION = '3.3.0'
-TESTS_BASE_PATH = os.path.realpath(os.path.dirname(__file__))
+TESTS_BASE_PATH = Path(__file__).parent.resolve()
 
 
 def get_fixture_path(*paths):
@@ -21,10 +22,10 @@ def get_fixture_path(*paths):
         str: the absolute path of the selected fixture.
 
     """
-    return os.path.join(TESTS_BASE_PATH, 'fixtures', *paths)
+    return Path(TESTS_BASE_PATH, 'fixtures', *paths)
 
 
-require_caplog = pytest.mark.skipif(  # pylint: disable=invalid-name
+require_caplog = pytest.mark.skipif(
     parse_version(pytest.__version__) < parse_version(CAPLOG_MIN_VERSION), reason='Requires caplog fixture')
 
 
@@ -35,5 +36,4 @@ def check_logs(logs, message, level):
             assert record.levelno == level
             break
     else:
-        raise RuntimeError("{level} log record with message '{msg}' not found".format(
-            level=logging.getLevelName(level), msg=message))
+        raise RuntimeError(f"{logging.getLevelName(level)} log record with message '{message}' not found")
