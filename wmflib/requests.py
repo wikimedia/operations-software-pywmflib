@@ -1,5 +1,5 @@
 """Requests module."""
-from typing import Any
+from typing import Any, Tuple, Union
 
 from requests import PreparedRequest, Response, Session
 from requests.adapters import HTTPAdapter
@@ -8,8 +8,10 @@ from requests.packages.urllib3.util.retry import Retry  # pylint: disable=import
 from wmflib import __version__
 
 
-DEFAULT_TIMEOUT: float = 5.0
-""":py:class:`float`: the default timeout to use if none is passed, in seconds."""
+TypeTimeout = Union[float, Tuple[float, float]]
+"""Type alias for the requests timeout parameter."""
+DEFAULT_TIMEOUT: TypeTimeout = (3.0, 5.0)
+""":py:const:`wmflib.requests.TypeTimeout`: the default timeout to use if none is passed, in seconds."""
 
 
 class TimeoutHTTPAdapter(HTTPAdapter):
@@ -52,7 +54,8 @@ class TimeoutHTTPAdapter(HTTPAdapter):
         return super().send(request, **kwargs)
 
 
-def http_session(name: str, *, timeout: float = DEFAULT_TIMEOUT, tries: int = 3, backoff: float = 1.0) -> Session:
+def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: int = 3,
+                 backoff: float = 1.0) -> Session:
     """Return a new requests Session with User-Agent, default timeout and retry logic on failure already setup.
 
     The returned session will retry any ``DELETE, GET, HEAD, OPTIONS, PUT, TRACE`` request that returns one of
@@ -85,14 +88,16 @@ def http_session(name: str, *, timeout: float = DEFAULT_TIMEOUT, tries: int = 3,
 
     See Also:
         https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry
+        https://docs.python-requests.org/en/latest/user/advanced/#timeouts
 
     Arguments:
         name (str): the name to use for the User-Agent header. It can be specified in the ``name/version`` format, if
             applicable. The resulting header will be set to::
 
                 pywmflib/{version} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib root@wikimedia.org
-        timeout (float): the default timeout to use in all requests within this session, in seconds. Any request can
-            override it passing the ``timeout`` parameter explicitely.
+        timeout (float, tuple): the default timeout to use in all requests within this session, in seconds. Any request
+            can override it passing the ``timeout`` parameter explicitely. It can be either a single float or a tuple
+            of two floats (connect, read), according to requests's documentation.
         tries (int): the total number of requests to perform before bailing out.
         backoff (float): the backoff factor to use, will generate a sleep between retries, in seconds, of::
 
