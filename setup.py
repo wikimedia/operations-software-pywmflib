@@ -8,7 +8,7 @@ with open('README.rst', 'r') as readme:
 
 
 INSTALL_REQUIRES = [
-    'dnspython>=1.15.0',
+    "dnspython>=1.15.0,<2.2.0",  # Temporary upper limit to prevent mypy failures
     'pyyaml>=3.11',
     'phabricator>=0.7.0',
     'requests',
