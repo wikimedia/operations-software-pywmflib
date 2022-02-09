@@ -1,6 +1,21 @@
 wmflib Changelog
 ----------------
 
+`v1.0.1`_ (2022-02-09)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Minor improvements
+""""""""""""""""""
+
+* requests: add support to specify connection and read timeouts separately.
+
+    * Set the default connection timeout to 3s and keep the existing read timeout to 5s.
+
+Miscellanea
+"""""""""""
+
+* setup.py: temporarily add upper limit to dnspython, the latest 2.2.0 version generates mypy issues.
+
 `v1.0.0`_ (2021-11-11)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -200,3 +215,4 @@ New features
 .. _`v0.0.8`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.8
 .. _`v0.0.9`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.9
 .. _`v1.0.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.0
+.. _`v1.0.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.1
