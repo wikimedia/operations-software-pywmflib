@@ -50,7 +50,9 @@ class TimeoutHTTPAdapter(HTTPAdapter):
             The ``noqa`` is needed unless the exact signature is replicated.
 
         """
-        kwargs['timeout'] = kwargs.get('timeout', self.timeout)
+        if kwargs.get('timeout') is None:  # The Session will pass timeout=None when not set by the caller.
+            kwargs['timeout'] = self.timeout
+
         return super().send(request, **kwargs)
 
 
@@ -73,7 +75,8 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
     The retry interval between requests is determined by the ``backoff`` parameter, see below.
 
     The timeout functionality is provided via the :py:class:`wmflib.requests.TimeoutHTTPAdapter` and individual request
-    can override the session timeout by specifying a ``timeout`` parameter.
+    can override the session timeout by specifying a ``timeout`` parameter. When using this adapter to unset the
+    timeout for a specific call, it should be set to ``(None, None)``.
 
     Examples:
         With default parameters::
@@ -85,6 +88,7 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
         With customized parameters::
 
             session = http_session('AppName', timeout=10.0, tries=5, backoff=2.0)
+            session = http_session('AppName', timeout=(3.0, 10.0), tries=5, backoff=2.0)
 
     See Also:
         https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry
