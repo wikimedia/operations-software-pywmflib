@@ -1,6 +1,16 @@
 wmflib Changelog
 ----------------
 
+`v1.0.2`_ (2022-02-14)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Bug fixes
+"""""""""
+
+* requests: fix timeout parameter of ``http_session()`` so that is gets always propagated to the underlying calls to
+  the requests library as that was not always the case. Clarify in the documentation how to unset the timeout for a
+  single call when using this session.
+
 `v1.0.1`_ (2022-02-09)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -216,3 +226,4 @@ New features
 .. _`v0.0.9`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.9
 .. _`v1.0.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.0
 .. _`v1.0.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.1
+.. _`v1.0.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.2
