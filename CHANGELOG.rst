@@ -1,6 +1,24 @@
 wmflib Changelog
 ----------------
 
+`v1.1.0`_ (2022-03-09)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Minor improvements
+""""""""""""""""""
+
+* requests: allow to customize the list of HTTP methods and HTTP status codes that should trigger a retry as the
+  existing generic values might need to be tweaked at times.
+
+Miscellanea
+"""""""""""
+
+* prospector: ignore deprecation message
+
+  * The latest ``prospector`` issues a deprecated message for the ``pep8`` and ``pep257`` tools that have been renamed
+    to ``pycodestyle`` and ``pydocstyle`` respectively. The new names are incompatible with ``prospector < 1.7.0``,
+    so for now keep the old names and disable the deprecation warning.
+
 `v1.0.2`_ (2022-02-14)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -227,3 +245,4 @@ New features
 .. _`v1.0.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.0
 .. _`v1.0.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.1
 .. _`v1.0.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.2
+.. _`v1.1.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.0
