@@ -123,8 +123,12 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
         requests.Session: the pre-configured session.
 
     """
-    retry_strategy = Retry(
-        total=tries, backoff_factor=backoff, status_forcelist=retry_codes, allowed_methods=retry_methods)
+    # The method_whitelist parameter has been deprecated since urllib3 v1.26.0 and will be removed in v2.0.
+    # It has been renamed to allowed_methods in v1.26.0. Keep backward compatibility.
+    methods_param_name = 'allowed_methods' if hasattr(Retry.DEFAULT, 'allowed_methods') else 'method_whitelist'
+    params = {
+        'total': tries, 'backoff_factor': backoff, 'status_forcelist': retry_codes, methods_param_name: retry_methods}
+    retry_strategy = Retry(**params)
     adapter = TimeoutHTTPAdapter(timeout=timeout, max_retries=retry_strategy)
     session = Session()
     user_agent = f'pywmflib/{__version__} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib'
