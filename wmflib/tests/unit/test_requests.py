@@ -67,6 +67,20 @@ def test_timeout_http_adapter_send_override(mocked_send, timeout, expected):
     assert used_timeout.read_timeout == expected[1]
 
 
+def test_session_default_codes_methods():
+    """Calling session should return a Requests's session pre-configured with the default methods and codes."""
+    session = requests.http_session('UA-name')
+    assert session.adapters['https://'].max_retries.status_forcelist == requests.DEFAULT_RETRY_STATUS_CODES
+    assert session.adapters['https://'].max_retries.allowed_methods == requests.DEFAULT_RETRY_METHODS
+
+
+def test_session_custom_codes_methods():
+    """Calling session with custom status codes and methods, should return a Requests's session with those values."""
+    session = requests.http_session('UA-name', retry_codes=(429,), retry_methods=('GET',))
+    assert session.adapters['https://'].max_retries.status_forcelist == (429,)
+    assert session.adapters['https://'].max_retries.allowed_methods == ('GET',)
+
+
 def test_session():
     """Calling session should return a Requests's session pre-configured."""
     session = requests.http_session('UA-name')
