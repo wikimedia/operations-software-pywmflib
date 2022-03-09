@@ -71,14 +71,16 @@ def test_session_default_codes_methods():
     """Calling session should return a Requests's session pre-configured with the default methods and codes."""
     session = requests.http_session('UA-name')
     assert session.adapters['https://'].max_retries.status_forcelist == requests.DEFAULT_RETRY_STATUS_CODES
-    assert session.adapters['https://'].max_retries.allowed_methods == requests.DEFAULT_RETRY_METHODS
+    param_name = 'allowed_methods' if hasattr(requests.Retry.DEFAULT, 'allowed_methods') else 'method_whitelist'
+    assert getattr(session.adapters['https://'].max_retries, param_name) == requests.DEFAULT_RETRY_METHODS
 
 
 def test_session_custom_codes_methods():
     """Calling session with custom status codes and methods, should return a Requests's session with those values."""
     session = requests.http_session('UA-name', retry_codes=(429,), retry_methods=('GET',))
     assert session.adapters['https://'].max_retries.status_forcelist == (429,)
-    assert session.adapters['https://'].max_retries.allowed_methods == ('GET',)
+    param_name = 'allowed_methods' if hasattr(requests.Retry.DEFAULT, 'allowed_methods') else 'method_whitelist'
+    assert getattr(session.adapters['https://'].max_retries, param_name) == ('GET',)
 
 
 def test_session():

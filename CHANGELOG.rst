@@ -1,6 +1,14 @@
 wmflib Changelog
 ----------------
 
+`v1.1.2`_ (2022-03-09)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Bug fixes
+"""""""""
+
+* requests: fix backward compatibility with urllib3 also in the tests.
+
 `v1.1.1`_ (2022-03-09)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -258,3 +266,4 @@ New features
 .. _`v1.0.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.0.2
 .. _`v1.1.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.0
 .. _`v1.1.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.1
+.. _`v1.1.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.2
