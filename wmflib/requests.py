@@ -1,5 +1,5 @@
 """Requests module."""
-from typing import Any, Tuple, Union
+from typing import Any, Sequence, Tuple, Union
 
 from requests import PreparedRequest, Response, Session
 from requests.adapters import HTTPAdapter
@@ -11,7 +11,13 @@ from wmflib import __version__
 TypeTimeout = Union[float, Tuple[float, float]]
 """Type alias for the requests timeout parameter."""
 DEFAULT_TIMEOUT: TypeTimeout = (3.0, 5.0)
-""":py:const:`wmflib.requests.TypeTimeout`: the default timeout to use if none is passed, in seconds."""
+""":py:class:`tuple`: the default timeout to use if none is passed, in seconds."""
+DEFAULT_RETRY_STATUS_CODES: Tuple[int, ...] = (429, 500, 502, 503, 504)
+""":py:class`tuple`: the default sequence of HTTP status codes that are retried if the method is one of
+   :py:const:`DEFAULT_RETRY_METHODS`."""
+DEFAULT_RETRY_METHODS: Tuple[str, ...] = ('DELETE', 'GET', 'HEAD', 'OPTIONS', 'PUT', 'TRACE')
+""":py:class`tuple`: the default sequence of HTTP methods that are retried if the status code is one of
+   :py:const:`DEFAULT_RETRY_STATUS_CODES`."""
 
 
 class TimeoutHTTPAdapter(HTTPAdapter):
@@ -56,12 +62,13 @@ class TimeoutHTTPAdapter(HTTPAdapter):
         return super().send(request, **kwargs)
 
 
-def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: int = 3,
-                 backoff: float = 1.0) -> Session:
+def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: int = 3, backoff: float = 1.0,
+                 retry_codes: Sequence[int] = DEFAULT_RETRY_STATUS_CODES,
+                 retry_methods: Sequence[str] = DEFAULT_RETRY_METHODS) -> Session:
     """Return a new requests Session with User-Agent, default timeout and retry logic on failure already setup.
 
-    The returned session will retry any ``DELETE, GET, HEAD, OPTIONS, PUT, TRACE`` request that returns one of
-    the following HTTP status code:
+    By default the returned session will retry any :py:const:`DEFAULT_RETRY_METHODS` request that returns one of
+    the following HTTP status code (see :py:const:`DEFAULT_RETRY_STATUS_CODES`):
 
         - 429 Too Many Requests
         - 500 Internal Server Error
@@ -87,8 +94,8 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
 
         With customized parameters::
 
-            session = http_session('AppName', timeout=10.0, tries=5, backoff=2.0)
-            session = http_session('AppName', timeout=(3.0, 10.0), tries=5, backoff=2.0)
+            session = http_session('AppName', timeout=10.0, tries=5, backoff=2.0, retry_codes=(429,))
+            session = http_session('AppName', timeout=(3.0, 10.0), tries=5, backoff=2.0, retry_methods=('GET',))
 
     See Also:
         https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry
@@ -107,11 +114,17 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
 
             {backoff factor} * (2 ** ({number of total retries} - 1))
 
+        retry_codes (sequence): a sequence of integers with the list of HTTP status codes to retry instead of the
+            default of :py:const:`DEFAULT_RETRY_STATUS_CODES`.
+        retry_methods (sequence): a sequence of strings with the list of HTTP methods to retry intead of the default
+            default of :py:const:`DEFAULT_RETRY_METHODS`.
+
     Returns:
         requests.Session: the pre-configured session.
 
     """
-    retry_strategy = Retry(total=tries, backoff_factor=backoff, status_forcelist=[429, 500, 502, 503, 504])
+    retry_strategy = Retry(
+        total=tries, backoff_factor=backoff, status_forcelist=retry_codes, allowed_methods=retry_methods)
     adapter = TimeoutHTTPAdapter(timeout=timeout, max_retries=retry_strategy)
     session = Session()
     user_agent = f'pywmflib/{__version__} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib'
