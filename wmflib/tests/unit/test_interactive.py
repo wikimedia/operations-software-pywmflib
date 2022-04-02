@@ -54,6 +54,22 @@ def test_ask_input_ko(mocked_isatty, mocked_input, capsys):
     assert out.count('Invalid response') == 3
 
 
+@pytest.mark.parametrize('exception', (EOFError, KeyboardInterrupt))
+@mock.patch('builtins.input')
+@mock.patch('wmflib.interactive.sys.stdout.isatty')
+def test_ask_input_raise(mocked_isatty, mocked_input, exception, capsys):
+    """Calling ask_input() should raise InputError if Ctrl+c or Ctrl+d is pressed multiple times."""
+    mocked_isatty.return_value = True
+    mocked_input.side_effect = exception
+    message = 'Test message'
+    with pytest.raises(interactive.InputError, match='Too many invalid answers'):
+        interactive.ask_input(message, ['go'])
+
+    out, _ = capsys.readouterr()
+    assert message in out
+    assert out.count('Invalid response') == 3
+
+
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
 def test_ask_input_no_tty(mocked_isatty):
     """It should raise InputError if not in a TTY."""
