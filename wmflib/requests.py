@@ -106,9 +106,9 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
             applicable. The resulting header will be set to::
 
                 pywmflib/{version} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib root@wikimedia.org
-        timeout (float, tuple): the default timeout to use in all requests within this session, in seconds. Any request
-            can override it passing the ``timeout`` parameter explicitely. It can be either a single float or a tuple
-            of two floats (connect, read), according to requests's documentation.
+        timeout (:py:data:`wmflib.requests.TypeTimeout`): the default timeout to use in all requests within this
+            session, in seconds. Any request can override it passing the ``timeout`` parameter explicitely. It can be
+            either a single float or a tuple of two floats (connect, read), according to requests's documentation.
         tries (int): the total number of requests to perform before bailing out.
         backoff (float): the backoff factor to use, will generate a sleep between retries, in seconds, of::
 
