@@ -20,7 +20,7 @@ class PrometheusError(WmflibError):
 class Prometheus:
     """Class to interact with the Prometheus server."""
 
-    _prometheus_api: str = 'http://prometheus.svc.{site}.wmnet/ops/api/v1/query'
+    _prometheus_api: str = 'http://prometheus.svc.{site}.wmnet/{instance}/api/v1/query'
 
     def __init__(self) -> None:
         """Initialize the instance.
@@ -34,15 +34,17 @@ class Prometheus:
         """
         self._http_session = http_session('.'.join((self.__module__, self.__class__.__name__)))
 
-    def query(self, query: str, site: str, *, timeout: Optional[Union[float, int]] = 10) -> List[Dict]:
+    def query(self, query: str, site: str, *, instance: str = 'ops',
+              timeout: Optional[Union[float, int]] = 10) -> List[Dict]:
         """Perform a generic query.
 
         Examples:
             ::
 
-                results = prometheus.query('node_memory_MemTotal_bytes{instance=~"host1001:.*"}', 'eqiad')
+                >>> results = prometheus.query('node_uname_info{instance=~"cumin1001:.*"}', 'eqiad', instance='global')
+                >>> results = prometheus.query('node_memory_MemTotal_bytes{instance=~"host1001:.*"}', 'eqiad')
 
-            The results will be something like::
+            The content of the last results will be something like::
 
                 [
                     {
@@ -61,6 +63,8 @@ class Prometheus:
             query (str): a prometheus query
             site (str): The site to use for queries. Must be one of
                 :py:const:`wmflib.constants.ALL_DATACENTERS`
+            instance (str, optional): The prometheus instance to query on the given site, see
+                https://wikitech.wikimedia.org/wiki/Prometheus#Instances for the full list of available instances.
             timeout (float, int, None, optional): How many seconds to wait for the prometheus to
                 send data before giving up, as a float or int. Alternatively None to indicate an
                 infinite timeout.
@@ -77,7 +81,7 @@ class Prometheus:
             msg = f'site ({site}) must be one of wmflib.constants.ALL_DATACENTERS {ALL_DATACENTERS}'
             raise PrometheusError(msg)
 
-        url = self._prometheus_api.format(site=site)
+        url = self._prometheus_api.format(site=site, instance=instance)
         response = self._http_session.get(url, params={'query': query}, timeout=timeout)
         if response.status_code != requests.codes['ok']:
             msg = f'Unable to get metric: HTTP {response.status_code}: {response.text}'

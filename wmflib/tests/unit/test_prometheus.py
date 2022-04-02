@@ -5,6 +5,7 @@ from wmflib.prometheus import Prometheus, PrometheusError
 
 
 TEST_URI = 'http://prometheus.svc.eqiad.wmnet/ops/api/v1/query'
+TEST_URI_GLOBAL = 'http://prometheus.svc.eqiad.wmnet/global/api/v1/query'
 
 
 def get_response_data(check='ok'):
@@ -50,11 +51,11 @@ class TestPrometheus:
     def test_query_ok(self, requests_mock):
         """Check parsing a good request."""
         requests_mock.get(
-            TEST_URI,
+            TEST_URI_GLOBAL,
             json=get_response_data('ok'),
             status_code=200
         )
-        assert 'value' in self.prometheus.query('query_string', 'eqiad')[0]
+        assert 'value' in self.prometheus.query('query_string', 'eqiad', instance='global')[0]
 
     def test_query_not_ok(self, requests_mock):
         """Check we error on a fetch failure."""
