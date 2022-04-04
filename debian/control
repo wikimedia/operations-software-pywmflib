@@ -3,7 +3,7 @@ Section: python
 Priority: optional
 Maintainer: Luca Toscano <ltoscano@wikimedia.org>
 Uploaders: Riccardo Coccioli <rcoccioli@wikimedia.org>
-Standards-Version: 4.5.0
+Standards-Version: 4.6.0.1
 Build-Depends:
   debhelper (>= 12),
   dh-python (>= 2.20160609~),
