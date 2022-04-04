@@ -54,9 +54,12 @@ def ask_input(message: str, choices: Sequence[str]) -> str:
     print(f'{prefix} {message}')
 
     for _ in range(3):
-        response = input('> ')
-        if response in choices:
-            return response
+        try:
+            response = input('> ')
+            if response in choices:
+                return response
+        except (EOFError, KeyboardInterrupt):
+            pass  # Treat Ctrl+c and Ctrl+d as invalid answers
 
         print(f'{prefix} Invalid response, please type one of: {",".join(choices)}. '
               'After 3 wrong answers the task will be aborted.')

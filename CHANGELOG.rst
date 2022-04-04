@@ -1,6 +1,37 @@
 wmflib Changelog
 ----------------
 
+`v1.2.0`_ (2022-04-04)
+^^^^^^^^^^^^^^^^^^^^^^
+
+New features
+""""""""""""
+
+* prometheus: add support for Thanos
+
+  * Extract the common functionalities into a ``PrometheusBase`` class.
+  * Have the existing ``Prometheus`` class inherit from ``PrometheusBase``.
+  * Add a new ``Thanos`` class that inherits from ``PrometheusBase`` to query the Thanos endpoint.
+  * For Thanos queries set the deduplicate parameter always to ``true`` and the partial response one always to false to
+    ensure to have unique data and all the data, respectively.
+  * See also the `Thanos#Global_view`_ Wikitech page.
+
+Minor improvements
+""""""""""""""""""
+
+* prometheus: allow to specify a different Prometheus instance from the default ``ops`` one, while keeping backward
+  compatibility.
+
+Bug fixes
+"""""""""
+
+* interactive: catch ``Ctrl+c`` / ``Ctrl+d`` on ``ask_input()`` to handle them properly.
+
+Miscellanea
+"""""""""""
+
+* requests: fix docstring regarding the timeout type.
+
 `v1.1.2`_ (2022-03-09)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -249,6 +280,8 @@ New features
 * Initial version of the package.
 * Import the dns module and tests from Spicerack.
 
+.. _`Thanos#Global_view`: https://wikitech.wikimedia.org/wiki/Thanos#Global_view
+
 .. _`T257905`: https://phabricator.wikimedia.org/T257905
 .. _`T283242`: https://phabricator.wikimedia.org/T283242
 
@@ -267,3 +300,4 @@ New features
 .. _`v1.1.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.0
 .. _`v1.1.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.1
 .. _`v1.1.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.2
+.. _`v1.2.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.0

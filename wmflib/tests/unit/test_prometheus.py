@@ -1,10 +1,7 @@
 """Prometheus module tests."""
 import pytest
 
-from wmflib.prometheus import Prometheus, PrometheusError
-
-
-TEST_URI = 'http://prometheus.svc.eqiad.wmnet/ops/api/v1/query'
+from wmflib.prometheus import Prometheus, PrometheusError, Thanos
 
 
 def get_response_data(check='ok'):
@@ -35,6 +32,8 @@ class TestPrometheus:
     def setup_method(self):
         """Setup the test environment."""
         # pylint: disable=attribute-defined-outside-init
+        self.ops_uri = 'http://prometheus.svc.eqiad.wmnet/ops/api/v1/query'
+        self.global_uri = 'http://prometheus.svc.eqiad.wmnet/global/api/v1/query'
         self.prometheus = Prometheus()
 
     def test_init(self):
@@ -49,38 +48,42 @@ class TestPrometheus:
 
     def test_query_ok(self, requests_mock):
         """Check parsing a good request."""
-        requests_mock.get(
-            TEST_URI,
-            json=get_response_data('ok'),
-            status_code=200
-        )
-        assert 'value' in self.prometheus.query('query_string', 'eqiad')[0]
+        requests_mock.get(self.global_uri, json=get_response_data('ok'), status_code=200)
+        assert 'value' in self.prometheus.query('query_string', 'eqiad', instance='global')[0]
 
     def test_query_not_ok(self, requests_mock):
         """Check we error on a fetch failure."""
-        requests_mock.get(
-            TEST_URI,
-            json=get_response_data('not_ok'),
-            status_code=503
-        )
+        requests_mock.get(self.ops_uri, json=get_response_data('not_ok'), status_code=503)
         with pytest.raises(PrometheusError, match='Unable to get metric: HTTP 503'):
             self.prometheus.query('query_string', 'eqiad')
 
     def test_query_error(self, requests_mock):
         """Check handling an error in response data."""
-        requests_mock.get(
-            TEST_URI,
-            json=get_response_data('error'),
-            status_code=200
-        )
+        requests_mock.get(self.ops_uri, json=get_response_data('error'), status_code=200)
         with pytest.raises(PrometheusError, match='Unable to get metric: Foobar error'):
             self.prometheus.query('query_string', 'eqiad')
 
     def test_query_empty_result(self, requests_mock):
         """Test for en empty result."""
-        requests_mock.get(
-            TEST_URI,
-            json=get_response_data('empty_result'),
-            status_code=200
-        )
+        requests_mock.get(self.ops_uri, json=get_response_data('empty_result'), status_code=200)
         assert not self.prometheus.query('query_string', 'eqiad')
+
+
+class TestThanos:
+    """Test class for the Prometheus class."""
+
+    def setup_method(self):
+        """Setup the test environment."""
+        # pylint: disable=attribute-defined-outside-init
+        self.uri = 'https://thanos-query.discovery.wmnet/api/v1/query'
+        self.thanos = Thanos()
+
+    def test_init(self):
+        """It should initialise the instance."""
+        assert isinstance(self.thanos, Thanos)
+
+    def test_query_ok(self, requests_mock):
+        """Check parsing a good request."""
+        requests_mock.get(f'{self.uri}?dedup=true&partial_response=false&query=query_string',
+                          json=get_response_data('ok'), status_code=200)
+        assert 'value' in self.thanos.query('query_string')[0]
