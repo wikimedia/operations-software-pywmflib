@@ -88,3 +88,9 @@ def test_session():
     session = requests.http_session('UA-name')
     assert isinstance(session, Session)
     assert 'UA-name' in session.headers['User-Agent']
+
+
+def test_session_no_retry():
+    """It should not add the retry logic to the session."""
+    session = requests.http_session('UA-name', tries=0)
+    assert session.adapters['https://'].max_retries.total == 0
