@@ -1,4 +1,5 @@
 """Vulture whitelist to avoid false positives."""
+# pylint: disable=pointless-statement
 
 
 class Whitelist:
@@ -6,7 +7,6 @@ class Whitelist:
 
     def __getattr__(self, _):
         """Mocking magic method __getattr__."""
-        pass
 
 
 whitelist_logging = Whitelist()
