@@ -1,5 +1,4 @@
 """Vulture whitelist to avoid false positives."""
-# pylint: disable=pointless-statement
 
 
 class Whitelist:
