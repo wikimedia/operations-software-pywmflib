@@ -99,7 +99,7 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
 
     See Also:
         https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry
-        https://docs.python-requests.org/en/latest/user/advanced/#timeouts
+        https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
 
     Arguments:
         name (str): the name to use for the User-Agent header. It can be specified in the ``name/version`` format, if
