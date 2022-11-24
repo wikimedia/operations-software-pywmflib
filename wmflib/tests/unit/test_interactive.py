@@ -26,14 +26,17 @@ def example_division(positional: int, *, keyword: int = 1) -> int:
 
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
-def test_ask_input_ok(mocked_isatty, mocked_input, capsys):
+def test_ask_input_ok(mocked_isatty, mocked_input, capsys, caplog):
     """Calling ask_input() should return the user input if valid."""
     valid_answer = 'valid'
     mocked_isatty.return_value = True
     mocked_input.return_value = valid_answer
     message = 'Test message'
-    choice = interactive.ask_input(message, [valid_answer, 'other'])
+    with caplog.at_level(logging.INFO):
+        choice = interactive.ask_input(message, [valid_answer, 'other'])
+
     assert choice == valid_answer
+    assert 'Option "valid" was chosen' in caplog.text
     out, _ = capsys.readouterr()
     assert message in out
     assert 'Invalid response' not in out

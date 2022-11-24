@@ -57,6 +57,7 @@ def ask_input(message: str, choices: Sequence[str]) -> str:
         try:
             response = input('> ')
             if response in choices:
+                logger.info('Option "%s" was chosen.', response)
                 return response
         except (EOFError, KeyboardInterrupt):
             pass  # Treat Ctrl+c and Ctrl+d as invalid answers
