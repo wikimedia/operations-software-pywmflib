@@ -74,6 +74,7 @@ setup(
     package_data={'wmflib': ['py.typed']},
     packages=find_packages(exclude=['*.tests', '*.tests.*']),
     platforms=['GNU/Linux'],
+    python_requires='>=3.7',
     setup_requires=SETUP_REQUIRES,
     use_scm_version=True,
     url='https://github.com/wikimedia/operations-software-pywmflib',
