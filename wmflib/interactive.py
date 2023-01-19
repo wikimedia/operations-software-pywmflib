@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Optional, Sequence
 
 from wmflib.exceptions import WmflibError
 
@@ -21,8 +21,8 @@ class AbortError(WmflibError):
     """Custom exception class raised when an action is manually aborted."""
 
 
-def ask_input(message: str, choices: Sequence[str]) -> str:
-    """Ask the user for input in interactive mode.
+def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Callable[[str], None]] = None) -> str:
+    """Ask the user for input in interactive mode. Can be used with a list of valid answers or a custom validator.
 
     Examples:
         ::
@@ -36,34 +36,69 @@ def ask_input(message: str, choices: Sequence[str]) -> str:
             >>> response
             'A'
 
+            >>> def my_validator(answer: str) -> None:
+            ...     if len(answer) < 5:
+            ...         raise RuntimeError('The directory name must be at least 5 characters long')
+            ...
+            >>> response = ask_input(f'Provide a directory name', choices=[], validator=my_validator)
+            ==> Provide a directory name
+            > tmp
+            ==> Invalid response. The directory name must be at least 5 characters long. After 3 wrong answers the
+            task will be aborted.
+            > tmpdir
+            >>> response
+            'tmpdir'
+
     Arguments:
         message (str): the message to be printed before asking for confirmation.
         choices (sequence): the available choices of possible answers that the user can give. Values must be strings.
+            It must be set to an empty sequence in order to use the custom validator for validating free-form answers.
+        validator (callable, optional): a custom validator callable that accepts a single string parameter as input and
+            returns :py:data:`None` if the answer is valid and raises any Exception with a meaningful message if the
+            answer is invalid. When using a custom validator the `choices` argument must be set to an empty sequence
+            like an empty string.
 
     Returns:
-        str: the selected choice.
+        str: the selected choice or free answer if ``choices`` is set to :py:data:`None` explicitly.
 
     Raises:
-        wmflib.interactive.InputError: if not in a TTY or on too many invalid answers.
+        wmflib.interactive.InputError: if not in a TTY, invalid parameters were given or too many invalid answers
+        were provided.
 
     """
-    prefix = '\x1b[36m==>\x1b[39m'  # Cyan ==> prefix
+    # TODO: once Python3.7 support is dropped use typing's Protocol and runtime_checkable for the validator
+    if validator is None and not choices:
+        raise InputError('The `choices` argument is empty and no custom validator was provided.')
+
+    if validator is not None and choices:
+        raise InputError('When the `validator` argument is set, the `choices` argument must be empty.')
+
     if not sys.stdout.isatty():
         raise InputError('Not in a TTY, unable to ask for input')
 
+    prefix = '\x1b[36m==>\x1b[39m'  # Cyan ==> prefix
     print(f'{prefix} {message}')
 
+    message = f'Please type one of: {",".join(choices)}'
     for _ in range(3):
         try:
             response = input('> ')
-            if response in choices:
-                logger.info('Option "%s" was chosen.', response)
-                return response
-        except (EOFError, KeyboardInterrupt):
-            pass  # Treat Ctrl+c and Ctrl+d as invalid answers
+            logger.info('User input is: "%s"', response)
 
-        print(f'{prefix} Invalid response, please type one of: {",".join(choices)}. '
-              'After 3 wrong answers the task will be aborted.')
+            if validator is not None:
+                validator(response)
+                return response
+
+            if response in choices:
+                return response
+
+        except BaseException as e:  # pylint: disable=broad-except
+            # Treat any exception as invalid answer, including Ctrl+c and Ctrl+d as well as any exception raised by the
+            # custom validator when present.
+            if validator is not None:
+                message = str(e)
+
+        print(f'{prefix} Invalid response. {message}. After 3 wrong answers the task will be aborted.')
 
     raise InputError('Too many invalid answers')
 
