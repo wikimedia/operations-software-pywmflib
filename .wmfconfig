@@ -6,6 +6,6 @@ name = wmflib
 wheels_prefix = wmflib
 
 [debian]
-distros = buster,bullseye
+distros = buster,bullseye,bookworm
 source_package = python-wmflib
 binary_package = python3-wmflib
