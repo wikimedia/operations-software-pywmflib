@@ -24,16 +24,25 @@ def example_division(positional: int, *, keyword: int = 1) -> int:
     return positional / keyword
 
 
+def len_validator(answer: str) -> None:
+    """Validator for the ask_input function to ensure a minimum length of the answer."""
+    if len(answer) <= 5:
+        raise RuntimeError('The value must be at least 5 characters long')
+
+
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
-def test_ask_input_ok(mocked_isatty, mocked_input, capsys):
-    """Calling ask_input() should return the user input if valid."""
+def test_ask_input_choices_ok(mocked_isatty, mocked_input, capsys, caplog):
+    """Calling ask_input() should return the user input if valid among the given choices."""
     valid_answer = 'valid'
     mocked_isatty.return_value = True
     mocked_input.return_value = valid_answer
     message = 'Test message'
-    choice = interactive.ask_input(message, [valid_answer, 'other'])
+    with caplog.at_level(logging.INFO):
+        choice = interactive.ask_input(message, [valid_answer, 'other'])
+
     assert choice == valid_answer
+    assert 'User input is: "valid"' in caplog.text
     out, _ = capsys.readouterr()
     assert message in out
     assert 'Invalid response' not in out
@@ -41,7 +50,24 @@ def test_ask_input_ok(mocked_isatty, mocked_input, capsys):
 
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
-def test_ask_input_ko(mocked_isatty, mocked_input, capsys):
+def test_ask_input_validator_ok(mocked_isatty, mocked_input, capsys, caplog):
+    """Calling ask_input() with a validator should validate the answer."""
+    mocked_isatty.return_value = True
+    mocked_input.return_value = 'free answer'
+    message = 'Test message'
+
+    with caplog.at_level(logging.INFO):
+        choice = interactive.ask_input(message, choices=[], validator=len_validator)
+
+    assert choice == 'free answer'
+    assert 'User input is: "free answer"' in caplog.text
+    out, _ = capsys.readouterr()
+    assert message in out
+
+
+@mock.patch('builtins.input')
+@mock.patch('wmflib.interactive.sys.stdout.isatty')
+def test_ask_input_choices_ko(mocked_isatty, mocked_input, capsys):
     """Calling ask_input() should raise InputError if the correct answer is not provided."""
     mocked_isatty.return_value = True
     mocked_input.return_value = 'invalid'
@@ -54,7 +80,22 @@ def test_ask_input_ko(mocked_isatty, mocked_input, capsys):
     assert out.count('Invalid response') == 3
 
 
-@pytest.mark.parametrize('exception', (EOFError, KeyboardInterrupt))
+@mock.patch('builtins.input')
+@mock.patch('wmflib.interactive.sys.stdout.isatty')
+def test_ask_input_validator_ko(mocked_isatty, mocked_input, capsys):
+    """Calling ask_input() should raise InputError if the answer is not accepted by the validator."""
+    mocked_isatty.return_value = True
+    mocked_input.return_value = 'short'
+    message = 'Test message'
+    with pytest.raises(interactive.InputError, match='Too many invalid answers'):
+        interactive.ask_input(message, [], validator=len_validator)
+
+    out, _ = capsys.readouterr()
+    assert message in out
+    assert out.count('Invalid response') == 3
+
+
+@pytest.mark.parametrize('exception', (EOFError, KeyboardInterrupt, RuntimeError))
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
 def test_ask_input_raise(mocked_isatty, mocked_input, exception, capsys):
@@ -75,7 +116,19 @@ def test_ask_input_no_tty(mocked_isatty):
     """It should raise InputError if not in a TTY."""
     mocked_isatty.return_value = False
     with pytest.raises(interactive.InputError, match='Not in a TTY, unable to ask for input'):
-        interactive.ask_input('message', [])
+        interactive.ask_input('message', ['go'])
+
+
+@pytest.mark.parametrize('choices, kwargs, message', (
+    ([], {}, 'The `choices` argument is empty and no custom validator was provided'),
+    ([], {'validator': None}, 'The `choices` argument is empty and no custom validator was provided'),
+    (['value'], {'validator': lambda _: None},
+     'When the `validator` argument is set, the `choices` argument must be empty'),
+))
+def test_ask_input_wrong_args(choices, kwargs, message):
+    """It should raise InputError if the choices argument is empty and the validator one is None."""
+    with pytest.raises(interactive.InputError, match=message):
+        interactive.ask_input('message', choices, **kwargs)
 
 
 @mock.patch('builtins.input')

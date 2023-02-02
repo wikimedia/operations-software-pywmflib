@@ -72,7 +72,7 @@ class Prometheus(PrometheusBase):
         Examples:
             ::
 
-                >>> results = prometheus.query('node_uname_info{instance=~"cumin1001:.*"}', 'eqiad', instance='global')
+                >>> results = prometheus.query('node_uname_info{instance=~"host1001:.*"}', 'eqiad', instance='global')
                 >>> results = prometheus.query('node_memory_MemTotal_bytes{instance=~"host1001:.*"}', 'eqiad')
 
             The content of the last results will be something like::
@@ -136,7 +136,7 @@ class Thanos(PrometheusBase):
             ::
 
                 >>> results = thanos.query('node_memory_MemTotal_bytes{instance=~"host1001:.*"}')
-                >>> results = thanos.query('node_uname_info{instance=~"cumin1001:.*"}')
+                >>> results = thanos.query('node_uname_info{instance=~"host1001:.*"}')
 
             The content of the last results will be something like::
 

@@ -96,10 +96,12 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
 
             session = http_session('AppName', timeout=10.0, tries=5, backoff=2.0, retry_codes=(429,))
             session = http_session('AppName', timeout=(3.0, 10.0), tries=5, backoff=2.0, retry_methods=('GET',))
+            # Disable the retry logic, just set the User-Agent and default timeout
+            session = http_session('AppName', tries=0)
 
     See Also:
         https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry
-        https://docs.python-requests.org/en/latest/user/advanced/#timeouts
+        https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
 
     Arguments:
         name (str): the name to use for the User-Agent header. It can be specified in the ``name/version`` format, if
@@ -109,7 +111,9 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
         timeout (:py:data:`wmflib.requests.TypeTimeout`): the default timeout to use in all requests within this
             session, in seconds. Any request can override it passing the ``timeout`` parameter explicitely. It can be
             either a single float or a tuple of two floats (connect, read), according to requests's documentation.
-        tries (int): the total number of requests to perform before bailing out.
+        tries (int): the total number of requests to perform before bailing out. If set to ``0`` the whole retry logic
+            is not added to the session, making all the other parameters except the ``name`` one to be ignored. In this
+            case only the User-Agent and default timeout are set.
         backoff (float): the backoff factor to use, will generate a sleep between retries, in seconds, of::
 
             {backoff factor} * (2 ** ({number of total retries} - 1))
@@ -125,14 +129,23 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
     """
     # The method_whitelist parameter has been deprecated since urllib3 v1.26.0 and will be removed in v2.0.
     # It has been renamed to allowed_methods in v1.26.0. Keep backward compatibility.
-    methods_param_name = 'allowed_methods' if hasattr(Retry.DEFAULT, 'allowed_methods') else 'method_whitelist'
-    params = {
-        'total': tries, 'backoff_factor': backoff, 'status_forcelist': retry_codes, methods_param_name: retry_methods}
-    retry_strategy = Retry(**params)
-    adapter = TimeoutHTTPAdapter(timeout=timeout, max_retries=retry_strategy)
     session = Session()
     user_agent = f'pywmflib/{__version__} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib'
     session.headers.update({'User-Agent': user_agent})
+
+    if tries > 0:
+        methods_param_name = 'allowed_methods' if hasattr(Retry.DEFAULT, 'allowed_methods') else 'method_whitelist'
+        params = {
+            'total': tries,
+            'backoff_factor': backoff,
+            'status_forcelist': retry_codes,
+            methods_param_name: retry_methods,
+        }
+        retry_strategy = Retry(**params)
+        adapter = TimeoutHTTPAdapter(timeout=timeout, max_retries=retry_strategy)
+    else:
+        adapter = TimeoutHTTPAdapter(timeout=timeout)
+
     session.mount('http://', adapter)
     session.mount('https://', adapter)
 
