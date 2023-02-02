@@ -1,6 +1,38 @@
 wmflib Changelog
 ----------------
 
+`v1.2.1`_ (2023-02-02)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Minor improvements
+""""""""""""""""""
+
+* interactive: log the response to ``ask_input`` for easier troubleshooting. Indirectly logs also the response to
+  ``ask_confirmation`` and ``confirm_on_failure``.
+* interactive: allow free responses in ``ask_input`` (`T327408`_):
+
+  * Allow the answer to ``ask_input`` to be free-form using a custom validator callable.
+  * The choices argument must be set to an empty sequence when the custom validator is set.
+  * Add additional validation to fail in case choices is empty and no validator is provided or if the choices argument
+    is non empty and the validator one is also set.
+
+* requests: allow to skip the session retry logic. In some cases, for example when using the ``@retry`` decorator from
+  the decorators module, a client code might want to just set the UA and the timeout without any retry logic.
+
+Miscellanea
+"""""""""""
+
+* prometheus: fix typo in docstring.
+* doc: set default language.
+* doc: update URL to requests library timeouts documetation page.
+* Add configuration file for the WMF-specific release script.
+* flake8: move all flake8 config to ``setup.cfg``.
+* tox: add ``--no-external-config`` to prospector.
+* tests: remove unnecessary pylint disable
+* setup.py: specify ``python_requires``.
+* setup.py: add support for Python 3.10 and 3.11.
+* setup.py: force a newer ``sphinx_rtd_theme`` to avoid a rendering bug of the older version.
+
 `v1.2.0`_ (2022-04-04)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -284,6 +316,7 @@ New features
 
 .. _`T257905`: https://phabricator.wikimedia.org/T257905
 .. _`T283242`: https://phabricator.wikimedia.org/T283242
+.. _`T327408`: https://phabricator.wikimedia.org/T327408
 
 .. _`v0.0.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.1
 .. _`v0.0.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v0.0.2
@@ -301,3 +334,4 @@ New features
 .. _`v1.1.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.1
 .. _`v1.1.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.2
 .. _`v1.2.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.0
+.. _`v1.2.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.1
