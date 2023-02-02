@@ -1,3 +1,10 @@
+python-wmflib (1.2.1-1) unstable; urgency=medium
+
+  * v1.2.1 upstream release.
+  * Bump Standards-Version.
+
+ -- Riccardo Coccioli <rcoccioli@wikimedia.org>  Thu, 02 Feb 2023 15:30:05 -0000
+
 python-wmflib (1.2.0-1) unstable; urgency=medium
 
   * v1.2.0 upstream release.
