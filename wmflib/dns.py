@@ -28,7 +28,7 @@ class DnsNotFound(DnsError):
 class Dns:
     """Class to interact with the DNS."""
 
-    def __init__(self, *, nameserver_addresses: Optional[Sequence] = None, port: Optional[int] = None) -> None:
+    def __init__(self, *, nameserver_addresses: Optional[Sequence[str]] = None, port: Optional[int] = None) -> None:
         """Initialize the instance optionally specifying the nameservers to use.
 
         Examples:
@@ -53,7 +53,7 @@ class Dns:
             self._resolver = resolver.Resolver(configure=False)
             if port is not None:
                 self._resolver.port = port
-            self._resolver.nameservers = nameserver_addresses
+            self._resolver.nameservers = list(nameserver_addresses)
         else:
             self._resolver = resolver.Resolver()
 

@@ -176,4 +176,4 @@ def test_public_auth_dns_init(mocked_resolver):
     """The Production nameservers should be set on the resolver."""
     PublicAuthDns()
     mocked_resolver.assert_called_once_with(configure=False)
-    assert mocked_resolver.return_value.nameservers == PUBLIC_AUTHDNS
+    assert mocked_resolver.return_value.nameservers == list(PUBLIC_AUTHDNS)
