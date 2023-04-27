@@ -8,7 +8,7 @@ import requests
 
 from wmflib.constants import ALL_DATACENTERS
 from wmflib.exceptions import WmflibError
-from wmflib.requests import http_session, TypeTimeout
+from wmflib.requests import http_session, TimeoutType
 
 logger = logging.getLogger(__name__)
 
@@ -24,13 +24,13 @@ class PrometheusBase:
         """Initialize the instance."""
         self._http_session = http_session('.'.join((self.__module__, self.__class__.__name__)))
 
-    def _query(self, url: str, params: Dict[str, str], timeout: TypeTimeout) -> List[Dict]:
+    def _query(self, url: str, params: Dict[str, str], timeout: TimeoutType) -> List[Dict]:
         """Perform a generic query.
 
         Arguments:
             url (str): the URL to query.
             params (dict): a dictionary of the GET parameters to pass to the URL.
-            timeout (:py:data:`wmflib.requests.TypeTimeout`): How many seconds to wait for prometheus to reply before
+            timeout (:py:data:`wmflib.requests.TimeoutType`): How many seconds to wait for prometheus to reply before
                 giving up. This is passed directly to the requests library.
 
         Returns:
@@ -66,7 +66,7 @@ class Prometheus(PrometheusBase):
 
     _prometheus_api: str = 'http://prometheus.svc.{site}.wmnet/{instance}/api/v1/query'
 
-    def query(self, query: str, site: str, *, instance: str = 'ops', timeout: TypeTimeout = 10.0) -> List[Dict]:
+    def query(self, query: str, site: str, *, instance: str = 'ops', timeout: TimeoutType = 10.0) -> List[Dict]:
         """Perform a generic query.
 
         Examples:
@@ -96,7 +96,7 @@ class Prometheus(PrometheusBase):
                 :py:const:`wmflib.constants.ALL_DATACENTERS`
             instance (str, optional): The prometheus instance to query on the given site, see
                 https://wikitech.wikimedia.org/wiki/Prometheus#Instances for the full list of available instances.
-            timeout (:py:data:`wmflib.requests.TypeTimeout`, optional): How many seconds to wait for prometheus to
+            timeout (:py:data:`wmflib.requests.TimeoutType`, optional): How many seconds to wait for prometheus to
                 reply before giving up. This is passed directly to the requests library.
 
         Returns:
@@ -129,7 +129,7 @@ class Thanos(PrometheusBase):
 
     _thanos_api: str = 'https://thanos-query.discovery.wmnet/api/v1/query'
 
-    def query(self, query: str, *, timeout: TypeTimeout = 10.0) -> List[Dict]:
+    def query(self, query: str, *, timeout: TimeoutType = 10.0) -> List[Dict]:
         """Perform a generic query.
 
         Examples:
@@ -162,7 +162,7 @@ class Thanos(PrometheusBase):
 
         Arguments:
             query (str): a prometheus query string.
-            timeout (:py:data:`wmflib.requests.TypeTimeout`, optional): How many seconds to wait for prometheus to
+            timeout (:py:data:`wmflib.requests.TimeoutType`, optional): How many seconds to wait for prometheus to
                 reply before giving up. This is passed directly to the requests library.
 
         Returns:

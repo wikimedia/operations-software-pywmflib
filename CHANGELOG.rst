@@ -1,6 +1,21 @@
 wmflib Changelog
 ----------------
 
+`v1.2.2`_ (2023-04-27)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Bug fixes
+"""""""""
+
+* dns: clarify the type of the ``nameserver_addresses`` argument of the Dns class to adhere to the dnspython one.
+* dns: convert the sequence of ``nameserver_addresses`` to list to adhere to what dnspython is expecting.
+* requests: rename the type alias ``TypeTimeout`` to ``TimeoutType`` to adhere to pylint naming formats.
+
+Miscellanea
+"""""""""""
+
+* tox: disable bandit's ``request_without_timeout`` check in tests due to false positives.
+
 `v1.2.1`_ (2023-02-02)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -335,3 +350,4 @@ New features
 .. _`v1.1.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.1.2
 .. _`v1.2.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.0
 .. _`v1.2.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.1
+.. _`v1.2.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.2
