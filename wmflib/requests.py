@@ -8,9 +8,9 @@ from requests.packages.urllib3.util.retry import Retry  # pylint: disable=import
 from wmflib import __version__
 
 
-TypeTimeout = Union[float, Tuple[float, float]]
+TimeoutType = Union[float, Tuple[float, float]]
 """Type alias for the requests timeout parameter."""
-DEFAULT_TIMEOUT: TypeTimeout = (3.0, 5.0)
+DEFAULT_TIMEOUT: TimeoutType = (3.0, 5.0)
 """:py:class:`tuple`: the default timeout to use if none is passed, in seconds."""
 DEFAULT_RETRY_STATUS_CODES: Tuple[int, ...] = (429, 500, 502, 503, 504)
 """:py:class`tuple`: the default sequence of HTTP status codes that are retried if the method is one of
@@ -62,7 +62,7 @@ class TimeoutHTTPAdapter(HTTPAdapter):
         return super().send(request, **kwargs)
 
 
-def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: int = 3, backoff: float = 1.0,
+def http_session(name: str, *, timeout: TimeoutType = DEFAULT_TIMEOUT, tries: int = 3, backoff: float = 1.0,
                  retry_codes: Sequence[int] = DEFAULT_RETRY_STATUS_CODES,
                  retry_methods: Sequence[str] = DEFAULT_RETRY_METHODS) -> Session:
     """Return a new requests Session with User-Agent, default timeout and retry logic on failure already setup.
@@ -108,7 +108,7 @@ def http_session(name: str, *, timeout: TypeTimeout = DEFAULT_TIMEOUT, tries: in
             applicable. The resulting header will be set to::
 
                 pywmflib/{version} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib root@wikimedia.org
-        timeout (:py:data:`wmflib.requests.TypeTimeout`): the default timeout to use in all requests within this
+        timeout (:py:data:`wmflib.requests.TimeoutType`): the default timeout to use in all requests within this
             session, in seconds. Any request can override it passing the ``timeout`` parameter explicitely. It can be
             either a single float or a tuple of two floats (connect, read), according to requests's documentation.
         tries (int): the total number of requests to perform before bailing out. If set to ``0`` the whole retry logic
