@@ -70,7 +70,7 @@ class SocketHandler(logging.Handler):
 
         See https://docs.python.org/3/library/logging.html#handler-objects
         """
-        self._send_message(f'{self.command} {self.username}@{self.hostname} {record.getMessage()}'.strip(), record)
+        self._send_message(f'{self.command} {self.username}@{self.hostname} {self.format(record)}'.strip(), record)
 
 
 class SALSocketHandler(SocketHandler):

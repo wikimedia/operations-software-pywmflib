@@ -50,6 +50,14 @@ class TestIrc:
         assert mock.call().sendall(b'!log user@current-hostname message') in mocked_socket.mock_calls
 
     @mock.patch('wmflib.irc.socket.socket')
+    def test_socket_handler_emit_formatted_ok(self, mocked_socket):
+        """Calling emit() on a SALSocketHandler instance should use the formatter when set."""
+        self.sal_handler.setFormatter(logging.Formatter('Prefix - %(message)s'))
+        self.sal_handler.emit(GENERIC_LOG_RECORD)
+        assert mock.call().connect(('host', 123)) in mocked_socket.mock_calls
+        assert mock.call().sendall(b'!log user@current-hostname Prefix - message') in mocked_socket.mock_calls
+
+    @mock.patch('wmflib.irc.socket.socket')
     def test_irc_socket_handler_emit_ko(self, mocked_socket):
         """If an error occur while calling emit() on an SALSocketHandler instance, it should call handleError."""
         self.sal_handler.handleError = mock.MagicMock()
