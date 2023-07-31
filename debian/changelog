@@ -1,3 +1,9 @@
+python-wmflib (1.2.3-1) unstable; urgency=medium
+
+  * v1.2.3 upstream release.
+
+ -- Riccardo Coccioli <rcoccioli@wikimedia.org>  Mon, 31 Jul 2023 13:40:11 -0000
+
 python-wmflib (1.2.2-1) unstable; urgency=medium
 
   * v1.2.2 upstream release.
