@@ -1,6 +1,19 @@
 wmflib Changelog
 ----------------
 
+`v1.2.3`_ (2023-07-31)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Bug fixes
+"""""""""
+
+* irc: handle custom logging formatters, when set allow the message to be formatted according to them.
+
+Miscellanea
+"""""""""""
+
+* irc: refactored code and tests to simplify the code and improve readability.
+
 `v1.2.2`_ (2023-04-27)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -351,3 +364,4 @@ New features
 .. _`v1.2.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.0
 .. _`v1.2.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.1
 .. _`v1.2.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.2
+.. _`v1.2.3`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.3

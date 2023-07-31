@@ -34,7 +34,7 @@ class SocketHandler(logging.Handler):
 
     """
 
-    prefix = '{s.username}@{s.hostname}'
+    command = ''
 
     def __init__(self, host: str, port: int, username: str) -> None:
         """Initialize the IRC socket handler.
@@ -70,8 +70,7 @@ class SocketHandler(logging.Handler):
 
         See https://docs.python.org/3/library/logging.html#handler-objects
         """
-        message = self.prefix.format(s=self) + ' ' + record.getMessage()
-        self._send_message(message, record)
+        self._send_message(f'{self.command} {self.username}@{self.hostname} {self.format(record)}'.strip(), record)
 
 
 class SALSocketHandler(SocketHandler):
@@ -83,4 +82,4 @@ class SALSocketHandler(SocketHandler):
     # Stashbot expects !log messages relayed by logmsgbot to have the
     # format: "!log <nick> <msg>". The <nick> is parsed out and used as
     # the label of who actually made the SAL entry.
-    prefix = '!log {s.username}@{s.hostname}'
+    command = '!log'
