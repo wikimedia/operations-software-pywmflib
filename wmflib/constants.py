@@ -9,7 +9,7 @@ CORE_DATACENTERS = ("eqiad", "codfw")
 """tuple: WMF core datacenters."""
 
 
-PUBLIC_AUTHDNS = ('208.80.154.238', '208.80.153.231', '91.198.174.239')
+PUBLIC_AUTHDNS = ('208.80.154.238', '208.80.153.231', '198.35.27.27')
 """tuple: publicly Authorative DNS servers for the WMF domains."""
 
 

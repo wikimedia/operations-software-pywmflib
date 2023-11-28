@@ -136,14 +136,42 @@ def retry(
         func (function, method): the decorated function.
         tries (int, optional): the number of times to try calling the decorated function or method before giving up.
             Must be a positive integer.
-        delay (datetime.timedelta, optional): the initial delay for the first retry, used also as the base for the
-            backoff algorithm.
-        backoff_mode (str, optional): the backoff mode to use for the delay, available values are::
+        delay (datetime.timedelta, optional): the initial delay in seconds for the first retry, used also as the base
+            for the backoff algorithm.
+        backoff_mode (str, optional): the backoff mode to use for the delay, available values are shown below. All the
+            examples are made with ``tries=5`` and ``delay=3``:
 
-            constant:    delay       => 3, 3,  3,  3,   3, ...;
-            linear:      delay * N   => 3, 6,  9, 12,  15, ...; N in [1, tries]
-            power:       delay * 2^N => 3, 6, 12, 24,  48, ...; N in [0, tries - 1]
-            exponential: delay^N     => 3, 9, 27, 81, 243, ...; N in [1, tries], delay must be > 1.
+              * **constant**
+
+                .. code-block:: text
+
+                  Nth delay   = delay
+                  Total delay = delay * tries
+                  Example:      3s, 3s,  3s,  3s,   3s => 15s max possible delay
+
+              * **linear**
+
+                .. code-block:: text
+
+                  Nth delay   = (delay * N) with N in [1, tries]
+                  Total delay = 0.5 * tries * (delay + (delay * tries))
+                  Example:      3s, 6s,  9s, 12s,  15s => 45s max possible delay
+
+              * **power**
+
+                .. code-block:: text
+
+                  Nth delay   = (delay * 2^N) with N in [0, tries - 1]
+                  Total delay = delay * (2**tries - 1)
+                  Example:      3s, 6s, 12s, 24s,  48s => 93s max possible delay
+
+              * **exponential**
+
+                .. code-block:: text
+
+                  Nth delay   = (delay^N) with N in [1, tries], delay must be > 1
+                  Total delay = (delay * (delay**tries - 1)) / (delay - 1)
+                  Example:      3s, 9s, 27s, 81s, 243s => 363s max possible delay
 
         exceptions (type, tuple, optional): the decorated function call will be retried if it fails until it succeeds
             or `tries` attempts are reached. A retryable failure is defined as raising any of the exceptions listed.

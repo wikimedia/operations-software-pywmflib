@@ -3,7 +3,7 @@ from typing import Any, Sequence, Tuple, Union
 
 from requests import PreparedRequest, Response, Session
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry  # pylint: disable=import-error
+from urllib3.util import Retry
 
 from wmflib import __version__
 
@@ -135,13 +135,14 @@ def http_session(name: str, *, timeout: TimeoutType = DEFAULT_TIMEOUT, tries: in
 
     if tries > 0:
         methods_param_name = 'allowed_methods' if hasattr(Retry.DEFAULT, 'allowed_methods') else 'method_whitelist'
+        # TODO: add type hint with Literal once Python 3.7 support is dropped and remove the type ignore on line 145
         params = {
             'total': tries,
             'backoff_factor': backoff,
             'status_forcelist': retry_codes,
             methods_param_name: retry_methods,
         }
-        retry_strategy = Retry(**params)
+        retry_strategy = Retry(**params)  # type: ignore[arg-type]
         adapter = TimeoutHTTPAdapter(timeout=timeout, max_retries=retry_strategy)
     else:
         adapter = TimeoutHTTPAdapter(timeout=timeout)
