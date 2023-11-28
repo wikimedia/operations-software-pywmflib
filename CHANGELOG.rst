@@ -1,6 +1,26 @@
 wmflib Changelog
 ----------------
 
+`v1.2.4`_ (2023-11-28)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Bug fixes
+"""""""""
+
+* constants: update ``ns2.wikimedia.org`` IP address as it was recently changed.
+* requests: fix import of urllib's ``Retry`` to be imported directly instead of importing it from requests to avoid
+  mypy confusion.
+
+Miscellanea
+"""""""""""
+
+* documentation: extend the ``@retry`` decorator documentation adding the formula to calculate the total delay given
+  the number of tries and the delay argument for the different backoff strategies.
+* tox.ini: use directly ``sphinx-build`` instead of ``setup.py`` to generate the documentation, this prevents a
+  deprecation warning or failure with the newest Sphinx.
+* tox.ini: remove optimization for tox <4. Tox 4 will not re-use the environments because of the different names,
+  so removing this tox <4 optimization as it's making subsequent runs slower with tox 4+.
+
 `v1.2.3`_ (2023-07-31)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -365,3 +385,4 @@ New features
 .. _`v1.2.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.1
 .. _`v1.2.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.2
 .. _`v1.2.3`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.3
+.. _`v1.2.4`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.4
