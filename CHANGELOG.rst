@@ -1,6 +1,14 @@
 wmflib Changelog
 ----------------
 
+`v1.2.5`_ (2024-04-18)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Minor improvements
+""""""""""""""""""
+
+constants: add the new magru datacenter.
+
 `v1.2.4`_ (2023-11-28)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -386,3 +394,4 @@ New features
 .. _`v1.2.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.2
 .. _`v1.2.3`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.3
 .. _`v1.2.4`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.4
+.. _`v1.2.5`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.5

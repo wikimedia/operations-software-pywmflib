@@ -1,7 +1,7 @@
 """Constants module."""
 
 
-ALL_DATACENTERS = ('eqiad', 'codfw', 'esams', 'ulsfo', 'eqsin', 'drmrs')
+ALL_DATACENTERS = ('eqiad', 'codfw', 'esams', 'ulsfo', 'eqsin', 'drmrs', 'magru')
 """tuple: all WMF datacenters."""
 
 
@@ -20,5 +20,6 @@ DATACENTER_NUMBERING_PREFIX = {
     'ulsfo': '4',
     'eqsin': '5',
     'drmrs': '6',
+    'magru': '7',
 }
 """dict: mapping of hostname prefix for numbered servers for each WMF datacenter."""
