@@ -67,32 +67,36 @@ def test_ask_input_validator_ok(mocked_isatty, mocked_input, capsys, caplog):
 
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
-def test_ask_input_choices_ko(mocked_isatty, mocked_input, capsys):
+def test_ask_input_choices_ko(mocked_isatty, mocked_input, capsys, caplog):
     """Calling ask_input() should raise InputError if the correct answer is not provided."""
     mocked_isatty.return_value = True
     mocked_input.return_value = 'invalid'
     message = 'Test message'
     with pytest.raises(interactive.InputError, match='Too many invalid answers'):
-        interactive.ask_input(message, ['go'])
+        with caplog.at_level(logging.INFO):
+            interactive.ask_input(message, ['go'])
 
     out, _ = capsys.readouterr()
     assert message in out
     assert out.count('Invalid response') == 3
+    assert 'User input is' not in caplog.text
 
 
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
-def test_ask_input_validator_ko(mocked_isatty, mocked_input, capsys):
+def test_ask_input_validator_ko(mocked_isatty, mocked_input, capsys, caplog):
     """Calling ask_input() should raise InputError if the answer is not accepted by the validator."""
     mocked_isatty.return_value = True
     mocked_input.return_value = 'short'
     message = 'Test message'
     with pytest.raises(interactive.InputError, match='Too many invalid answers'):
-        interactive.ask_input(message, [], validator=len_validator)
+        with caplog.at_level(logging.INFO):
+            interactive.ask_input(message, [], validator=len_validator)
 
     out, _ = capsys.readouterr()
     assert message in out
     assert out.count('Invalid response') == 3
+    assert 'User input is' not in caplog.text
 
 
 @pytest.mark.parametrize('exception', (EOFError, KeyboardInterrupt, RuntimeError))

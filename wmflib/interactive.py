@@ -83,13 +83,15 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
     for _ in range(3):
         try:
             response = input('> ')
-            logger.info('User input is: "%s"', response)
 
             if validator is not None:
                 validator(response)
+                # Log only if the answer is valid to prevent leaks, the validator must raise for invalid values
+                logger.info('User input is: "%s"', response)
                 return response
 
             if response in choices:
+                logger.info('User input is: "%s"', response)  # Log only if the answer is valid to prevent leaks
                 return response
 
         except BaseException as e:  # pylint: disable=broad-except
