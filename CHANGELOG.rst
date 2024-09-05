@@ -1,6 +1,20 @@
 wmflib Changelog
 ----------------
 
+`v1.2.6`_ (2024-09-05)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Bug fixes
+"""""""""
+
+* interactive: fix regression and log the user input only if is valid to prevent leaks in the logs of wrongly pasted
+  inputs.
+
+Miscellanea
+"""""""""""
+
+* setup.py: fix test dependency removed upstream.
+
 `v1.2.5`_ (2024-04-18)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -395,3 +409,4 @@ New features
 .. _`v1.2.3`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.3
 .. _`v1.2.4`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.4
 .. _`v1.2.5`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.5
+.. _`v1.2.6`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.6
