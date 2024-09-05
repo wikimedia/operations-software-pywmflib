@@ -29,7 +29,7 @@ EXTRAS_REQUIRE = {
         'sphinx_rtd_theme>=1.0',
         'sphinx-argparse>=0.1.15',
         'Sphinx>=1.4.9',
-        'types-pkg_resources',
+        'types-setuptools',
         'types-PyYAML',
         'types-requests',
     ],
