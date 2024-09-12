@@ -8,6 +8,8 @@ ALL_DATACENTERS = ('eqiad', 'codfw', 'esams', 'ulsfo', 'eqsin', 'drmrs', 'magru'
 CORE_DATACENTERS = ("eqiad", "codfw")
 """tuple: WMF core datacenters."""
 
+US_DATACENTERS = ("eqiad", "codfw", "ulsfo")
+"""tuple: WMF datacenters in the US"""
 
 PUBLIC_AUTHDNS = ('208.80.154.238', '208.80.153.231', '198.35.27.27')
 """tuple: publicly Authorative DNS servers for the WMF domains."""
