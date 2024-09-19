@@ -1,6 +1,14 @@
 wmflib Changelog
 ----------------
 
+`v1.2.7`_ (2024-09-19)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Minor improvements
+""""""""""""""""""
+
+* constants: add ``US_DATACENTERS`` constant.
+
 `v1.2.6`_ (2024-09-05)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -410,3 +418,4 @@ New features
 .. _`v1.2.4`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.4
 .. _`v1.2.5`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.5
 .. _`v1.2.6`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.6
+.. _`v1.2.7`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.7

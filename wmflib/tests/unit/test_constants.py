@@ -1,6 +1,6 @@
 """Constants module tests."""
 
-from wmflib.constants import ALL_DATACENTERS, CORE_DATACENTERS, DATACENTER_NUMBERING_PREFIX
+from wmflib.constants import ALL_DATACENTERS, CORE_DATACENTERS, DATACENTER_NUMBERING_PREFIX, US_DATACENTERS
 
 
 def test_datacenters():
@@ -11,3 +11,8 @@ def test_datacenters():
 def test_core_datacenters():
     """Verify that the core datacenters is a subset of all datacenters."""
     assert set(CORE_DATACENTERS).issubset(set(ALL_DATACENTERS))
+
+
+def test_us_datacenters():
+    """Verify that the US datacenters are a subset of all datacenters."""
+    assert set(US_DATACENTERS).issubset(set(ALL_DATACENTERS))
