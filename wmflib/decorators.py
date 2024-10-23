@@ -71,7 +71,7 @@ def ensure_wrap(func: Callable) -> Callable:
 
 
 @ensure_wrap
-def retry(
+def retry(  # pylint: disable=too-many-arguments,useless-suppression
     func: Callable,
     *,
     tries: int = 3,

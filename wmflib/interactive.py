@@ -73,6 +73,7 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
     if validator is not None and choices:
         raise InputError('When the `validator` argument is set, the `choices` argument must be empty.')
 
+    # pylint: disable-next=no-member,useless-suppression; https://github.com/prospector-dev/prospector/issues/677
     if not sys.stdout.isatty():
         raise InputError('Not in a TTY, unable to ask for input')
 
