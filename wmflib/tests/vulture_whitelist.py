@@ -8,6 +8,9 @@ class Whitelist:
         """Mocking magic method __getattr__."""
 
 
+whitelist_interactive = Whitelist()
+whitelist_interactive.notify_logger.propagate
+
 whitelist_logging = Whitelist()
 whitelist_logging.raiseExceptions
 
