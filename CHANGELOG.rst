@@ -1,6 +1,31 @@
 wmflib Changelog
 ----------------
 
+`v1.3.0`_ (2025-03-25)
+^^^^^^^^^^^^^^^^^^^^^^
+
+New features
+""""""""""""
+
+* interactive: notify when waiting for user input
+
+  * When asking for user input, if the user has not replied within 3 minutes, send a notification via a custom logger.
+  * The notification is done via a ``threading.Timer`` that is canceled if the user replies in time.
+  * Clients of this cose (e.g. spicerack) can setup a custom handler for this dedicated notification logger to make
+    the notification alert the user running the code.
+
+Bug fixes
+"""""""""
+
+* tests: fix outstanding CI issues.
+* setup.py: pin types-setuptools for pkg_resources
+
+Miscellanea
+"""""""""""
+
+* tox: add Jenkins settings to reduce its execution time reducing the number of environments executed.
+* tests: remove unnecessary vulture setting
+
 `v1.2.7`_ (2024-09-19)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -419,3 +444,4 @@ New features
 .. _`v1.2.5`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.5
 .. _`v1.2.6`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.6
 .. _`v1.2.7`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.7
+.. _`v1.3.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.0
