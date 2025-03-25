@@ -16,6 +16,7 @@ NOTIFY_LOGGER_NAME = 'wmflib_interactive_notify'
 notify_logger = logging.getLogger(NOTIFY_LOGGER_NAME)
 """Instance of the notification logger that is used to send notification when the process is awaiting user input."""
 notify_logger.propagate = False  # Prevent messages to bubble up to the parent logger if no handlers are set.
+notify_logger.addHandler(logging.NullHandler())  # Prevent messages to use the root logger handlers.
 MIN_SECRET_SIZE: int = 6
 """The minimum number of characters for a secret."""
 NOTIFY_AFTER_SECONDS: float = 180.0
@@ -36,7 +37,8 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
     If the user doesn't reply within :py:const:`wmflib.interactive.NOTIFY_AFTER_SECONDS` seconds, a notification
     message will be sent to the :py:class:`wmflib.interactive.notify_logger` logger instance at warning level.
     The client of this code is responsible of setting up the logger handler in a way to notify the user. By default
-    there are no handlers and the messages will not be propagated to the parent logger.
+    there is a :py:class:`logging.NullHandler` handler and the messages will not be propagated to the parent logger.
+    It is safe to call `notify_logger.handlers.clear()` when setting up this handler.
 
     Examples:
         ::
@@ -134,7 +136,8 @@ def ask_confirmation(message: str) -> None:
     If the user doesn't reply within :py:const:`wmflib.interactive.NOTIFY_AFTER_SECONDS` seconds, a notification
     message will be sent to the :py:class:`wmflib.interactive.notify_logger` logger instance at warning level.
     The client of this code is responsible of setting up the logger handler in a way to notify the user. By default
-    there are no handlers and the messages will not be propagated to the parent logger.
+    there is a :py:class:`logging.NullHandler` handler and the messages will not be propagated to the parent logger.
+    It is safe to call `notify_logger.handlers.clear()` when setting up this handler.
 
 
     Examples:
@@ -174,7 +177,8 @@ def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
     If the user doesn't reply within :py:const:`wmflib.interactive.NOTIFY_AFTER_SECONDS` seconds, a notification
     message will be sent to the :py:class:`wmflib.interactive.notify_logger` logger instance at warning level.
     The client of this code is responsible of setting up the logger handler in a way to notify the user. By default
-    there are no handlers and the messages will not be propagated to the parent logger.
+    there is a :py:class:`logging.NullHandler` handler and the messages will not be propagated to the parent logger.
+    It is safe to call `notify_logger.handlers.clear()` when setting up this handler.
 
 
     Examples:
