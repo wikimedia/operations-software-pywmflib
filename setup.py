@@ -29,7 +29,9 @@ EXTRAS_REQUIRE = {
         'sphinx_rtd_theme>=1.0',
         'sphinx-argparse>=0.1.15',
         'Sphinx>=1.4.9',
-        'types-setuptools',
+        # We still rely on pkg_resources to support Python 3.7/Buster but it
+        # was removed from types-setuptools
+        'types-setuptools<75.8.2.20250305',
         'types-PyYAML',
         'types-requests',
     ],

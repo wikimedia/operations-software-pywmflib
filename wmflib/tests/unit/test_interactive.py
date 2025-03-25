@@ -1,5 +1,6 @@
 """Interactive module tests."""
 import logging
+import time
 
 from unittest import mock
 
@@ -43,6 +44,7 @@ def test_ask_input_choices_ok(mocked_isatty, mocked_input, capsys, caplog):
 
     assert choice == valid_answer
     assert 'User input is: "valid"' in caplog.text
+    assert 'is awaiting input' not in caplog.text
     out, _ = capsys.readouterr()
     assert message in out
     assert 'Invalid response' not in out
@@ -61,6 +63,7 @@ def test_ask_input_validator_ok(mocked_isatty, mocked_input, capsys, caplog):
 
     assert choice == 'free answer'
     assert 'User input is: "free answer"' in caplog.text
+    assert 'is awaiting input' not in caplog.text
     out, _ = capsys.readouterr()
     assert message in out
 
@@ -80,6 +83,7 @@ def test_ask_input_choices_ko(mocked_isatty, mocked_input, capsys, caplog):
     assert message in out
     assert out.count('Invalid response') == 3
     assert 'User input is' not in caplog.text
+    assert 'is awaiting input' not in caplog.text
 
 
 @mock.patch('builtins.input')
@@ -97,22 +101,25 @@ def test_ask_input_validator_ko(mocked_isatty, mocked_input, capsys, caplog):
     assert message in out
     assert out.count('Invalid response') == 3
     assert 'User input is' not in caplog.text
+    assert 'is awaiting input' not in caplog.text
 
 
 @pytest.mark.parametrize('exception', (EOFError, KeyboardInterrupt, RuntimeError))
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
-def test_ask_input_raise(mocked_isatty, mocked_input, exception, capsys):
+def test_ask_input_raise(mocked_isatty, mocked_input, exception, capsys, caplog):
     """Calling ask_input() should raise InputError if Ctrl+c or Ctrl+d is pressed multiple times."""
     mocked_isatty.return_value = True
     mocked_input.side_effect = exception
     message = 'Test message'
     with pytest.raises(interactive.InputError, match='Too many invalid answers'):
-        interactive.ask_input(message, ['go'])
+        with caplog.at_level(logging.INFO):
+            interactive.ask_input(message, ['go'])
 
     out, _ = capsys.readouterr()
     assert message in out
     assert out.count('Invalid response') == 3
+    assert 'is awaiting input' not in caplog.text
 
 
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
@@ -133,6 +140,52 @@ def test_ask_input_wrong_args(choices, kwargs, message):
     """It should raise InputError if the choices argument is empty and the validator one is None."""
     with pytest.raises(interactive.InputError, match=message):
         interactive.ask_input('message', choices, **kwargs)
+
+
+@pytest.mark.parametrize('invalid', (0, 1, 2))
+@mock.patch('builtins.input')
+@mock.patch('wmflib.interactive.sys.stdout.isatty')
+@mock.patch('wmflib.interactive.NOTIFY_AFTER_SECONDS', 0.0)
+def test_ask_input_notification_sent(mocked_isatty, mocked_input, invalid, capsys, caplog):
+    """If the operation takes longer than the timer, it should send the notification log message for each input."""
+    valid_answer = 'valid'
+    mocked_isatty.return_value = True
+    mocked_input.side_effect = ['invalid'] * invalid + [valid_answer]
+    message = 'Test message'
+    interactive.notify_logger.addHandler(logging.StreamHandler())
+    with caplog.at_level(logging.INFO):
+        choice = interactive.ask_input(message, [valid_answer, 'other'])
+        time.sleep(0.1)
+
+    list(map(interactive.notify_logger.removeHandler, interactive.notify_logger.handlers))
+    assert choice == valid_answer
+    assert caplog.text.count('User input is: "valid"') == 1
+    out, err = capsys.readouterr()
+    assert out.count('Invalid response') == invalid
+    assert err.count('is awaiting input') == invalid + 1
+
+
+@pytest.mark.parametrize('invalid', (0, 1, 2))
+@mock.patch('builtins.input')
+@mock.patch('wmflib.interactive.sys.stdout.isatty')
+@mock.patch('wmflib.interactive.NOTIFY_AFTER_SECONDS', 0.1)
+def test_ask_input_notification_canceled(mocked_isatty, mocked_input, invalid, capsys, caplog):
+    """If the operation takes less than the timer, the timer should be canceled and no notification should be sent."""
+    valid_answer = 'valid'
+    mocked_isatty.return_value = True
+    mocked_input.side_effect = ['invalid'] * invalid + [valid_answer]
+    message = 'Test message'
+    interactive.notify_logger.addHandler(logging.StreamHandler())
+    with caplog.at_level(logging.INFO):
+        choice = interactive.ask_input(message, [valid_answer, 'other'])
+        time.sleep(0.2)
+
+    list(map(interactive.notify_logger.removeHandler, interactive.notify_logger.handlers))
+    assert choice == valid_answer
+    assert caplog.text.count('User input is: "valid"') == 1
+    out, err = capsys.readouterr()
+    assert out.count('Invalid response') == invalid
+    assert 'is awaiting input' not in err
 
 
 @mock.patch('builtins.input')

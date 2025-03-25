@@ -3,6 +3,7 @@ import getpass
 import logging
 import os
 import sys
+import threading
 
 from typing import Any, Callable, Optional, Sequence
 
@@ -10,7 +11,15 @@ from wmflib.exceptions import WmflibError
 
 
 logger = logging.getLogger(__name__)
+NOTIFY_LOGGER_NAME = 'wmflib_interactive_notify'
+"""Name of the logger used to send notifications when the process is awaiting user input."""
+notify_logger = logging.getLogger(NOTIFY_LOGGER_NAME)
+"""Instance of the notification logger that is used to send notification when the process is awaiting user input."""
+notify_logger.propagate = False  # Prevent messages to bubble up to the parent logger if no handlers are set.
 MIN_SECRET_SIZE: int = 6
+"""The minimum number of characters for a secret."""
+NOTIFY_AFTER_SECONDS: float = 180.0
+"""The amount of time in seconds after which a notification log will be triggered."""
 
 
 class InputError(WmflibError):
@@ -23,6 +32,11 @@ class AbortError(WmflibError):
 
 def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Callable[[str], None]] = None) -> str:
     """Ask the user for input in interactive mode. Can be used with a list of valid answers or a custom validator.
+
+    If the user doesn't reply within :py:const:`wmflib.interactive.NOTIFY_AFTER_SECONDS` seconds, a notification
+    message will be sent to the :py:class:`wmflib.interactive.notify_logger` logger instance at warning level.
+    The client of this code is responsible of setting up the logger handler in a way to notify the user. By default
+    there are no handlers and the messages will not be propagated to the parent logger.
 
     Examples:
         ::
@@ -73,6 +87,7 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
     if validator is not None and choices:
         raise InputError('When the `validator` argument is set, the `choices` argument must be empty.')
 
+    # pylint: disable-next=no-member,useless-suppression; https://github.com/prospector-dev/prospector/issues/677
     if not sys.stdout.isatty():
         raise InputError('Not in a TTY, unable to ask for input')
 
@@ -80,7 +95,12 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
     print(f'{prefix} {message}')
 
     message = f'Please type one of: {",".join(choices)}'
+
     for _ in range(3):
+        # Create a notify timer for each attempt, the user might insert an invalid answer and not see it
+        timer = threading.Timer(NOTIFY_AFTER_SECONDS, notify_logger.warning, args=['is awaiting input'])
+        timer.start()
+
         try:
             response = input('> ')
 
@@ -100,6 +120,9 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
             if validator is not None:
                 message = str(e)
 
+        finally:
+            timer.cancel()
+
         print(f'{prefix} Invalid response. {message}. After 3 wrong answers the task will be aborted.')
 
     raise InputError('Too many invalid answers')
@@ -107,6 +130,12 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
 
 def ask_confirmation(message: str) -> None:
     """Ask the use for confirmation in interactive mode.
+
+    If the user doesn't reply within :py:const:`wmflib.interactive.NOTIFY_AFTER_SECONDS` seconds, a notification
+    message will be sent to the :py:class:`wmflib.interactive.notify_logger` logger instance at warning level.
+    The client of this code is responsible of setting up the logger handler in a way to notify the user. By default
+    there are no handlers and the messages will not be propagated to the parent logger.
+
 
     Examples:
         ::
@@ -141,6 +170,12 @@ def ask_confirmation(message: str) -> None:
 
 def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
     """Execute a function asking for confirmation to retry, abort or skip.
+
+    If the user doesn't reply within :py:const:`wmflib.interactive.NOTIFY_AFTER_SECONDS` seconds, a notification
+    message will be sent to the :py:class:`wmflib.interactive.notify_logger` logger instance at warning level.
+    The client of this code is responsible of setting up the logger handler in a way to notify the user. By default
+    there are no handlers and the messages will not be propagated to the parent logger.
+
 
     Examples:
         ::
@@ -243,6 +278,12 @@ def ensure_shell_is_durable() -> None:
 def get_secret(title: str, *, confirm: bool = False) -> str:
     """Ask the user for a secret e.g. password.
 
+    If the user doesn't reply within :py:const:`wmflib.interactive.NOTIFY_AFTER_SECONDS` seconds, a notification
+    message will be sent to the :py:class:`wmflib.interactive.notify_logger` logger instance at warning level.
+    The client of this code is responsible of setting up the logger handler in a way to notify the user. By default
+    there are no handlers and the messages will not be propagated to the parent logger.
+
+
     Examples:
         ::
 
@@ -265,13 +306,20 @@ def get_secret(title: str, *, confirm: bool = False) -> str:
         wmflib.exceptions.WmflibError: if the password confirmation does not match and confirm is :py:data:`True`.
 
     """
-    new_secret = getpass.getpass(prompt=f'{title}: ')
+    timer = threading.Timer(NOTIFY_AFTER_SECONDS, notify_logger.warning, args=['is awaiting input'])
+    timer.start()
 
-    while len(new_secret) < MIN_SECRET_SIZE:
-        new_secret = getpass.getpass(
-            prompt=f'Secret must be at least {MIN_SECRET_SIZE} characters. try again: ')
+    try:
+        new_secret = getpass.getpass(prompt=f'{title}: ')
 
-    if confirm and new_secret != getpass.getpass(prompt='Again, just to be sure: '):
-        raise WmflibError(f'{title}: Passwords did not match')
+        while len(new_secret) < MIN_SECRET_SIZE:
+            new_secret = getpass.getpass(
+                prompt=f'Secret must be at least {MIN_SECRET_SIZE} characters. try again: ')
 
-    return new_secret
+        if confirm and new_secret != getpass.getpass(prompt='Again, just to be sure: '):
+            raise WmflibError(f'{title}: Passwords did not match')
+
+        return new_secret
+
+    finally:
+        timer.cancel()
