@@ -33,6 +33,7 @@ def len_validator(answer: str) -> None:
 
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
+@mock.patch('wmflib.interactive.NOTIFY_AFTER_SECONDS', 0.0)
 def test_ask_input_choices_ok(mocked_isatty, mocked_input, capsys, caplog):
     """Calling ask_input() should return the user input if valid among the given choices."""
     valid_answer = 'valid'
@@ -52,6 +53,7 @@ def test_ask_input_choices_ok(mocked_isatty, mocked_input, capsys, caplog):
 
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
+@mock.patch('wmflib.interactive.NOTIFY_AFTER_SECONDS', 0.0)
 def test_ask_input_validator_ok(mocked_isatty, mocked_input, capsys, caplog):
     """Calling ask_input() with a validator should validate the answer."""
     mocked_isatty.return_value = True
@@ -70,6 +72,7 @@ def test_ask_input_validator_ok(mocked_isatty, mocked_input, capsys, caplog):
 
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
+@mock.patch('wmflib.interactive.NOTIFY_AFTER_SECONDS', 0.0)
 def test_ask_input_choices_ko(mocked_isatty, mocked_input, capsys, caplog):
     """Calling ask_input() should raise InputError if the correct answer is not provided."""
     mocked_isatty.return_value = True
@@ -88,6 +91,7 @@ def test_ask_input_choices_ko(mocked_isatty, mocked_input, capsys, caplog):
 
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
+@mock.patch('wmflib.interactive.NOTIFY_AFTER_SECONDS', 0.0)
 def test_ask_input_validator_ko(mocked_isatty, mocked_input, capsys, caplog):
     """Calling ask_input() should raise InputError if the answer is not accepted by the validator."""
     mocked_isatty.return_value = True
@@ -107,6 +111,7 @@ def test_ask_input_validator_ko(mocked_isatty, mocked_input, capsys, caplog):
 @pytest.mark.parametrize('exception', (EOFError, KeyboardInterrupt, RuntimeError))
 @mock.patch('builtins.input')
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
+@mock.patch('wmflib.interactive.NOTIFY_AFTER_SECONDS', 0.0)
 def test_ask_input_raise(mocked_isatty, mocked_input, exception, capsys, caplog):
     """Calling ask_input() should raise InputError if Ctrl+c or Ctrl+d is pressed multiple times."""
     mocked_isatty.return_value = True
@@ -152,6 +157,7 @@ def test_ask_input_notification_sent(mocked_isatty, mocked_input, invalid, capsy
     mocked_isatty.return_value = True
     mocked_input.side_effect = ['invalid'] * invalid + [valid_answer]
     message = 'Test message'
+    interactive.notify_logger.handlers.clear()
     interactive.notify_logger.addHandler(logging.StreamHandler())
     with caplog.at_level(logging.INFO):
         choice = interactive.ask_input(message, [valid_answer, 'other'])

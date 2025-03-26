@@ -1,6 +1,16 @@
 wmflib Changelog
 ----------------
 
+`v1.3.1`_ (2025-03-26)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Bug fixes
+"""""""""
+
+* interactive: add ``NullHandler`` to the notify logger to prevent the notify logger messages to be logged with the
+  root logger handlers. Clients are free to call ``notify_logger.handlers.clear()`` if they want to start from an
+  empty set of handlers.
+
 `v1.3.0`_ (2025-03-25)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -445,3 +455,4 @@ New features
 .. _`v1.2.6`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.6
 .. _`v1.2.7`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.7
 .. _`v1.3.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.0
+.. _`v1.3.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.1
