@@ -1,7 +1,8 @@
 """Actions module."""
 import logging
 
-from typing import Hashable, List
+from collections.abc import Hashable
+from typing import List
 
 
 logger = logging.getLogger(__name__)
