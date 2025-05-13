@@ -1,6 +1,19 @@
 wmflib Changelog
 ----------------
 
+`v1.3.2`_ (2025-05-13)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Minor improvements
+""""""""""""""""""
+
+* Add support for Python 3.13 and Debian Trixie
+
+Miscellanea
+"""""""""""
+
+* docstrings: update some examples to be more clear and up to date.
+
 `v1.3.1`_ (2025-03-26)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -456,3 +469,4 @@ New features
 .. _`v1.2.7`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.2.7
 .. _`v1.3.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.0
 .. _`v1.3.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.1
+.. _`v1.3.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.2
