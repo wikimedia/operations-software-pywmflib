@@ -72,10 +72,11 @@ class Prometheus(PrometheusBase):
         Examples:
             ::
 
-                >>> results = prometheus.query('node_uname_info{instance=~"host1001:.*"}', 'eqiad', instance='global')
                 >>> results = prometheus.query('node_memory_MemTotal_bytes{instance=~"host1001:.*"}', 'eqiad')
+                >>> results = prometheus.query(
+                ...     'kube_deployment_created{deployment="mw-web.eqiad.main"}', 'eqiad', instance='k8s')
 
-            The content of the last results will be something like::
+            The content of the first results will be something like::
 
                 [
                     {

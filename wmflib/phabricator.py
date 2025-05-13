@@ -21,7 +21,7 @@ def create_phabricator(
         ::
 
             from wmflib.phabricator import create_phabricator
-            phab_client = create_phabricator('/path/to/config.ini')
+            phab_client = create_phabricator('/path/to/config.ini', dry_run=False)
             phab_client.task_comment('T12345', 'Message')
 
     Arguments:
