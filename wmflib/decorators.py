@@ -1,4 +1,5 @@
 """Decorators module."""
+
 import logging
 import time
 
@@ -59,6 +60,7 @@ def ensure_wrap(func: Callable) -> Callable:
             that is also a callable is not supported.
 
     """
+
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Callable:
         """Decorator wrapper."""
@@ -231,8 +233,14 @@ def retry(  # pylint: disable=too-many-arguments,useless-suppression
                 return func(*args, **kwargs)
             except exceptions as e:
                 sleep = get_backoff_sleep(params.backoff_mode, params.delay.total_seconds(), attempt)
-                logger.warning("[%d/%d, retrying in %.2fs] %s: %s",
-                               attempt, params.tries, sleep, params.failure_message, _exception_message(e))
+                logger.warning(
+                    '[%d/%d, retrying in %.2fs] %s: %s',
+                    attempt,
+                    params.tries,
+                    sleep,
+                    params.failure_message,
+                    _exception_message(e),
+                )
                 time.sleep(sleep)
 
         return func(*args, **kwargs)
@@ -284,7 +292,7 @@ def get_backoff_sleep(backoff_mode: str, base: Union[int, float], index: int) ->
     elif backoff_mode == 'power':
         sleep = base * 2 ** (index - 1)
     elif backoff_mode == 'exponential':
-        sleep = base ** index
+        sleep = base**index
     else:
         raise ValueError(f'Invalid backoff_mode: {backoff_mode}')
 

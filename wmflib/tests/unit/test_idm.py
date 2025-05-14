@@ -1,4 +1,5 @@
 """IDM utils module tests."""
+
 from argparse import Namespace
 from unittest.mock import patch
 

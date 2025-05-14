@@ -21,6 +21,7 @@ def logoutd_args(description: Optional[str] = None, args: Optional[List] = None)
     script still using the same command line arguments processing, of the form::
 
         from wmflib.idm import logoutd_args
+
         args = logoutd_args('Some description')
         # write your own script
 

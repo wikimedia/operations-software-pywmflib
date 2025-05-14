@@ -1,4 +1,5 @@
 """Interactive module tests."""
+
 import logging
 import time
 
@@ -135,12 +136,18 @@ def test_ask_input_no_tty(mocked_isatty):
         interactive.ask_input('message', ['go'])
 
 
-@pytest.mark.parametrize('choices, kwargs, message', (
-    ([], {}, 'The `choices` argument is empty and no custom validator was provided'),
-    ([], {'validator': None}, 'The `choices` argument is empty and no custom validator was provided'),
-    (['value'], {'validator': lambda _: None},
-     'When the `validator` argument is set, the `choices` argument must be empty'),
-))
+@pytest.mark.parametrize(
+    'choices, kwargs, message',
+    (
+        ([], {}, 'The `choices` argument is empty and no custom validator was provided'),
+        ([], {'validator': None}, 'The `choices` argument is empty and no custom validator was provided'),
+        (
+            ['value'],
+            {'validator': lambda _: None},
+            'When the `validator` argument is set, the `choices` argument must be empty',
+        ),
+    ),
+)
 def test_ask_input_wrong_args(choices, kwargs, message):
     """It should raise InputError if the choices argument is empty and the validator one is None."""
     with pytest.raises(interactive.InputError, match=message):
@@ -328,12 +335,15 @@ def test_ensure_shell_is_durable_non_interactive(mocked_isatty):
 
 
 @mock.patch('wmflib.interactive.sys.stdout.isatty')
-@pytest.mark.parametrize('env_name, env_value', (
-    ('STY', '12345.pts-1.host'),
-    ('TMUX', '/tmux-1001/default,12345,0'),
-    ('TERM', 'screen-example'),
-    ('TERM', 'tmux-example'),
-))
+@pytest.mark.parametrize(
+    'env_name, env_value',
+    (
+        ('STY', '12345.pts-1.host'),
+        ('TMUX', '/tmux-1001/default,12345,0'),
+        ('TERM', 'screen-example'),
+        ('TERM', 'tmux-example'),
+    ),
+)
 def test_ensure_shell_is_durable_sty(mocked_isatty, env_name, env_value, monkeypatch):
     """Should not raise if in an interactive shell with STY set, TMUX set or a screen-line TERM."""
     mocked_isatty.return_value = True
@@ -356,7 +366,8 @@ def test_get_secret_correct(mocked_getpass):
     mocked_getpass.getpass.side_effect = ['interactive_password', 'interactive_password']
     assert interactive.get_secret('secret', confirm=True) == 'interactive_password'
     mocked_getpass.getpass.assert_has_calls(
-        [mock.call(prompt='secret: '), mock.call(prompt='Again, just to be sure: ')])
+        [mock.call(prompt='secret: '), mock.call(prompt='Again, just to be sure: ')]
+    )
 
 
 @mock.patch('wmflib.interactive.getpass')
@@ -366,7 +377,8 @@ def test_get_secret_bad_retry(mocked_getpass):
     with pytest.raises(WmflibError, match='secret: Passwords did not match'):
         interactive.get_secret('secret', confirm=True)
     mocked_getpass.getpass.assert_has_calls(
-        [mock.call(prompt='secret: '), mock.call(prompt='Again, just to be sure: ')])
+        [mock.call(prompt='secret: '), mock.call(prompt='Again, just to be sure: ')]
+    )
 
 
 @mock.patch('wmflib.interactive.getpass')
@@ -375,5 +387,5 @@ def test_get_secret_too_small(mocked_getpass):
     mocked_getpass.getpass.side_effect = ['5char', 'interactive_password']
     assert interactive.get_secret('secret') == 'interactive_password'
     mocked_getpass.getpass.assert_has_calls(
-        [mock.call(prompt='secret: '),
-         mock.call(prompt='Secret must be at least 6 characters. try again: ')])
+        [mock.call(prompt='secret: '), mock.call(prompt='Secret must be at least 6 characters. try again: ')]
+    )

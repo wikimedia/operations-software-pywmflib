@@ -1,4 +1,5 @@
 """Interactive module."""
+
 import getpass
 import logging
 import os
@@ -165,8 +166,9 @@ def ask_confirmation(message: str) -> None:
         wmflib.interactive.AbortError: if manually aborted.
 
     """
-    response = ask_input('\n'.join((message, 'Type "go" to proceed or "abort" to interrupt the execution')),
-                         ['go', 'abort'])
+    response = ask_input(
+        '\n'.join((message, 'Type "go" to proceed or "abort" to interrupt the execution')), ['go', 'abort']
+    )
     if response == 'abort':
         raise AbortError('Confirmation manually aborted')
 
@@ -213,8 +215,10 @@ def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
         wmflib.interactive.AbortError: on manually aborted tasks.
 
     """
-    retry_message = ('What do you want to do? "retry" the last command, manually fix the issue and "skip" the last '
-                     'command to continue the execution or completely "abort" the execution.')
+    retry_message = (
+        'What do you want to do? "retry" the last command, manually fix the issue and "skip" the last '
+        'command to continue the execution or completely "abort" the execution.'
+    )
     choices = ['retry', 'skip', 'abort']
 
     while True:
@@ -274,8 +278,13 @@ def ensure_shell_is_durable() -> None:
     """
     # STY is for screen, TMUX is for tmux. Not using `getenv('NAME') is not None` to check they are not empty.
     # TODO: verify if the check on TERM is redundant.
-    if (sys.stdout.isatty() and not os.getenv('STY', '') and not os.getenv('TMUX', '')
-            and 'screen' not in os.getenv('TERM', '') and 'tmux' not in os.getenv('TERM', '')):
+    if (
+        sys.stdout.isatty()
+        and not os.getenv('STY', '')
+        and not os.getenv('TMUX', '')
+        and 'screen' not in os.getenv('TERM', '')
+        and 'tmux' not in os.getenv('TERM', '')
+    ):
         raise WmflibError('Must be run in non-interactive mode or inside a screen or tmux.')
 
 
@@ -317,8 +326,7 @@ def get_secret(title: str, *, confirm: bool = False) -> str:
         new_secret = getpass.getpass(prompt=f'{title}: ')
 
         while len(new_secret) < MIN_SECRET_SIZE:
-            new_secret = getpass.getpass(
-                prompt=f'Secret must be at least {MIN_SECRET_SIZE} characters. try again: ')
+            new_secret = getpass.getpass(prompt=f'Secret must be at least {MIN_SECRET_SIZE} characters. try again: ')
 
         if confirm and new_secret != getpass.getpass(prompt='Again, just to be sure: '):
             raise WmflibError(f'{title}: Passwords did not match')

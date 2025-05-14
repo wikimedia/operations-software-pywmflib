@@ -1,4 +1,5 @@
 """Phabricator module."""
+
 import configparser
 import logging
 
@@ -11,9 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_phabricator(
-    bot_config_file: str,
-    section: str = 'phabricator_bot',
-    dry_run: bool = True
+    bot_config_file: str, section: str = 'phabricator_bot', dry_run: bool = True
 ) -> phabricator.Phabricator:
     """Initialize the Phabricator client from the bot config file.
 
@@ -21,6 +20,7 @@ def create_phabricator(
         ::
 
             from wmflib.phabricator import create_phabricator
+
             phab_client = create_phabricator('/path/to/config.ini', dry_run=False)
             phab_client.task_comment('T12345', 'Message')
 
@@ -56,8 +56,10 @@ def create_phabricator(
     except configparser.NoSectionError as e:
         raise PhabricatorError(f'Unable to find section {section} in config file {bot_config_file}') from e
     except configparser.NoOptionError as e:
-        raise PhabricatorError(f'Unable to find all required options {required_options} in section {section} of config '
-                               f'file {bot_config_file}') from e
+        raise PhabricatorError(
+            f'Unable to find all required options {required_options} in section {section} of config '
+            f'file {bot_config_file}'
+        ) from e
 
     try:
         client = phabricator.Phabricator(**params)

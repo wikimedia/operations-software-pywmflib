@@ -85,9 +85,9 @@ class Prometheus(PrometheusBase):
                             'cluster': 'management',
                             'instance': 'host1001:9100',
                             'job': 'node',
-                            'site': 'eqiad'
+                            'site': 'eqiad',
                         },
-                        'value': [1636569623.988, '67225329664']
+                        'value': [1636569623.988, '67225329664'],
                     }
                 ]
 
@@ -155,9 +155,9 @@ class Thanos(PrometheusBase):
                             'release': '5.10.0-11-amd64',
                             'site': 'eqiad',
                             'sysname': 'Linux',
-                            'version': '#1 SMP Debian 5.10.92-2 (2022-02-28)'
+                            'version': '#1 SMP Debian 5.10.92-2 (2022-02-28)',
                         },
-                        'value': [1648898872.82, '1']
+                        'value': [1648898872.82, '1'],
                     }
                 ]
 

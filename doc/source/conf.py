@@ -59,11 +59,13 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'wmflib'
+project = 'wmflib'
 title = f'{project} Documentation'
-copyright = (u'2018-2020, Riccardo Coccioli <rcoccioli@wikimedia.org>, '
-              'Luca Toscano <ltoscano@wikimedia.org>, Wikimedia Foundation, Inc.')
-author = u'Riccardo Coccioli'
+copyright = (
+    '2018-2020, Riccardo Coccioli <rcoccioli@wikimedia.org>, '
+    'Luca Toscano <ltoscano@wikimedia.org>, Wikimedia Foundation, Inc.'
+)
+author = 'Riccardo Coccioli'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -153,6 +155,7 @@ autoclass_content = 'both'
 
 # -- Helper functions -----------------------------------------------------
 
+
 def filter_namedtuple_docstrings(app, what, name, obj, options, lines):
     """Fix the automatically generated docstrings for namedtuples classes."""
     if what == 'attribute' and len(lines) == 1 and lines[0].startswith('Alias for field number'):
@@ -161,8 +164,9 @@ def filter_namedtuple_docstrings(app, what, name, obj, options, lines):
 
 def add_abstract_annotations(app, what, name, obj, options, lines):
     """Workaround to add an abstract annotation for ABC abstract classes and abstract methods."""
-    if ((what in ('method', 'attribute') and getattr(obj, '__isabstractmethod__', False)) or
-            (what == 'class' and len(getattr(obj, '__abstractmethods__', [])) > 0)):
+    if (what in ('method', 'attribute') and getattr(obj, '__isabstractmethod__', False)) or (
+        what == 'class' and len(getattr(obj, '__abstractmethods__', [])) > 0
+    ):
         lines.insert(0, '``abstract``')
 
 

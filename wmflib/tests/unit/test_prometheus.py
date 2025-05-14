@@ -1,4 +1,5 @@
 """Prometheus module tests."""
+
 import pytest
 
 from wmflib.prometheus import Prometheus, PrometheusError, Thanos
@@ -8,13 +9,7 @@ def get_response_data(check='ok'):
     """Return mocked data based on the test."""
     json_data = {
         'status': 'success',
-        'data': {
-            'resultType': 'vector',
-            'result': [{
-                'metric': {},
-                'value': [1553173538.378, '42.42']
-            }]
-        }
+        'data': {'resultType': 'vector', 'result': [{'metric': {}, 'value': [1553173538.378, '42.42']}]},
     }
     if check == 'empty_result':
         json_data['data']['result'] = []
@@ -42,8 +37,7 @@ class TestPrometheus:
 
     def test_bad_site(self):
         """Test with a bad site parameter."""
-        with pytest.raises(
-                PrometheusError, match=r'site \(bad_site\) must be one of wmflib.constants.ALL_DATACENTERS'):
+        with pytest.raises(PrometheusError, match=r'site \(bad_site\) must be one of wmflib.constants.ALL_DATACENTERS'):
             self.prometheus.query('query_string', 'bad_site')
 
     def test_query_ok(self, requests_mock):
@@ -84,6 +78,9 @@ class TestThanos:
 
     def test_query_ok(self, requests_mock):
         """Check parsing a good request."""
-        requests_mock.get(f'{self.uri}?dedup=true&partial_response=false&query=query_string',
-                          json=get_response_data('ok'), status_code=200)
+        requests_mock.get(
+            f'{self.uri}?dedup=true&partial_response=false&query=query_string',
+            json=get_response_data('ok'),
+            status_code=200,
+        )
         assert 'value' in self.thanos.query('query_string')[0]

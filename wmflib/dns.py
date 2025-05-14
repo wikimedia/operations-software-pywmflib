@@ -1,4 +1,5 @@
 """DNS module."""
+
 import logging
 
 from typing import cast, List, Optional, Sequence, Union

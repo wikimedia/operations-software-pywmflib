@@ -1,4 +1,5 @@
 """Requests module tests."""
+
 from unittest import mock
 
 import pytest
@@ -21,13 +22,16 @@ def test_timeout_http_adapter_init_custom(timeout):
     assert adapter.timeout == timeout
 
 
-@pytest.mark.parametrize('timeout, expected', (
-    (None, (None, None)),
-    ((None, None), (None, None)),
-    ('NOTSET', requests.DEFAULT_TIMEOUT),
-    (1.0, (1.0, 1.0)),
-    ((1.1, 9.9), (1.1, 9.9))
-))
+@pytest.mark.parametrize(
+    'timeout, expected',
+    (
+        (None, (None, None)),
+        ((None, None), (None, None)),
+        ('NOTSET', requests.DEFAULT_TIMEOUT),
+        (1.0, (1.0, 1.0)),
+        ((1.1, 9.9), (1.1, 9.9)),
+    ),
+)
 @mock.patch('urllib3.connectionpool.HTTPConnectionPool.urlopen', spec_set=True)
 def test_timeout_http_adapter_send(mocked_send, timeout, expected):
     """Sending a request with the TimeoutHTTPAdapter should use the default timeout."""
@@ -46,12 +50,9 @@ def test_timeout_http_adapter_send(mocked_send, timeout, expected):
     assert used_timeout.read_timeout == expected[1]
 
 
-@pytest.mark.parametrize('timeout, expected', (
-    (None, (2.2, 6.6)),
-    ((None, None), (None, None)),
-    (1.0, (1.0, 1.0)),
-    ((1.1, 9.9), (1.1, 9.9))
-))
+@pytest.mark.parametrize(
+    'timeout, expected', ((None, (2.2, 6.6)), ((None, None), (None, None)), (1.0, (1.0, 1.0)), ((1.1, 9.9), (1.1, 9.9)))
+)
 @mock.patch('urllib3.connectionpool.HTTPConnectionPool.urlopen', spec_set=True)
 def test_timeout_http_adapter_send_override(mocked_send, timeout, expected):
     """Sending a request with the TimeoutHTTPAdapter and timeout set should use the override unless is None."""

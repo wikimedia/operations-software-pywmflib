@@ -17,10 +17,13 @@ def test_load_yaml_config_empty():
     assert {} == config_dict
 
 
-@pytest.mark.parametrize('name, message', (
-    ('invalid.yaml', 'ParserError'),
-    ('non-existent.yaml', 'FileNotFoundError'),
-))
+@pytest.mark.parametrize(
+    'name, message',
+    (
+        ('invalid.yaml', 'ParserError'),
+        ('non-existent.yaml', 'FileNotFoundError'),
+    ),
+)
 def test_load_yaml_config_raise(name, message):
     """Loading an invalid config should raise Exception."""
     with pytest.raises(WmflibError, match=message):

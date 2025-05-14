@@ -1,4 +1,5 @@
 """Phabricator module tests."""
+
 from unittest import mock
 
 import pytest
@@ -33,7 +34,8 @@ def test_init_client_raise(mocked_phabricator):
 
     # Values from the phabricator/valid.conf fixture
     mocked_phabricator.assert_called_once_with(  # nosec
-        host='https://phabricator.example.com/api/', username='phab-bot', token='api-12345')
+        host='https://phabricator.example.com/api/', username='phab-bot', token='api-12345'
+    )
 
 
 class TestPhabricator:
@@ -51,7 +53,8 @@ class TestPhabricator:
         """It should update a task on Phabricator."""
         self.phab.task_comment('T12345', 'new message')
         self.mocked_phabricator_client.maniphest.edit.assert_called_once_with(
-            objectIdentifier='T12345', transactions=self.task_comment_transactions)
+            objectIdentifier='T12345', transactions=self.task_comment_transactions
+        )
 
     def test_task_comment_dry_run(self):
         """It should not update a task on Phabricator when in DRY-RUN mode."""
@@ -66,4 +69,5 @@ class TestPhabricator:
             self.phab.task_comment('T12345', 'new message')
 
         self.mocked_phabricator_client.maniphest.edit.assert_called_once_with(
-            objectIdentifier='T12345', transactions=self.task_comment_transactions)
+            objectIdentifier='T12345', transactions=self.task_comment_transactions
+        )

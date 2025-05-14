@@ -1,4 +1,5 @@
 """DNS module tests."""
+
 from collections import namedtuple
 from unittest import mock
 
@@ -36,19 +37,29 @@ MOCKED_RESPONSES = {
     ('2001::1', 'PTR'): MockedDnsAnswer(ttl=600, rrset=[MockedDnsTarget(target=MockedTarget('host1.example.com.'))]),
     ('host2.example.com', 'A'): MockedDnsAnswer(ttl=600, rrset=[MockedDnsAddress(address='10.0.0.1')]),
     ('host2.example.com', 'AAAA'): dns.resolver.NoAnswer('Not found'),
-    ('host3.example.com', 'A'):
-        MockedDnsAnswer(ttl=600, rrset=[MockedDnsAddress(address='10.0.0.1'), MockedDnsAddress(address='10.0.0.2')]),
-    ('host3.example.com', 'AAAA'):
-        MockedDnsAnswer(ttl=600, rrset=[MockedDnsAddress(address='2001::1'), MockedDnsAddress(address='2001::2')]),
-    ('2001::2', 'PTR'):
-        MockedDnsAnswer(ttl=600, rrset=[
+    ('host3.example.com', 'A'): MockedDnsAnswer(
+        ttl=600, rrset=[MockedDnsAddress(address='10.0.0.1'), MockedDnsAddress(address='10.0.0.2')]
+    ),
+    ('host3.example.com', 'AAAA'): MockedDnsAnswer(
+        ttl=600, rrset=[MockedDnsAddress(address='2001::1'), MockedDnsAddress(address='2001::2')]
+    ),
+    ('2001::2', 'PTR'): MockedDnsAnswer(
+        ttl=600,
+        rrset=[
             MockedDnsTarget(target=MockedTarget('host3.example.com.')),
-            MockedDnsTarget(target=MockedTarget('service.example.com.'))]),
+            MockedDnsTarget(target=MockedTarget('service.example.com.')),
+        ],
+    ),
     ('service.example.com', 'CNAME'): MockedDnsAnswer(
-        ttl=600, rrset=[MockedDnsTarget(target=MockedTarget('host1.example.com.'))]),
+        ttl=600, rrset=[MockedDnsTarget(target=MockedTarget('host1.example.com.'))]
+    ),
     ('multiservice.example.com', 'CNAME'): MockedDnsAnswer(
-        ttl=600, rrset=[MockedDnsTarget(target=MockedTarget('host1.example.com.')),
-                        MockedDnsTarget(target=MockedTarget('host2.example.com.'))]),
+        ttl=600,
+        rrset=[
+            MockedDnsTarget(target=MockedTarget('host1.example.com.')),
+            MockedDnsTarget(target=MockedTarget('host2.example.com.')),
+        ],
+    ),
     ('relative.example.com', 'CNAME'): MockedDnsAnswer(ttl=600, rrset=[MockedDnsTarget(target=MockedTarget('host1'))]),
 }
 
@@ -131,11 +142,14 @@ class TestDns:
         with pytest.raises(DnsNotFound, match='Record A or AAAA not found for missing.example.com'):
             self.dns.resolve_ips('missing.example.com')
 
-    @pytest.mark.parametrize('address, response', (
-        ('10.0.0.1', ['host1.example.com']),
-        ('2001::1', ['host1.example.com']),
-        ('2001::2', ['host3.example.com', 'service.example.com']),
-    ))
+    @pytest.mark.parametrize(
+        'address, response',
+        (
+            ('10.0.0.1', ['host1.example.com']),
+            ('2001::1', ['host1.example.com']),
+            ('2001::2', ['host3.example.com', 'service.example.com']),
+        ),
+    )
     def test_resolve_ptr(self, address, response):
         """Should return the list of pointers matching the address."""
         assert self.dns.resolve_ptr(address) == response
@@ -159,12 +173,15 @@ class TestDns:
         with pytest.raises(DnsNotFound, match='Record AAAA not found for host2.example.com'):
             self.dns.resolve('host2.example.com', 'AAAA')
 
-    @pytest.mark.parametrize('qname, record_type', (
-        ('raise.example.com', 'A'),
-        ('raise.example.com', 'AAAA'),
-        (dns.reversename.from_address('192.168.1.1'), 'PTR'),
-        (dns.reversename.from_address('fe80::1'), 'PTR'),
-    ))
+    @pytest.mark.parametrize(
+        'qname, record_type',
+        (
+            ('raise.example.com', 'A'),
+            ('raise.example.com', 'AAAA'),
+            (dns.reversename.from_address('192.168.1.1'), 'PTR'),
+            (dns.reversename.from_address('fe80::1'), 'PTR'),
+        ),
+    )
     def test_resolve_raise(self, qname, record_type):
         """Should raise DnsError if the qname is not defined."""
         with pytest.raises(DnsError, match=f'Unable to resolve {record_type} record for {qname}'):

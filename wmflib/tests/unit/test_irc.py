@@ -1,4 +1,5 @@
 """IRC utils module tests."""
+
 import logging
 import socket
 

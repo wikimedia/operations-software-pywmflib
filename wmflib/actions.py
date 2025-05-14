@@ -1,4 +1,5 @@
 """Actions module."""
+
 import logging
 
 from collections.abc import Hashable

@@ -34,7 +34,7 @@ def load_yaml_config(config_file: Union[str, PathLike], raises: bool = True) -> 
             config = yaml.safe_load(fh)
 
     except Exception as e:  # pylint: disable=broad-except
-        message = "Could not load config file %s: %s"
+        message = 'Could not load config file %s: %s'
         if raises:
             raise WmflibError(repr(e)) from e
 
@@ -61,7 +61,7 @@ def load_ini_config(config_file: Union[str, PathLike], raises: bool = True) -> c
         config.read(config_file)
 
     except configparser.Error as e:
-        message = "Could not load config file %s: %s"
+        message = 'Could not load config file %s: %s'
         if raises:
             raise WmflibError(repr(e)) from e
 

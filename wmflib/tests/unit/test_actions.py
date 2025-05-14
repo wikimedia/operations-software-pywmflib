@@ -1,4 +1,5 @@
 """Actions module tests."""
+
 import logging
 
 from textwrap import dedent

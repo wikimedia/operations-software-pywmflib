@@ -1,4 +1,5 @@
 """Requests module."""
+
 from typing import Any, Sequence, Tuple, Union
 
 from requests import PreparedRequest, Response, Session
@@ -46,8 +47,11 @@ class TimeoutHTTPAdapter(HTTPAdapter):
 
         super().__init__(**kwargs)
 
-    def send(self, request: PreparedRequest,  # type: ignore # pylint: disable=arguments-differ
-             **kwargs: Any) -> Response:
+    def send(  # type: ignore # pylint: disable=arguments-differ
+        self,
+        request: PreparedRequest,
+        **kwargs: Any,
+    ) -> Response:
         """Override the send method to pass the default timeout if not set.
 
         Params:
@@ -62,9 +66,15 @@ class TimeoutHTTPAdapter(HTTPAdapter):
         return super().send(request, **kwargs)
 
 
-def http_session(name: str, *, timeout: TimeoutType = DEFAULT_TIMEOUT, tries: int = 3, backoff: float = 1.0,
-                 retry_codes: Sequence[int] = DEFAULT_RETRY_STATUS_CODES,
-                 retry_methods: Sequence[str] = DEFAULT_RETRY_METHODS) -> Session:
+def http_session(
+    name: str,
+    *,
+    timeout: TimeoutType = DEFAULT_TIMEOUT,
+    tries: int = 3,
+    backoff: float = 1.0,
+    retry_codes: Sequence[int] = DEFAULT_RETRY_STATUS_CODES,
+    retry_methods: Sequence[str] = DEFAULT_RETRY_METHODS,
+) -> Session:
     """Return a new requests Session with User-Agent, default timeout and retry logic on failure already setup.
 
     By default the returned session will retry any :py:const:`DEFAULT_RETRY_METHODS` request that returns one of
@@ -89,6 +99,7 @@ def http_session(name: str, *, timeout: TimeoutType = DEFAULT_TIMEOUT, tries: in
         With default parameters::
 
             from wmflib.requests import http_session
+
             session = http_session('AppName')  # The given name will be used in the User-Agent header, see below
             # At this point the session can be used as a normal requests session
 

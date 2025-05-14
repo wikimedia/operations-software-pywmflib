@@ -1,4 +1,5 @@
 """File I/O module."""
+
 import fcntl
 import logging
 
@@ -30,6 +31,7 @@ def locked_open(file_path: PathLike, file_mode: str = 'r', *, timeout: int = 10)
         ::
 
             from wmflib.fileio import locked_open
+
             with locked_open('existing.file') as f:
                 text = f.read()
 
@@ -59,7 +61,7 @@ def locked_open(file_path: PathLike, file_mode: str = 'r', *, timeout: int = 10)
                 tries=tries,
                 delay=timedelta(seconds=timeout / tries),
                 backoff_mode='constant',
-                exceptions=(OSError, BlockingIOError)
+                exceptions=(OSError, BlockingIOError),
             )(fcntl.flock)(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             logger.debug('Acquired exclusive lock on %s', file_path)
         except OSError as e:
