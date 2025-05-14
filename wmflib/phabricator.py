@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_phabricator(
-    bot_config_file: str, section: str = 'phabricator_bot', dry_run: bool = True
+    bot_config_file: str, section: str = "phabricator_bot", dry_run: bool = True
 ) -> phabricator.Phabricator:
     """Initialize the Phabricator client from the bot config file.
 
@@ -21,8 +21,8 @@ def create_phabricator(
 
             from wmflib.phabricator import create_phabricator
 
-            phab_client = create_phabricator('/path/to/config.ini', dry_run=False)
-            phab_client.task_comment('T12345', 'Message')
+            phab_client = create_phabricator("/path/to/config.ini", dry_run=False)
+            phab_client.task_comment("T12345", "Message")
 
     Arguments:
         bot_config_file (str): the path to the configuration file for the Phabricator bot, with the following
@@ -47,24 +47,24 @@ def create_phabricator(
     """
     parser = configparser.ConfigParser()
     parser.read(bot_config_file)
-    required_options = ('host', 'username', 'token')
+    required_options = ("host", "username", "token")
     params = {}
 
     try:
         for option in required_options:
             params[option] = parser.get(section, option)
     except configparser.NoSectionError as e:
-        raise PhabricatorError(f'Unable to find section {section} in config file {bot_config_file}') from e
+        raise PhabricatorError(f"Unable to find section {section} in config file {bot_config_file}") from e
     except configparser.NoOptionError as e:
         raise PhabricatorError(
-            f'Unable to find all required options {required_options} in section {section} of config '
-            f'file {bot_config_file}'
+            f"Unable to find all required options {required_options} in section {section} of config "
+            f"file {bot_config_file}"
         ) from e
 
     try:
         client = phabricator.Phabricator(**params)
     except Exception as e:
-        raise PhabricatorError('Unable to instantiate Phabricator client') from e
+        raise PhabricatorError("Unable to instantiate Phabricator client") from e
 
     return Phabricator(client, dry_run=dry_run)
 
@@ -99,12 +99,12 @@ class Phabricator:
 
         """
         if self._dry_run:
-            logger.debug('Skip updating Phabricator task %s in DRY-RUN with comment: %s', task_id, comment)
+            logger.debug("Skip updating Phabricator task %s in DRY-RUN with comment: %s", task_id, comment)
             return
 
         try:
-            transactions = [{'type': 'comment', 'value': comment}]
+            transactions = [{"type": "comment", "value": comment}]
             self._client.maniphest.edit(objectIdentifier=task_id, transactions=transactions)
-            logger.info('Updated Phabricator task %s', task_id)
+            logger.info("Updated Phabricator task %s", task_id)
         except Exception as e:
-            raise PhabricatorError(f'Unable to update Phabricator task {task_id}') from e
+            raise PhabricatorError(f"Unable to update Phabricator task {task_id}") from e

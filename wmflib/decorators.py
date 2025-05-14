@@ -39,17 +39,17 @@ class RetryParams:
             wmflib.exceptions.WmflibError: if any field has an invalid value.
 
         """
-        if self.backoff_mode not in ('constant', 'linear', 'power', 'exponential'):
-            raise WmflibError(f'Invalid backoff_mode: {self.backoff_mode}')
+        if self.backoff_mode not in ("constant", "linear", "power", "exponential"):
+            raise WmflibError(f"Invalid backoff_mode: {self.backoff_mode}")
 
-        if self.backoff_mode == 'exponential' and self.delay.total_seconds() < 1:
-            raise WmflibError(f'Delay must be greater than 1 if backoff_mode is exponential, got {self.delay}')
+        if self.backoff_mode == "exponential" and self.delay.total_seconds() < 1:
+            raise WmflibError(f"Delay must be greater than 1 if backoff_mode is exponential, got {self.delay}")
 
         if self.tries < 1:
-            raise WmflibError(f'Tries must be a positive integer, got {self.tries}')
+            raise WmflibError(f"Tries must be a positive integer, got {self.tries}")
 
         if not self.failure_message:
-            raise WmflibError('A failure_message must be set.')
+            raise WmflibError("A failure_message must be set.")
 
 
 def ensure_wrap(func: Callable) -> Callable:
@@ -78,7 +78,7 @@ def retry(  # pylint: disable=too-many-arguments,useless-suppression
     *,
     tries: int = 3,
     delay: timedelta = timedelta(seconds=3),
-    backoff_mode: str = 'exponential',
+    backoff_mode: str = "exponential",
     exceptions: Tuple[Type[Exception], ...] = (WmflibError,),
     failure_message: Optional[str] = None,
     dynamic_params_callbacks: Tuple[Callable[[RetryParams, Callable, Tuple, Dict[str, Any]], None], ...] = (),
@@ -98,10 +98,10 @@ def retry(  # pylint: disable=too-many-arguments,useless-suppression
             >>> @retry
             ... def poll_file(path: Path):
             ...     if not path.exists():
-            ...         raise WmflibError(f'File {path} not found')
+            ...         raise WmflibError(f"File {path} not found")
             ...
-            >>> poll_file(Path('/tmp'))
-            >>> poll_file(Path('/tmp/nonexistent'))
+            >>> poll_file(Path("/tmp"))
+            >>> poll_file(Path("/tmp/nonexistent"))
             [1/3, retrying in 3.00s] Attempt to run '__main__.poll_file' raised: File /tmp/nonexistent not found
             [2/3, retrying in 9.00s] Attempt to run '__main__.poll_file' raised: File /tmp/nonexistent not found
             Traceback (most recent call last):
@@ -117,7 +117,7 @@ def retry(  # pylint: disable=too-many-arguments,useless-suppression
             >>> from datetime import timedelta
             >>> from pathlib import Path
             >>> from wmflib.decorators import retry
-            >>> @retry(tries=5, delay=timedelta(seconds=30), backoff_mode='constant', failure_message='File not found',
+            >>> @retry(tries=5, delay=timedelta(seconds=30), backoff_mode="constant", failure_message="File not found",
             ...        exceptions=(RuntimeError,))
             ... def poll_file(path: Path):
             ...     if not path.exists():
@@ -190,7 +190,7 @@ def retry(  # pylint: disable=too-many-arguments,useless-suppression
             decorator if the decorated function/method has a 'slow' keyword argument that is to True::
 
                 def double_delay(retry_params, func, args, kwargs):
-                    if kwargs.get('slow', False):
+                    if kwargs.get("slow", False):
                         retry_params.delay = retry_params.delay * 2
 
                 @retry(delay=timedelta(seconds=10), dynamic_params_callbacks=(double_delay,))
@@ -210,11 +210,11 @@ def retry(  # pylint: disable=too-many-arguments,useless-suppression
         failure_message = f"Attempt to run '{func.__module__}.{func.__qualname__}' raised"
 
     static_params: Dict[str, Any] = {
-        'tries': tries,
-        'delay': delay,
-        'backoff_mode': backoff_mode,
-        'exceptions': exceptions,
-        'failure_message': failure_message,
+        "tries": tries,
+        "delay": delay,
+        "backoff_mode": backoff_mode,
+        "exceptions": exceptions,
+        "failure_message": failure_message,
     }
 
     @wraps(func)
@@ -234,7 +234,7 @@ def retry(  # pylint: disable=too-many-arguments,useless-suppression
             except exceptions as e:
                 sleep = get_backoff_sleep(params.backoff_mode, params.delay.total_seconds(), attempt)
                 logger.warning(
-                    '[%d/%d, retrying in %.2fs] %s: %s',
+                    "[%d/%d, retrying in %.2fs] %s: %s",
                     attempt,
                     params.tries,
                     sleep,
@@ -265,12 +265,12 @@ def _exception_message(exception: BaseException) -> str:
         # reverse order from the built-in handler (i.e. newest exception first) since we aren't following a
         # traceback.
         if exception.__cause__ is not None:
-            message_parts.append(f'Caused by: {exception.__cause__}')
+            message_parts.append(f"Caused by: {exception.__cause__}")
             exception = exception.__cause__
         else:  # e.__context__ is not None, due to the while condition.
-            message_parts.append(f'Raised while handling: {exception.__context__}')
+            message_parts.append(f"Raised while handling: {exception.__context__}")
             exception = cast(BaseException, exception.__context__)  # Casting away the Optional.
-    return '\n'.join(message_parts)
+    return "\n".join(message_parts)
 
 
 def get_backoff_sleep(backoff_mode: str, base: Union[int, float], index: int) -> Union[int, float]:
@@ -285,15 +285,15 @@ def get_backoff_sleep(backoff_mode: str, base: Union[int, float], index: int) ->
         int, float: the amount of sleep to perform for the backoff.
 
     """
-    if backoff_mode == 'constant':
+    if backoff_mode == "constant":
         sleep = base
-    elif backoff_mode == 'linear':
+    elif backoff_mode == "linear":
         sleep = base * index
-    elif backoff_mode == 'power':
+    elif backoff_mode == "power":
         sleep = base * 2 ** (index - 1)
-    elif backoff_mode == 'exponential':
+    elif backoff_mode == "exponential":
         sleep = base**index
     else:
-        raise ValueError(f'Invalid backoff_mode: {backoff_mode}')
+        raise ValueError(f"Invalid backoff_mode: {backoff_mode}")
 
     return sleep

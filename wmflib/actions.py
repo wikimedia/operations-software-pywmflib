@@ -39,9 +39,9 @@ class Actions:
         Examples:
             ::
 
-                actions = Actions('host1001')
-                actions.success('Downtimed on Icinga')
-                actions.success('Restarted ntp')
+                actions = Actions("host1001")
+                actions.success("Downtimed on Icinga")
+                actions.success("Restarted ntp")
                 print(actions)
 
             The above code will print::
@@ -66,8 +66,8 @@ class Actions:
             str: the string representation.
 
         """
-        actions = '\n'.join(f'  - {action}' for action in self.actions)
-        return f'{self.name} (**{self.status}**)\n{actions}'
+        actions = "\n".join(f"  - {action}" for action in self.actions)
+        return f"{self.name} (**{self.status}**)\n{actions}"
 
     @property
     def status(self) -> str:
@@ -81,11 +81,11 @@ class Actions:
 
         """
         if self.has_failures:
-            return 'FAIL'
+            return "FAIL"
         if self.has_warnings:
-            return 'WARN'
+            return "WARN"
 
-        return 'PASS'
+        return "PASS"
 
     def success(self, message: str) -> None:
         """Register a successful action, it gets also logged with info level.
@@ -144,9 +144,9 @@ class ActionsDict(dict):
         ::
 
             actions = ActionsDict()
-            actions['host1001'].success('Downtimed on Icinga')
-            actions['host1001'].failure('**Failed to restart ntp**')  # Will be rendered in bold in Phabricator
-            actions['host2001'].warning('//Host with alerts on Icinga//')  # Will be rendered in italic in Phabricator
+            actions["host1001"].success("Downtimed on Icinga")
+            actions["host1001"].failure("**Failed to restart ntp**")  # Will be rendered in bold in Phabricator
+            actions["host2001"].warning("//Host with alerts on Icinga//")  # Will be rendered in italic in Phabricator
             print(actions)
 
         The above code will print::
@@ -178,4 +178,4 @@ class ActionsDict(dict):
             str: the string representation of each item in the dictionary, newline-separated.
 
         """
-        return '\n'.join(f'- {value}\n' for value in self.values())
+        return "\n".join(f"- {value}\n" for value in self.values())

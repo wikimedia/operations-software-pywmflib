@@ -22,7 +22,7 @@ def logoutd_args(description: Optional[str] = None, args: Optional[List] = None)
 
         from wmflib.idm import logoutd_args
 
-        args = logoutd_args('Some description')
+        args = logoutd_args("Some description")
         # write your own script
 
     Arguments:
@@ -34,28 +34,28 @@ def logoutd_args(description: Optional[str] = None, args: Optional[List] = None)
 
     """
     if description is None:
-        raise IdmValueError('Must provide a string description')
+        raise IdmValueError("Must provide a string description")
 
     parser = ArgumentParser(description=description)
-    parser.add_argument('-v', '--verbose', action='count', default=0)
-    sub = parser.add_subparsers(dest='command', required=True)
-    query = sub.add_parser('query', help='display the status of logged-in users')
+    parser.add_argument("-v", "--verbose", action="count", default=0)
+    sub = parser.add_subparsers(dest="command", required=True)
+    query = sub.add_parser("query", help="display the status of logged-in users")
     query.add_argument(
-        '-u',
-        '--uid',
+        "-u",
+        "--uid",
         required=True,
-        help='The uid of the user to use',
+        help="The uid of the user to use",
     )
-    query.add_argument('-c', '--cn', required=True, help='The cn of the user to use')
+    query.add_argument("-c", "--cn", required=True, help="The cn of the user to use")
 
     sub.add_parser(
-        'logout',
+        "logout",
         parents=[query],
         add_help=False,
-        help='display the status of logged in users',
+        help="display the status of logged in users",
     )
 
-    sub.add_parser('list', help='list all active sessions')
+    sub.add_parser("list", help="list all active sessions")
 
     return parser.parse_args(args)
 
@@ -84,7 +84,7 @@ class LogoutdBase(ABC):  # noqa: D300,D301 See https://github.com/PyCQA/pydocsty
 
     """
 
-    user_identifier: str = 'cn'
+    user_identifier: str = "cn"
 
     def __init__(self, args: Optional[List] = None) -> None:
         """Init function.
@@ -94,7 +94,7 @@ class LogoutdBase(ABC):  # noqa: D300,D301 See https://github.com/PyCQA/pydocsty
 
         """
         self._args = logoutd_args(self.__doc__, args)
-        self._logger = getLogger('.'.join((self.__module__, self.__class__.__name__)))
+        self._logger = getLogger(".".join((self.__module__, self.__class__.__name__)))
 
     @property
     def user(self) -> str:
@@ -146,9 +146,9 @@ class LogoutdBase(ABC):  # noqa: D300,D301 See https://github.com/PyCQA/pydocsty
             (int): exit code depends on command
 
         """
-        self._logger.debug('Running action: %s', self._args.command)
-        if self._args.command == 'query':
+        self._logger.debug("Running action: %s", self._args.command)
+        if self._args.command == "query":
             return self.query_user(self.user)
-        if self._args.command == 'logout':
+        if self._args.command == "logout":
             return self.logout_user(self.user)
         return self.list()

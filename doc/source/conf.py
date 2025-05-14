@@ -30,49 +30,49 @@ sys.path.insert(0, Path(__file__).parent.parent.resolve())
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
+# needs_sphinx = "1.0"
 
 # Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+# extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinxarg.ext',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
+    "sphinxarg.ext",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+# source_suffix = [".rst", ".md"]
+source_suffix = ".rst"
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = 'wmflib'
-title = f'{project} Documentation'
+project = "wmflib"
+title = f"{project} Documentation"
 copyright = (
-    '2018-2020, Riccardo Coccioli <rcoccioli@wikimedia.org>, '
-    'Luca Toscano <ltoscano@wikimedia.org>, Wikimedia Foundation, Inc.'
+    "2018-2020, Riccardo Coccioli <rcoccioli@wikimedia.org>, "
+    "Luca Toscano <ltoscano@wikimedia.org>, Wikimedia Foundation, Inc."
 )
-author = 'Riccardo Coccioli'
+author = "Riccardo Coccioli"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = get_distribution('wmflib').version
+release = get_distribution("wmflib").version
 # The short X.Y version.
 version = release
 
@@ -82,7 +82,7 @@ version = release
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'en'
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -90,7 +90,7 @@ language = 'en'
 exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
@@ -98,20 +98,20 @@ todo_include_todos = True
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = 'sphinx_rtd_theme'
-sphinx_version_parts = [int(i) for i in sphinx_version.split('.')]
+html_theme = "sphinx_rtd_theme"
+sphinx_version_parts = [int(i) for i in sphinx_version.split(".")]
 if sphinx_version_parts[0] == 1 and sphinx_version_parts[1] < 6:
     html_use_smartypants = False
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'wmflibdoc'
+htmlhelp_basename = "wmflibdoc"
 
 
 # -- Options for manual page output ---------------------------------------
@@ -124,9 +124,9 @@ htmlhelp_basename = 'wmflibdoc'
 # -- Options for intersphinx ---------------------------------------
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3/', None),
-    'dnspython': ('https://dnspython.readthedocs.io/en/stable/', None),
-    'requests': ('https://requests.readthedocs.io/en/master/', None),
+    "python": ("https://docs.python.org/3/", None),
+    "dnspython": ("https://dnspython.readthedocs.io/en/stable/", None),
+    "requests": ("https://requests.readthedocs.io/en/master/", None),
 }
 
 # Napoleon settings
@@ -146,11 +146,11 @@ napoleon_use_keyword = True
 # Autodoc settings
 autodoc_default_options = {
     # Using None as value instead of True to support the version of Sphinx used in Buster
-    'members': None,
-    'member-order': 'bysource',
-    'show-inheritance': None,
+    "members": None,
+    "member-order": "bysource",
+    "show-inheritance": None,
 }
-autoclass_content = 'both'
+autoclass_content = "both"
 
 
 # -- Helper functions -----------------------------------------------------
@@ -158,63 +158,63 @@ autoclass_content = 'both'
 
 def filter_namedtuple_docstrings(app, what, name, obj, options, lines):
     """Fix the automatically generated docstrings for namedtuples classes."""
-    if what == 'attribute' and len(lines) == 1 and lines[0].startswith('Alias for field number'):
-        lines[0] = 'See the Keyword Arguments description.'
+    if what == "attribute" and len(lines) == 1 and lines[0].startswith("Alias for field number"):
+        lines[0] = "See the Keyword Arguments description."
 
 
 def add_abstract_annotations(app, what, name, obj, options, lines):
     """Workaround to add an abstract annotation for ABC abstract classes and abstract methods."""
-    if (what in ('method', 'attribute') and getattr(obj, '__isabstractmethod__', False)) or (
-        what == 'class' and len(getattr(obj, '__abstractmethods__', [])) > 0
+    if (what in ("method", "attribute") and getattr(obj, "__isabstractmethod__", False)) or (
+        what == "class" and len(getattr(obj, "__abstractmethods__", [])) > 0
     ):
-        lines.insert(0, '``abstract``')
+        lines.insert(0, "``abstract``")
 
 
 def add_inherited_annotations(app, what, name, obj, options, lines):
     """Workaround to add an inherited annotation for methods inherited from the parent classes."""
-    if what == 'method':
-        if hasattr(obj, 'im_class'):
+    if what == "method":
+        if hasattr(obj, "im_class"):
             if obj.__name__ not in obj.im_class.__dict__:
-                lines.insert(0, '``inherited``')
+                lines.insert(0, "``inherited``")
         elif isinstance(obj, types.FunctionType):  # Static methods
-            module_name, class_name, _ = name.rsplit('.', 2)
+            module_name, class_name, _ = name.rsplit(".", 2)
             module = importlib.import_module(module_name)  # Dynamically import the module
             if obj.__name__ not in getattr(module, class_name).__dict__:  # Dynamically inspect the class
-                lines.insert(0, '``inherited``')
-                lines.insert(0, '``static``')
+                lines.insert(0, "``inherited``")
+                lines.insert(0, "``static``")
 
-    elif what == 'attribute':
-        module_name, class_name, prop = name.rsplit('.', 2)
+    elif what == "attribute":
+        module_name, class_name, prop = name.rsplit(".", 2)
         module = importlib.import_module(module_name)  # Dynamically import the module
         if prop not in getattr(module, class_name).__dict__:  # Dynamically inspect the class
-            lines.insert(0, '``inherited``')
+            lines.insert(0, "``inherited``")
 
 
 def skip_external_inherited(app, what, name, obj, skip, options):
     """Skip methods inherited from external libraries."""
-    if not (what == 'class' and hasattr(obj, 'im_class') and obj.__name__ not in obj.im_class.__dict__):
+    if not (what == "class" and hasattr(obj, "im_class") and obj.__name__ not in obj.im_class.__dict__):
         return
 
     classes = [obj.im_class]
     while classes:
         c = classes.pop()
         if obj.__name__ in c.__dict__:  # Found the class that defined the method
-            return 'wmflib' not in c.__module__  # Skip if from external libraries
+            return "wmflib" not in c.__module__  # Skip if from external libraries
         else:
             classes = list(c.__bases__) + classes  # Continue in the inheritance tree
 
 
 def skip_exceptions_init(app, what, name, obj, skip, options):
     """Skip __init__ and with_traceback methods for Exception classes."""
-    if what == 'exception' and name in ('__init__', 'with_traceback'):
+    if what == "exception" and name in ("__init__", "with_traceback"):
         return True
 
 
 def setup(app):
     """Register the filter_namedtuple_docstrings function."""
-    app.connect('autodoc-process-docstring', filter_namedtuple_docstrings)
-    app.connect('autodoc-process-docstring', add_abstract_annotations)
-    app.connect('autodoc-process-docstring', add_inherited_annotations)
-    app.connect('autodoc-skip-member', skip_exceptions_init)
-    app.connect('autodoc-skip-member', skip_external_inherited)
-    app.add_css_file('theme_overrides.css')  # override wide tables in RTD theme
+    app.connect("autodoc-process-docstring", filter_namedtuple_docstrings)
+    app.connect("autodoc-process-docstring", add_abstract_annotations)
+    app.connect("autodoc-process-docstring", add_inherited_annotations)
+    app.connect("autodoc-skip-member", skip_exceptions_init)
+    app.connect("autodoc-skip-member", skip_external_inherited)
+    app.add_css_file("theme_overrides.css")  # override wide tables in RTD theme

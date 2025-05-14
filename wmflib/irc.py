@@ -23,10 +23,10 @@ class SocketHandler(logging.Handler):
             >>> import logging
             >>> from wmflib.interactive import get_username
             >>> from wmflib.irc import SocketHandler
-            >>> irc_logger = logging.getLogger('irc_logger')
+            >>> irc_logger = logging.getLogger("irc_logger")
             >>> irc_logger.setLevel(logging.INFO)
-            >>> irc_logger.addHandler(SocketHandler('irchost.domain', 1234, get_username()))
-            >>> irc_logger.info('Message')
+            >>> irc_logger.addHandler(SocketHandler("irchost.domain", 1234, get_username()))
+            >>> irc_logger.info("Message")
 
         The tcpircbot that received the message will then send it to the configured IRC channel::
 
@@ -34,7 +34,7 @@ class SocketHandler(logging.Handler):
 
     """
 
-    command = ''
+    command = ""
 
     def __init__(self, host: str, port: int, username: str) -> None:
         """Initialize the IRC socket handler.
@@ -58,7 +58,7 @@ class SocketHandler(logging.Handler):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(1.0)
             sock.connect(self.addr)
-            sock.sendall(message.encode('utf-8'))
+            sock.sendall(message.encode("utf-8"))
         except OSError:
             self.handleError(record)
         finally:
@@ -70,7 +70,7 @@ class SocketHandler(logging.Handler):
 
         See https://docs.python.org/3/library/logging.html#handler-objects
         """
-        self._send_message(f'{self.command} {self.username}@{self.hostname} {self.format(record)}'.strip(), record)
+        self._send_message(f"{self.command} {self.username}@{self.hostname} {self.format(record)}".strip(), record)
 
 
 class SALSocketHandler(SocketHandler):
@@ -82,4 +82,4 @@ class SALSocketHandler(SocketHandler):
     # Stashbot expects !log messages relayed by logmsgbot to have the
     # format: "!log <nick> <msg>". The <nick> is parsed out and used as
     # the label of who actually made the SAL entry.
-    command = '!log'
+    command = "!log"
