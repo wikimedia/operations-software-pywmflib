@@ -165,7 +165,7 @@ class ActionsDict(dict):
     def __missing__(self, key: Hashable) -> Actions:
         """Instantiate a new Actions instance for the missing key like a defaultdict.
 
-        Parameters as required by Python's data model, see :py:method:`object.__missing__`.
+        Parameters as required by Python's data model, see :py:meth:`object.__missing__`.
 
         """
         self[key] = Actions(key)

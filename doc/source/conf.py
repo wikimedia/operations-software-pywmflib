@@ -15,6 +15,7 @@ import importlib
 import sys
 import types
 
+from datetime import date
 from pathlib import Path
 
 from pkg_resources import get_distribution
@@ -30,7 +31,7 @@ sys.path.insert(0, Path(__file__).parent.parent.resolve())
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = "1.0"
+needs_sphinx = "1.4.9"
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
@@ -52,7 +53,6 @@ templates_path = ["_templates"]
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = [".rst", ".md"]
 source_suffix = ".rst"
 
 # The master toctree document.
@@ -62,7 +62,7 @@ master_doc = "index"
 project = "wmflib"
 title = f"{project} Documentation"
 copyright = (
-    "2018-2020, Riccardo Coccioli <rcoccioli@wikimedia.org>, "
+    f"2018-{date.today().year}, Riccardo Coccioli <rcoccioli@wikimedia.org>, "
     "Luca Toscano <ltoscano@wikimedia.org>, Wikimedia Foundation, Inc."
 )
 author = "Riccardo Coccioli"
@@ -118,7 +118,6 @@ htmlhelp_basename = "wmflibdoc"
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-# man_pages = []
 
 
 # -- Options for intersphinx ---------------------------------------
@@ -193,21 +192,22 @@ def add_inherited_annotations(app, what, name, obj, options, lines):
 def skip_external_inherited(app, what, name, obj, skip, options):
     """Skip methods inherited from external libraries."""
     if not (what == "class" and hasattr(obj, "im_class") and obj.__name__ not in obj.im_class.__dict__):
-        return
+        return False
 
     classes = [obj.im_class]
     while classes:
         c = classes.pop()
         if obj.__name__ in c.__dict__:  # Found the class that defined the method
             return "wmflib" not in c.__module__  # Skip if from external libraries
-        else:
-            classes = list(c.__bases__) + classes  # Continue in the inheritance tree
+
+        classes = list(c.__bases__) + classes  # Continue in the inheritance tree
+
+    return False
 
 
 def skip_exceptions_init(app, what, name, obj, skip, options):
     """Skip __init__ and with_traceback methods for Exception classes."""
-    if what == "exception" and name in ("__init__", "with_traceback"):
-        return True
+    return what == "exception" and name in ("__init__", "with_traceback")
 
 
 def setup(app):
