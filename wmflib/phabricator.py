@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_phabricator(
-    bot_config_file: str, section: str = "phabricator_bot", dry_run: bool = True
+    bot_config_file: str, *, section: str = "phabricator_bot", dry_run: bool = True
 ) -> phabricator.Phabricator:
     """Initialize the Phabricator client from the bot config file.
 
@@ -76,7 +76,7 @@ class PhabricatorError(WmflibError):
 class Phabricator:
     """Class to interact with a Phabricator website."""
 
-    def __init__(self, phabricator_client: phabricator.Phabricator, dry_run: bool = True) -> None:
+    def __init__(self, phabricator_client: phabricator.Phabricator, *, dry_run: bool = True) -> None:
         """Initialize the Phabricator client from the bot config file.
 
         Arguments:
