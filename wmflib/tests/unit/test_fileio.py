@@ -15,9 +15,10 @@ def try_lock_file(test_file):
         try:
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             fcntl.flock(fd, fcntl.LOCK_UN)
-            return True
         except OSError:
             return False
+
+        return True
 
 
 @mock.patch("wmflib.decorators.time.sleep", return_value=None)
@@ -36,8 +37,7 @@ def test_locked_open_success(mocked_sleep, tmp_path):
 @mock.patch("wmflib.decorators.time.sleep", return_value=None)
 def test_locked_open_fail(mocked_sleep, locked_file):
     """It should retry to get an exclusive lock and raise a LockError exception on failure."""
-    with pytest.raises(LockError, match="Unable to acquire exclusive lock on"):
-        with locked_open(locked_file):
-            assert False, "Execution should not reach this point"
+    with pytest.raises(LockError, match="Unable to acquire exclusive lock on"), locked_open(locked_file):
+        pytest.fail("Execution should not reach this point")
 
     mocked_sleep.assert_has_calls([mock.call(1.0)] * 9)  # 10 tries, 9 sleeps

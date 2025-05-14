@@ -79,9 +79,8 @@ def test_ask_input_choices_ko(mocked_isatty, mocked_input, capsys, caplog):
     mocked_isatty.return_value = True
     mocked_input.return_value = "invalid"
     message = "Test message"
-    with pytest.raises(interactive.InputError, match="Too many invalid answers"):
-        with caplog.at_level(logging.INFO):
-            interactive.ask_input(message, ["go"])
+    with pytest.raises(interactive.InputError, match="Too many invalid answers"), caplog.at_level(logging.INFO):
+        interactive.ask_input(message, ["go"])
 
     out, _ = capsys.readouterr()
     assert message in out
@@ -98,9 +97,8 @@ def test_ask_input_validator_ko(mocked_isatty, mocked_input, capsys, caplog):
     mocked_isatty.return_value = True
     mocked_input.return_value = "short"
     message = "Test message"
-    with pytest.raises(interactive.InputError, match="Too many invalid answers"):
-        with caplog.at_level(logging.INFO):
-            interactive.ask_input(message, [], validator=len_validator)
+    with pytest.raises(interactive.InputError, match="Too many invalid answers"), caplog.at_level(logging.INFO):
+        interactive.ask_input(message, [], validator=len_validator)
 
     out, _ = capsys.readouterr()
     assert message in out
@@ -118,9 +116,8 @@ def test_ask_input_raise(mocked_isatty, mocked_input, exception, capsys, caplog)
     mocked_isatty.return_value = True
     mocked_input.side_effect = exception
     message = "Test message"
-    with pytest.raises(interactive.InputError, match="Too many invalid answers"):
-        with caplog.at_level(logging.INFO):
-            interactive.ask_input(message, ["go"])
+    with pytest.raises(interactive.InputError, match="Too many invalid answers"), caplog.at_level(logging.INFO):
+        interactive.ask_input(message, ["go"])
 
     out, _ = capsys.readouterr()
     assert message in out

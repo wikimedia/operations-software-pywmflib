@@ -14,7 +14,7 @@ from wmflib.tests import check_logs, get_fixture_path, require_caplog
 def test_load_yaml_config_empty():
     """Loading an empty config should return an empty dictionary."""
     config_dict = load_yaml_config(get_fixture_path("config", "empty.yaml"))
-    assert {} == config_dict
+    assert config_dict == {}
 
 
 @pytest.mark.parametrize(
@@ -37,7 +37,7 @@ def test_load_yaml_config_no_raise(caplog, name):
     with caplog.at_level(DEBUG):
         config_dict = load_yaml_config(get_fixture_path("config", name), raises=False)
 
-    assert {} == config_dict
+    assert config_dict == {}
     check_logs(caplog, "Could not load config file", DEBUG)
 
 

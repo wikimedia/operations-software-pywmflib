@@ -71,7 +71,7 @@ def mocked_dns_query(qname, record_type):
         if isinstance(qname, bytes):
             qname = qname.decode()
 
-        if qname.startswith("192.168.") or qname.startswith("fe80::"):
+        if qname.startswith(("192.168.", "fe80::")):
             raise dns.exception.DNSException("Not defined")
 
     elif record_type in ("A", "AAAA") and qname.startswith("raise."):
