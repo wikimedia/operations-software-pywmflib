@@ -205,7 +205,7 @@ def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
     Arguments:
         func (callable): the function/method to execute.
         *args (mixed): all the positional arguments to pass to the function/method.
-        *kwargs (mixed): all the keyword arguments to pass to the function/method.
+        **kwargs (mixed): all the keyword arguments to pass to the function/method.
 
     Returns:
         mixed: what the called function returns, or :py:data:`None` if the execution should continue skipping this

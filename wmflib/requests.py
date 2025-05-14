@@ -47,7 +47,7 @@ class TimeoutHTTPAdapter(HTTPAdapter):
 
         super().__init__(**kwargs)
 
-    def send(  # type: ignore # pylint: disable=arguments-differ
+    def send(  # type: ignore[override] # pylint: disable=arguments-differ
         self,
         request: PreparedRequest,
         **kwargs: Any,

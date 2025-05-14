@@ -1,12 +1,9 @@
 """Package configuration."""
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
-
-with open("README.rst", "r") as readme:
-    LONG_DESCRIPTION = readme.read()
-
-
+LONG_DESCRIPTION = Path("README.rst").read_text()
 INSTALL_REQUIRES = [
     "dnspython>=1.15.0",
     "pyyaml>=3.11",

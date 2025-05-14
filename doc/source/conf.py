@@ -11,11 +11,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use pathlib's resolve() to make it absolute, like shown here.
 #
+import datetime
 import importlib
 import sys
 import types
-
-from datetime import date
 from pathlib import Path
 
 from pkg_resources import get_distribution
@@ -62,7 +61,7 @@ master_doc = "index"
 project = "wmflib"
 title = f"{project} Documentation"
 copyright = (
-    f"2018-{date.today().year}, Riccardo Coccioli <rcoccioli@wikimedia.org>, "
+    f"2018-{datetime.datetime.now(tz=datetime.timezone.utc).year}, Riccardo Coccioli <rcoccioli@wikimedia.org>, "
     "Luca Toscano <ltoscano@wikimedia.org>, Wikimedia Foundation, Inc."
 )
 author = "Riccardo Coccioli"

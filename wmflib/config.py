@@ -51,6 +51,7 @@ def load_ini_config(config_file: Union[str, PathLike], raises: bool = True) -> c
 
     Arguments:
         config_file (str): the path of the configuration file.
+        raises (bool, optional): whether to raise exception if unable to load the config.
 
     Returns:
         configparser.ConfigParser: the parsed config.

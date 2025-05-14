@@ -54,8 +54,8 @@ def locked_open(file_path: PathLike, file_mode: str = "r", *, timeout: int = 10)
     tries = 10
     with open(file_path, file_mode, encoding="utf-8") as fd:
         try:
-            # Decorate the call to the locking function to retry acquiring the lock:
-            # decorator(decorator_args)(function)(function_args)
+            # Decorate the call to the locking function to retry acquiring the lock
+            # with: decorator(decorator_args)(function)(function_args)
             # no-value-for-parameter is needed because pylint is confused by @ensure_wraps
             retry(  # pylint: disable=no-value-for-parameter
                 tries=tries,
