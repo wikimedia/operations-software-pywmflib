@@ -2,6 +2,7 @@
 
 import logging
 
+from contextlib import suppress
 from typing import cast, List, Optional, Sequence, Union
 
 from dns import resolver, reversename, rrset
@@ -19,11 +20,14 @@ class DnsError(WmflibError):
     """Custom exception class for errors of the Dns class."""
 
 
-class DnsNotFound(DnsError):
+class DnsNotFoundError(DnsError):
     """Custom exception class to indicate the record was not found.
 
     One or more resource records might exist for this domain but no record matches the resource record type requested.
     """
+
+
+DnsNotFound = DnsNotFoundError
 
 
 class Dns:
@@ -110,18 +114,16 @@ class Dns:
             list: the list of IPv4 and IPv6 addresses as strings returned by the DNS response.
 
         Raises:
-            wmflib.dns.DnsNotFound: when no address is found.
+            wmflib.dns.DnsNotFoundError: when no address is found.
 
         """
         addresses = []
         for func in ("resolve_ipv4", "resolve_ipv6"):
-            try:
+            with suppress(DnsNotFoundError):  # Allow single stack answers
                 addresses += getattr(self, func)(name)
-            except DnsNotFound:
-                pass  # Allow single stack answers
 
         if not addresses:
-            raise DnsNotFound(f"Record A or AAAA not found for {name}")
+            raise DnsNotFoundError(f"Record A or AAAA not found for {name}")
 
         return addresses
 
@@ -184,7 +186,7 @@ class Dns:
             dns.resolver.Answer: the DNS response.
 
         Raises:
-            wmflib.dns.DnsNotFound: if there are no records for the given record type but the qname has records for
+            wmflib.dns.DnsNotFoundError: if there are no records for the given record type but the qname has records for
                 different record type(s).
             wmflib.dns.DnsError: on generic error.
 
@@ -193,7 +195,7 @@ class Dns:
             response = self._resolver.query(qname, record_type)
             logger.debug("Resolved %s record for %s: %s", record_type, qname, response.rrset)
         except (resolver.NoAnswer, resolver.NXDOMAIN) as e:
-            raise DnsNotFound(f"Record {record_type} not found for {qname}") from e
+            raise DnsNotFoundError(f"Record {record_type} not found for {qname}") from e
         except DNSException as e:
             raise DnsError(f"Unable to resolve {record_type} record for {qname}") from e
 

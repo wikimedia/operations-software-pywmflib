@@ -7,7 +7,7 @@ import dns
 import pytest
 
 from wmflib.constants import PUBLIC_AUTHDNS
-from wmflib.dns import Dns, DnsError, DnsNotFound, PublicAuthDns
+from wmflib.dns import Dns, DnsError, DnsNotFound, DnsNotFoundError, PublicAuthDns
 
 
 # TODO: convert the mocked objects using dnspython objects. It requires quite some code given the structure of
@@ -138,8 +138,8 @@ class TestDns:
         assert self.dns.resolve_ips("host2.example.com") == ["10.0.0.1"]
 
     def test_resolve_ips_not_found(self):
-        """Should raise DnsNotFound exception if the name raises NoAnswer for both A and AAAA records."""
-        with pytest.raises(DnsNotFound, match="Record A or AAAA not found for missing.example.com"):
+        """Should raise DnsNotFoundError exception if the name raises NoAnswer for both A and AAAA records."""
+        with pytest.raises(DnsNotFoundError, match="Record A or AAAA not found for missing.example.com"):
             self.dns.resolve_ips("missing.example.com")
 
     @pytest.mark.parametrize(
@@ -169,7 +169,8 @@ class TestDns:
             self.dns.resolve_cname("relative.example.com")
 
     def test_resolve_not_found(self):
-        """Should raise DnsNotFound exception if the record type is not defined for the qname."""
+        """Should raise DnsNotFoundError exception if the record type is not defined for the qname."""
+        # Using the alias DnsNotFound to check it works
         with pytest.raises(DnsNotFound, match="Record AAAA not found for host2.example.com"):
             self.dns.resolve("host2.example.com", "AAAA")
 
