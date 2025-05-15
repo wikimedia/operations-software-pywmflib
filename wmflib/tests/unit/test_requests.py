@@ -3,7 +3,6 @@
 from unittest import mock
 
 import pytest
-
 from requests import Request, Session
 
 from wmflib import requests

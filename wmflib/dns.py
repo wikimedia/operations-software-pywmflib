@@ -1,9 +1,8 @@
 """DNS module."""
 
 import logging
-
 from contextlib import suppress
-from typing import cast, List, Optional, Sequence, Union
+from typing import List, Optional, Sequence, Union, cast
 
 from dns import resolver, reversename, rrset
 from dns.exception import DNSException
@@ -11,7 +10,6 @@ from dns.name import Name
 
 from wmflib.constants import PUBLIC_AUTHDNS
 from wmflib.exceptions import WmflibError
-
 
 logger = logging.getLogger(__name__)
 

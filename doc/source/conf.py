@@ -17,10 +17,8 @@ import sys
 import types
 from pathlib import Path
 
-from pkg_resources import get_distribution
-
 import sphinx_rtd_theme
-
+from pkg_resources import get_distribution
 from sphinx import __version__ as sphinx_version
 
 # Adjust path

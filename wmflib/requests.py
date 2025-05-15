@@ -8,7 +8,6 @@ from urllib3.util import Retry
 
 from wmflib import __version__
 
-
 TimeoutType = Union[float, Tuple[float, float]]
 """Type alias for the requests timeout parameter."""
 DEFAULT_TIMEOUT: TimeoutType = (3.0, 5.0)

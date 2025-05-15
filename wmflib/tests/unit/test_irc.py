@@ -2,11 +2,9 @@
 
 import logging
 import socket
-
 from unittest import mock
 
 from wmflib.irc import SALSocketHandler, SocketHandler
-
 
 GENERIC_LOG_RECORD = logging.LogRecord("module", logging.DEBUG, "/source/file.py", 1, "message", [], None)
 

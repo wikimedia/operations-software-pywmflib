@@ -9,11 +9,9 @@
 import argparse
 import pkgutil
 import sys
-
 from pathlib import Path
 
 import wmflib
-
 
 DOC_API_BASE_PATH = Path("doc/source/api")
 DOC_API_INDEX_PATH = DOC_API_BASE_PATH / "index.rst"

@@ -9,7 +9,6 @@ import pytest
 from wmflib.constants import PUBLIC_AUTHDNS
 from wmflib.dns import Dns, DnsError, DnsNotFound, DnsNotFoundError, PublicAuthDns
 
-
 # TODO: convert the mocked objects using dnspython objects. It requires quite some code given the structure of
 #       dnspython API.
 MockedDnsAddress = namedtuple("MockedDnsAddress", ["address"])

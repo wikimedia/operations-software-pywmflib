@@ -5,11 +5,9 @@ import logging
 import os
 import sys
 import threading
-
 from typing import Any, Callable, Optional, Sequence
 
 from wmflib.exceptions import WmflibError
-
 
 logger = logging.getLogger(__name__)
 NOTIFY_LOGGER_NAME = "wmflib_interactive_notify"

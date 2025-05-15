@@ -2,14 +2,12 @@
 
 import configparser
 import logging
-
 from os import PathLike
 from typing import Dict, Union
 
 import yaml
 
 from wmflib.exceptions import WmflibError
-
 
 logger = logging.getLogger(__name__)
 

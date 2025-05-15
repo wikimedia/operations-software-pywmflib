@@ -1,7 +1,6 @@
 """Actions module tests."""
 
 import logging
-
 from textwrap import dedent
 
 from wmflib import actions

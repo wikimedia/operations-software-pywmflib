@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 
-from wmflib.decorators import get_backoff_sleep, retry, RetryParams
+from wmflib.decorators import RetryParams, get_backoff_sleep, retry
 from wmflib.exceptions import WmflibError
 
 

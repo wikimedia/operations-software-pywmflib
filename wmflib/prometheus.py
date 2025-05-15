@@ -1,14 +1,13 @@
 """Prometheus module."""
 
 import logging
-
 from typing import Dict, List
 
 import requests
 
 from wmflib.constants import ALL_DATACENTERS
 from wmflib.exceptions import WmflibError
-from wmflib.requests import http_session, TimeoutType
+from wmflib.requests import TimeoutType, http_session
 
 logger = logging.getLogger(__name__)
 

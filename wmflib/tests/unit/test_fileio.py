@@ -1,12 +1,11 @@
 """File I/O module tests."""
 
 import fcntl
-
 from unittest import mock
 
 import pytest
 
-from wmflib.fileio import locked_open, LockError
+from wmflib.fileio import LockError, locked_open
 
 
 def try_lock_file(test_file):

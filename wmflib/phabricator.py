@@ -7,7 +7,6 @@ import phabricator
 
 from wmflib.exceptions import WmflibError
 
-
 logger = logging.getLogger(__name__)
 
 

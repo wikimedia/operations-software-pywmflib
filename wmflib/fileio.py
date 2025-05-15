@@ -2,15 +2,13 @@
 
 import fcntl
 import logging
-
 from contextlib import contextmanager
 from datetime import timedelta
 from os import PathLike
-from typing import Generator, IO
+from typing import IO, Generator
 
 from wmflib.decorators import retry
 from wmflib.exceptions import WmflibError
-
 
 logger = logging.getLogger(__name__)
 

@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from wmflib.idm import IdmValueError, logoutd_args, LogoutdBase
+from wmflib.idm import IdmValueError, LogoutdBase, logoutd_args
 
 
 def test_logoutd_args_no_description():

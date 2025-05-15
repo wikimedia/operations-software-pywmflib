@@ -1,7 +1,6 @@
 """Config module tests."""
 
 import configparser
-
 from logging import DEBUG
 
 import pytest

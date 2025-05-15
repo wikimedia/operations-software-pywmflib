@@ -1,11 +1,9 @@
 """Tests package for wmflib."""
 
 import logging
-
 from pathlib import Path
 
 import pytest
-
 from pkg_resources import parse_version
 
 CAPLOG_MIN_VERSION = "3.3.0"

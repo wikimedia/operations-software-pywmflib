@@ -2,14 +2,12 @@
 
 import logging
 import time
-
 from dataclasses import dataclass
 from datetime import timedelta
 from functools import wraps
-from typing import Any, Callable, cast, Dict, Optional, Tuple, Type, Union
+from typing import Any, Callable, Dict, Optional, Tuple, Type, Union, cast
 
 from wmflib.exceptions import WmflibError
-
 
 logger = logging.getLogger(__name__)
 
