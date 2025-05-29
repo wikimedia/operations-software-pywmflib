@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# noqa: INP001
 """Sphynx configuration."""
 #
 # This file is execfile()d with the current directory set to its
@@ -17,7 +17,7 @@ import sys
 import types
 from pathlib import Path
 
-import sphinx_rtd_theme
+import sphinx_rtd_theme  # noqa: F401
 from pkg_resources import get_distribution
 from sphinx import __version__ as sphinx_version
 
@@ -58,7 +58,7 @@ master_doc = "index"
 # General information about the project.
 project = "wmflib"
 title = f"{project} Documentation"
-copyright = (
+copyright = (  # noqa: A001
     f"2018-{datetime.datetime.now(tz=datetime.timezone.utc).year}, Riccardo Coccioli <rcoccioli@wikimedia.org>, "
     "Luca Toscano <ltoscano@wikimedia.org>, Wikimedia Foundation, Inc."
 )

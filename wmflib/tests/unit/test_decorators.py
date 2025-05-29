@@ -166,9 +166,9 @@ def test_retry_fail_chained_exceptions(mocked_sleep, caplog):
 
     def side_effect():
         try:
-            raise WmflibError("error2") from WmflibError("error3")
+            raise WmflibError("error2") from WmflibError("error3")  # noqa: TRY301
         except WmflibError:
-            raise WmflibError("error1")  # pylint: disable=raise-missing-from
+            raise WmflibError("error1")  # noqa: B904
 
     func = _generate_mocked_function(side_effect)
     with pytest.raises(WmflibError, match="error1"):

@@ -255,7 +255,7 @@ def test_confirm_on_failure_func_abort(capsys, caplog):
     try:
         check_logs(caplog, log_message, logging.ERROR)
         raise AssertionError(f"Found unexpected message in logs: {log_message}")
-    except RuntimeError:
+    except RuntimeError:  # noqa: S110
         pass  # No log message found, as expected
 
 

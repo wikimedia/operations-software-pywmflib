@@ -1,0 +1,90 @@
+target-version = "py37"  # Minimum python version to support
+line-length = 120
+
+[lint]
+select = [
+    # Ordered as in https://docs.astral.sh/ruff/rules/
+    "ERA",  # Eradicate
+    "YTT",  # Flake8 2020
+    "ANN",  # Flake8 annotations
+    "S",  # Flake8 bandit
+    "BLE",  # Flake8 blind except
+    "FBT",  # Flake8 boolean trap
+    "B",  # Flake8 bugbear
+    "A",  # Flake8 builtins
+    "COM",  # Flake8 commas
+    "C4",  # Flake8 comprehensions
+    "DTZ",  # Flake8 datetimez
+    "T10",  # Flake8 debugger
+    "EXE",  # Flake8 executable
+    "ISC",  # Flaje8 implicit string concat
+    "LOG",  # Flake8 logging
+    "G",  # Flake8 logging format
+    "INP",  # Flake8 no pep420
+    "PIE",  # Flake8 pie
+    "T20",  # Flake8 print
+    "PT",  # Flake8 pytest style
+    "Q",  # Flake8 quotes
+    "RSE",  # Flake8 raise
+    "RET",  # Flake8 return
+    "SLF",  # Flake8 self
+    "SIM",  # Flake8 simplify
+    "SLOT",  # Flake8 slots
+    "TID",  # Flake8 tidy imports
+    "ARG",  # Flake8 unused arguments
+    "PTH",  # Flake8 use pathlib
+    "I",  # Isort
+    "N",  # Pep8 naming
+    "E",  # Pycodestyle errors
+    "W",  # Pycodestyle warnings
+    "D",  # Pydocstyle
+    "F",  # Pyflakes
+    "PGH",  # Pygrep hooks
+    "PL",  # Pylint
+    "RUF",  # Ruff specific rules
+    "TRY",  # Tryceratops
+]
+
+ignore = [
+    "PLR",  # Ignore Pylint refactor rules
+    "ANN401",  # Allow Any type hint
+    "COM812",  # Trailing commas enforced by the formatter
+    "PLR0915",  # Ignore the too many statements check
+    "S603",  # Subprocess calls without shell=True
+    "SIM108",  # Don't force ternary operator always
+    "T201",  # Allow print() calls
+    "TRY003",  # Allow exception classes that don't define a common message
+    "TRY400",  # Allow to log just the error message an not the full exception traceback
+    "PTH123",  # Do not force to use Path in all cases
+    "Q000",  # Allow to use the built-in open() function
+]
+
+[lint.flake8-annotations]
+mypy-init-return = true
+
+[lint.flake8-bandit]
+check-typed-exception = true
+
+[lint.flake8-pytest-style]
+parametrize-names-type = "csv"
+parametrize-values-type = "tuple"
+
+[lint.per-file-ignores]
+"wmflib/tests/*" = [
+    "ANN",  # Ignore type hints checks in tests
+    "S101",  # Allow asserts in tests
+    "S106",  # Allow hardcoded fake passwords in tests
+]
+"wmflib/tests/vulture_whitelist.py" = [
+    "B018",  # Ignore useless expressions
+]
+"doc/*" = [
+    "ANN",  # Ignore type hints checks in doc
+    "ARG",  # Ignore unused variables in doc
+]
+
+[lint.pydocstyle]
+convention = "google"
+
+[format]
+docstring-code-format = true

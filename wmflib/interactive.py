@@ -115,7 +115,7 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
                 logger.info('User input is: "%s"', response)  # Log only if the answer is valid to prevent leaks
                 return response
 
-        except BaseException as e:  # pylint: disable=broad-except
+        except BaseException as e:  # noqa: BLE001
             # Treat any exception as invalid answer, including Ctrl+c and Ctrl+d as well as any exception raised by the
             # custom validator when present.
             if validator is not None:

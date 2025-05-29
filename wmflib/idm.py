@@ -60,7 +60,7 @@ def logoutd_args(description: Optional[str] = None, args: Optional[List] = None)
     return parser.parse_args(args)
 
 
-class LogoutdBase(ABC):  # noqa: D300,D301 See https://github.com/PyCQA/pydocstyle/issues/542
+class LogoutdBase(ABC):
     """Base class for a standardized API for logout scripts.
 
     A simple logout.d python script would then be of the form::
