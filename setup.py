@@ -36,7 +36,7 @@ EXTRAS_REQUIRE = {
         'types-requests',
     ],
     'prospector': [
-        'prospector[with_everything]>=0.12.4',
+        'prospector[with_everything]==1.16.1',  # pinned
         'pytest>=3.10.1',
     ],
 }
