@@ -9,6 +9,7 @@ Automation framework for the WMF production infrastructure.
    introduction
    installation
    api/index
+   development
 
 .. toctree::
    :maxdepth: 2
