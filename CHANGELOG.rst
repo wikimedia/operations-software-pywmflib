@@ -1,6 +1,65 @@
 wmflib Changelog
 ----------------
 
+`v2.0.0`_ (2025-06-17)
+^^^^^^^^^^^^^^^^^^^^^^
+
+API breaking changes
+""""""""""""""""""""
+
+* config: make the raises argument keyword only for both ``load_yaml_config()`` and ``load_ini_config()``.
+  All current clients are already either not passing the argument or passing it as keyword, not positional.
+* phabricator: make the ``section`` and ``dry_run`` arguments of ``create_phabricator()`` keyword only and also
+  the ``dry_run`` argument of the ``Phabricator`` class constructor to keyword only. All current clients are already
+  either not passing the optional arguments or passing them as keyword, not positional.
+
+New features
+""""""""""""
+
+* phabricator: expand support for Phabricator tasks:
+
+  * Add a ``validate_task_id()`` function to validate the format of a task ID. Optionally allow empty strings
+    as valid based on the ``allow_empty_identifiers`` argument so that clients can decide if a CLI argument
+    that is optional with a default value of empty string is considered valid.
+  * Add the ``allow_empty_identifiers`` also to the ``Phabricator`` class's ``__init__()`` and the
+    ``create_phabricator()`` helper function and support for it throughout the class.
+  * Add a ``task_accessible()`` method to verify if a task ID is accessible with the given token. It return
+    ``False`` if the task doesn't exists or is not visible.
+  * Add to the new methods and the existing ``task_comment()`` a ``raises`` boolean parameter that defaults to
+    ``True`` (to keep backward compatibility) that when set to ``False`` allows to call those methods in a
+    best-effort way, just logging errors in case of failures and not raising exceptions.
+
+Minor improvements
+""""""""""""""""""
+
+dns: alias ``DnsNotFound`` to ``DnsNotFoundError``:
+
+  * The existing exception ``DnsNotFound`` was not having a proper exception name. Add a new ``DnsNotFoundError``
+    and alias the old one to the new one to allow for a smooth transition of clients.
+  * The ``DnsNotFound`` exception will be removed in a future release.
+
+Miscellanea
+"""""""""""
+
+* setup.py: pin prospector to a specific version.
+* doc: small improvements in the config file, add automatically the current year in the copyright end date.
+* Refactored tox/CI and code formatting to adopt ``ruff`` and ``ruff format``:
+
+  * Applied various automatic formatting to the code base, including the move to double quote strings.
+  * Applied various code simplifications/best practices as reported by ruff linters.
+  * Completely refactored static checkers/linters using ruff.
+  * Drastically reduce the current run of prospector to just run the ``pyroma`` and ``vulture`` tools, to be
+    re-evaluated if they could be dropped entirely.
+  * Setup ruff with an extensive set of rules to be potentially reduce/expanded based on feedback and usability.
+  * On a clean checkout without a prior ``.tox/`` directory the time for a full tox run is now ~16% faster.
+  * Add a new style checker and formatter tox environments. The checker will be run automatically both locally and
+    in CI, while the formatter can be called manually or integrated into IDE, git commit or git review workflows.
+    For now it formats and checks the whole repository, if at any point this will become annoying we can use the same
+    logic currently used in spicerack to format and check only the modified files or the last commit, based on the
+    presence of local modifications or not.
+  * Add a ``.git-blame-ignore-revs`` file with the list of commits (SHA1) of autoformatted changes so that they can
+    be avoided in git blame with the ``--ignore-revs-file`` CLI argument.
+
 `v1.3.2`_ (2025-05-13)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -470,3 +529,4 @@ New features
 .. _`v1.3.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.0
 .. _`v1.3.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.1
 .. _`v1.3.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.2
+.. _`v2.0.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v2.0.0
