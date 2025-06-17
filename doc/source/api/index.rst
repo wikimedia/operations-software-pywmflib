@@ -3,8 +3,6 @@ Python API
 
 .. automodule:: wmflib
 
-.. autodata:: __version__
-
 .. rubric:: Subpackages and Submodules
 
 .. toctree::

@@ -1,14 +1,13 @@
 """Prometheus module."""
 
 import logging
-
 from typing import Dict, List
 
 import requests
 
 from wmflib.constants import ALL_DATACENTERS
 from wmflib.exceptions import WmflibError
-from wmflib.requests import http_session, TimeoutType
+from wmflib.requests import TimeoutType, http_session
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +21,7 @@ class PrometheusBase:
 
     def __init__(self) -> None:
         """Initialize the instance."""
-        self._http_session = http_session('.'.join((self.__module__, self.__class__.__name__)))
+        self._http_session = http_session(".".join((self.__module__, self.__class__.__name__)))
 
     def _query(self, url: str, params: Dict[str, str], timeout: TimeoutType) -> List[Dict]:
         """Perform a generic query.
@@ -35,22 +34,22 @@ class PrometheusBase:
 
         Returns:
             list: returns an empty list if there are no results otherwise return a list of results of the form:
-            ``{'metric': {}, 'value': [$timestamp, $value]}``.
+            ``{"metric": {}, "value": [$timestamp, $value]}``.
 
         Raises:
             wmflib.prometheus.PrometheusError: on error
 
         """
         response = self._http_session.get(url, params=params, timeout=timeout)
-        if response.status_code != requests.codes['ok']:
-            raise PrometheusError(f'Unable to get metric: HTTP {response.status_code}: {response.text}')
+        if response.status_code != requests.codes["ok"]:
+            raise PrometheusError(f"Unable to get metric: HTTP {response.status_code}: {response.text}")
 
         result = response.json()
 
-        if result.get('status', 'error') == 'error':
-            raise PrometheusError(f'Unable to get metric: {result.get("error", "unknown")}')
+        if result.get("status", "error") == "error":
+            raise PrometheusError(f"Unable to get metric: {result.get('error', 'unknown')}")
 
-        return result['data']['result']
+        return result["data"]["result"]
 
 
 class Prometheus(PrometheusBase):
@@ -64,30 +63,30 @@ class Prometheus(PrometheusBase):
 
     """
 
-    _prometheus_api: str = 'http://prometheus.svc.{site}.wmnet/{instance}/api/v1/query'
+    _prometheus_api: str = "http://prometheus.svc.{site}.wmnet/{instance}/api/v1/query"
 
-    def query(self, query: str, site: str, *, instance: str = 'ops', timeout: TimeoutType = 10.0) -> List[Dict]:
+    def query(self, query: str, site: str, *, instance: str = "ops", timeout: TimeoutType = 10.0) -> List[Dict]:
         """Perform a generic query.
 
         Examples:
             ::
 
-                >>> results = prometheus.query('node_memory_MemTotal_bytes{instance=~"host1001:.*"}', 'eqiad')
+                >>> results = prometheus.query('node_memory_MemTotal_bytes{instance=~"host1001:.*"}', "eqiad")
                 >>> results = prometheus.query(
-                ...     'kube_deployment_created{deployment="mw-web.eqiad.main"}', 'eqiad', instance='k8s')
+                ...     'kube_deployment_created{deployment="mw-web.eqiad.main"}', "eqiad", instance="k8s")
 
             The content of the first results will be something like::
 
                 [
                     {
-                        'metric': {
-                            '__name__': 'node_memory_MemTotal_bytes',
-                            'cluster': 'management',
-                            'instance': 'host1001:9100',
-                            'job': 'node',
-                            'site': 'eqiad'
+                        "metric": {
+                            "__name__": "node_memory_MemTotal_bytes",
+                            "cluster": "management",
+                            "instance": "host1001:9100",
+                            "job": "node",
+                            "site": "eqiad",
                         },
-                        'value': [1636569623.988, '67225329664']
+                        "value": [1636569623.988, "67225329664"],
                     }
                 ]
 
@@ -102,18 +101,18 @@ class Prometheus(PrometheusBase):
 
         Returns:
             list: returns an empty list if there are no results otherwise return a list of results of the form:
-            ``{'metric': {}, 'value': [$timestamp, $value]}``.
+            ``{"metric": {}, "value": [$timestamp, $value]}``.
 
         Raises:
             wmflib.prometheus.PrometheusError: on error
 
         """
         if site not in ALL_DATACENTERS:
-            msg = f'site ({site}) must be one of wmflib.constants.ALL_DATACENTERS {ALL_DATACENTERS}'
+            msg = f"site ({site}) must be one of wmflib.constants.ALL_DATACENTERS {ALL_DATACENTERS}"
             raise PrometheusError(msg)
 
         url = self._prometheus_api.format(site=site, instance=instance)
-        params = {'query': query}
+        params = {"query": query}
         return self._query(url, params, timeout)
 
 
@@ -128,7 +127,7 @@ class Thanos(PrometheusBase):
 
     """
 
-    _thanos_api: str = 'https://thanos-query.discovery.wmnet/api/v1/query'
+    _thanos_api: str = "https://thanos-query.discovery.wmnet/api/v1/query"
 
     def query(self, query: str, *, timeout: TimeoutType = 10.0) -> List[Dict]:
         """Perform a generic query.
@@ -143,21 +142,21 @@ class Thanos(PrometheusBase):
 
                 [
                     {
-                        'metric': {
-                            '__name__': 'node_uname_info',
-                            'cluster': 'management',
-                            'domainname': '(none)',
-                            'instance': 'host1001:9100',
-                            'job': 'node',
-                            'machine': 'x86_64',
-                            'nodename': 'host1001',
-                            'prometheus': 'ops',
-                            'release': '5.10.0-11-amd64',
-                            'site': 'eqiad',
-                            'sysname': 'Linux',
-                            'version': '#1 SMP Debian 5.10.92-2 (2022-02-28)'
+                        "metric": {
+                            "__name__": "node_uname_info",
+                            "cluster": "management",
+                            "domainname": "(none)",
+                            "instance": "host1001:9100",
+                            "job": "node",
+                            "machine": "x86_64",
+                            "nodename": "host1001",
+                            "prometheus": "ops",
+                            "release": "5.10.0-11-amd64",
+                            "site": "eqiad",
+                            "sysname": "Linux",
+                            "version": "#1 SMP Debian 5.10.92-2 (2022-02-28)",
                         },
-                        'value': [1648898872.82, '1']
+                        "value": [1648898872.82, "1"],
                     }
                 ]
 
@@ -168,11 +167,11 @@ class Thanos(PrometheusBase):
 
         Returns:
             list: returns an empty list if there are no results otherwise return a list of results of the form:
-            ``{'metric': {}, 'value': [$timestamp, $value]}``.
+            ``{"metric": {}, "value": [$timestamp, $value]}``.
 
         Raises:
             wmflib.prometheus.PrometheusError: on error.
 
         """
-        params = {'dedup': 'true', 'partial_response': 'false', 'query': query}
+        params = {"dedup": "true", "partial_response": "false", "query": query}
         return self._query(self._thanos_api, params, timeout)

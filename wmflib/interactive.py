@@ -1,17 +1,16 @@
 """Interactive module."""
+
 import getpass
 import logging
 import os
 import sys
 import threading
-
 from typing import Any, Callable, Optional, Sequence
 
 from wmflib.exceptions import WmflibError
 
-
 logger = logging.getLogger(__name__)
-NOTIFY_LOGGER_NAME = 'wmflib_interactive_notify'
+NOTIFY_LOGGER_NAME = "wmflib_interactive_notify"
 """Name of the logger used to send notifications when the process is awaiting user input."""
 notify_logger = logging.getLogger(NOTIFY_LOGGER_NAME)
 """Instance of the notification logger that is used to send notification when the process is awaiting user input."""
@@ -43,8 +42,8 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
     Examples:
         ::
 
-            >>> choices = ['A', 'B']
-            >>> response = ask_input(f'Choose a door between {choices}', choices)
+            >>> choices = ["A", "B"]
+            >>> response = ask_input(f"Choose a door between {choices}", choices)
             ==> Choose a door between ['A', 'B']
             > a
             ==> Invalid response, please type one of: A,B. After 3 wrong answers the task will be aborted.
@@ -54,9 +53,9 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
 
             >>> def my_validator(answer: str) -> None:
             ...     if len(answer) < 5:
-            ...         raise RuntimeError('The directory name must be at least 5 characters long')
+            ...         raise RuntimeError("The directory name must be at least 5 characters long")
             ...
-            >>> response = ask_input(f'Provide a directory name', choices=[], validator=my_validator)
+            >>> response = ask_input(f"Provide a directory name", choices=[], validator=my_validator)
             ==> Provide a directory name
             > tmp
             ==> Invalid response. The directory name must be at least 5 characters long. After 3 wrong answers the
@@ -84,27 +83,27 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
     """
     # TODO: once Python3.7 support is dropped use typing's Protocol and runtime_checkable for the validator
     if validator is None and not choices:
-        raise InputError('The `choices` argument is empty and no custom validator was provided.')
+        raise InputError("The `choices` argument is empty and no custom validator was provided.")
 
     if validator is not None and choices:
-        raise InputError('When the `validator` argument is set, the `choices` argument must be empty.')
+        raise InputError("When the `validator` argument is set, the `choices` argument must be empty.")
 
     # pylint: disable-next=no-member,useless-suppression; https://github.com/prospector-dev/prospector/issues/677
     if not sys.stdout.isatty():
-        raise InputError('Not in a TTY, unable to ask for input')
+        raise InputError("Not in a TTY, unable to ask for input")
 
-    prefix = '\x1b[36m==>\x1b[39m'  # Cyan ==> prefix
-    print(f'{prefix} {message}')
+    prefix = "\x1b[36m==>\x1b[39m"  # Cyan ==> prefix
+    print(f"{prefix} {message}")
 
-    message = f'Please type one of: {",".join(choices)}'
+    message = f"Please type one of: {','.join(choices)}"
 
     for _ in range(3):
         # Create a notify timer for each attempt, the user might insert an invalid answer and not see it
-        timer = threading.Timer(NOTIFY_AFTER_SECONDS, notify_logger.warning, args=['is awaiting input'])
+        timer = threading.Timer(NOTIFY_AFTER_SECONDS, notify_logger.warning, args=["is awaiting input"])
         timer.start()
 
         try:
-            response = input('> ')
+            response = input("> ")
 
             if validator is not None:
                 validator(response)
@@ -116,7 +115,7 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
                 logger.info('User input is: "%s"', response)  # Log only if the answer is valid to prevent leaks
                 return response
 
-        except BaseException as e:  # pylint: disable=broad-except
+        except BaseException as e:  # noqa: BLE001
             # Treat any exception as invalid answer, including Ctrl+c and Ctrl+d as well as any exception raised by the
             # custom validator when present.
             if validator is not None:
@@ -125,9 +124,9 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
         finally:
             timer.cancel()
 
-        print(f'{prefix} Invalid response. {message}. After 3 wrong answers the task will be aborted.')
+        print(f"{prefix} Invalid response. {message}. After 3 wrong answers the task will be aborted.")
 
-    raise InputError('Too many invalid answers')
+    raise InputError("Too many invalid answers")
 
 
 def ask_confirmation(message: str) -> None:
@@ -143,11 +142,11 @@ def ask_confirmation(message: str) -> None:
     Examples:
         ::
 
-            >>> ask_confirmation('Ready to continue?')
+            >>> ask_confirmation("Ready to continue?")
             ==> Ready to continue?
             Type "go" to proceed or "abort" to interrupt the execution
             > go
-            >>> ask_confirmation('Ready to continue?')
+            >>> ask_confirmation("Ready to continue?")
             ==> Ready to continue?
             Type "go" to proceed or "abort" to interrupt the execution
             > abort
@@ -165,10 +164,11 @@ def ask_confirmation(message: str) -> None:
         wmflib.interactive.AbortError: if manually aborted.
 
     """
-    response = ask_input('\n'.join((message, 'Type "go" to proceed or "abort" to interrupt the execution')),
-                         ['go', 'abort'])
-    if response == 'abort':
-        raise AbortError('Confirmation manually aborted')
+    response = ask_input(
+        "\n".join((message, 'Type "go" to proceed or "abort" to interrupt the execution')), ["go", "abort"]
+    )
+    if response == "abort":
+        raise AbortError("Confirmation manually aborted")
 
 
 def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
@@ -186,7 +186,7 @@ def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
 
             >>> def test(fail=False):
             ...     if fail:
-            ...         raise RuntimeError('Failed')
+            ...         raise RuntimeError("Failed")
             ...
             >>> confirm_on_failure(test)
             >>> confirm_on_failure(test, fail=True)
@@ -203,7 +203,7 @@ def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
     Arguments:
         func (callable): the function/method to execute.
         *args (mixed): all the positional arguments to pass to the function/method.
-        *kwargs (mixed): all the keyword arguments to pass to the function/method.
+        **kwargs (mixed): all the keyword arguments to pass to the function/method.
 
     Returns:
         mixed: what the called function returns, or :py:data:`None` if the execution should continue skipping this
@@ -213,9 +213,11 @@ def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
         wmflib.interactive.AbortError: on manually aborted tasks.
 
     """
-    retry_message = ('What do you want to do? "retry" the last command, manually fix the issue and "skip" the last '
-                     'command to continue the execution or completely "abort" the execution.')
-    choices = ['retry', 'skip', 'abort']
+    retry_message = (
+        'What do you want to do? "retry" the last command, manually fix the issue and "skip" the last '
+        'command to continue the execution or completely "abort" the execution.'
+    )
+    choices = ["retry", "skip", "abort"]
 
     while True:
         try:
@@ -223,13 +225,13 @@ def confirm_on_failure(func: Callable, *args: Any, **kwargs: Any) -> Any:
         except AbortError:
             raise
         except BaseException as e:  # pylint: disable=broad-except
-            logger.error('Failed to run %s.%s: %s', func.__module__, func.__qualname__, e)
-            logger.debug('Traceback', exc_info=True)
+            logger.error("Failed to run %s.%s: %s", func.__module__, func.__qualname__, e)
+            logger.debug("Traceback", exc_info=True)
             response = ask_input(retry_message, choices)
-            if response == 'skip':
+            if response == "skip":
                 return None
-            if response == 'abort':
-                raise AbortError('Task manually aborted') from e
+            if response == "abort":
+                raise AbortError("Task manually aborted") from e
         else:
             return ret
 
@@ -247,16 +249,16 @@ def get_username() -> str:
         str: the name of the effective running user or ``-`` if unable to detect it.
 
     """
-    user = os.getenv('USER')
-    sudo_user = os.getenv('SUDO_USER')
+    user = os.getenv("USER")
+    sudo_user = os.getenv("SUDO_USER")
 
-    if sudo_user is not None and sudo_user != 'root':
+    if sudo_user is not None and sudo_user != "root":
         return sudo_user
 
     if user is not None:
         return user
 
-    return '-'
+    return "-"
 
 
 def ensure_shell_is_durable() -> None:
@@ -272,11 +274,16 @@ def ensure_shell_is_durable() -> None:
         wmflib.exceptions.WmflibError: if in a non-durable shell session.
 
     """
-    # STY is for screen, TMUX is for tmux. Not using `getenv('NAME') is not None` to check they are not empty.
+    # STY is for screen, TMUX is for tmux. Not using `getenv("NAME") is not None` to check they are not empty.
     # TODO: verify if the check on TERM is redundant.
-    if (sys.stdout.isatty() and not os.getenv('STY', '') and not os.getenv('TMUX', '')
-            and 'screen' not in os.getenv('TERM', '') and 'tmux' not in os.getenv('TERM', '')):
-        raise WmflibError('Must be run in non-interactive mode or inside a screen or tmux.')
+    if (
+        sys.stdout.isatty()
+        and not os.getenv("STY", "")
+        and not os.getenv("TMUX", "")
+        and "screen" not in os.getenv("TERM", "")
+        and "tmux" not in os.getenv("TERM", "")
+    ):
+        raise WmflibError("Must be run in non-interactive mode or inside a screen or tmux.")
 
 
 def get_secret(title: str, *, confirm: bool = False) -> str:
@@ -291,10 +298,10 @@ def get_secret(title: str, *, confirm: bool = False) -> str:
     Examples:
         ::
 
-            >>> secret = get_secret('Secret key')
+            >>> secret = get_secret("Secret key")
             Secret key:
             Secret must be at least 6 characters. try again:
-            >>> secret = get_secret('Secret key', confirm=True)  # Will raise if the confirmation doesn't match
+            >>> secret = get_secret("Secret key", confirm=True)  # Will raise if the confirmation doesn't match
             Secret key:
             Again, just to be sure:
             >>>
@@ -310,18 +317,17 @@ def get_secret(title: str, *, confirm: bool = False) -> str:
         wmflib.exceptions.WmflibError: if the password confirmation does not match and confirm is :py:data:`True`.
 
     """
-    timer = threading.Timer(NOTIFY_AFTER_SECONDS, notify_logger.warning, args=['is awaiting input'])
+    timer = threading.Timer(NOTIFY_AFTER_SECONDS, notify_logger.warning, args=["is awaiting input"])
     timer.start()
 
     try:
-        new_secret = getpass.getpass(prompt=f'{title}: ')
+        new_secret = getpass.getpass(prompt=f"{title}: ")
 
         while len(new_secret) < MIN_SECRET_SIZE:
-            new_secret = getpass.getpass(
-                prompt=f'Secret must be at least {MIN_SECRET_SIZE} characters. try again: ')
+            new_secret = getpass.getpass(prompt=f"Secret must be at least {MIN_SECRET_SIZE} characters. try again: ")
 
-        if confirm and new_secret != getpass.getpass(prompt='Again, just to be sure: '):
-            raise WmflibError(f'{title}: Passwords did not match')
+        if confirm and new_secret != getpass.getpass(prompt="Again, just to be sure: "):
+            raise WmflibError(f"{title}: Passwords did not match")
 
         return new_secret
 

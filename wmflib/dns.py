@@ -1,7 +1,8 @@
 """DNS module."""
-import logging
 
-from typing import cast, List, Optional, Sequence, Union
+import logging
+from contextlib import suppress
+from typing import List, Optional, Sequence, Union, cast
 
 from dns import resolver, reversename, rrset
 from dns.exception import DNSException
@@ -10,7 +11,6 @@ from dns.name import Name
 from wmflib.constants import PUBLIC_AUTHDNS
 from wmflib.exceptions import WmflibError
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -18,11 +18,14 @@ class DnsError(WmflibError):
     """Custom exception class for errors of the Dns class."""
 
 
-class DnsNotFound(DnsError):
+class DnsNotFoundError(DnsError):
     """Custom exception class to indicate the record was not found.
 
     One or more resource records might exist for this domain but no record matches the resource record type requested.
     """
+
+
+DnsNotFound = DnsNotFoundError
 
 
 class Dns:
@@ -40,7 +43,7 @@ class Dns:
             Using a specific set of resolvers and port::
 
                 >>> from wmflib.dns import Dns
-                >>> dns = Dns(nameserver_addresses=['10.0.0.1', '10.0.0.2'], port=5353)
+                >>> dns = Dns(nameserver_addresses=["10.0.0.1", "10.0.0.2"], port=5353)
 
         Arguments:
             nameserver_addresses (Sequence, optional): the nameserveres address to use, if not set uses the OS
@@ -63,7 +66,7 @@ class Dns:
         Examples:
             ::
 
-                >>> dns.resolve_ipv4('api.svc.eqiad.wmnet')
+                >>> dns.resolve_ipv4("api.svc.eqiad.wmnet")
                 ['10.2.2.22']
 
         Arguments:
@@ -73,7 +76,7 @@ class Dns:
             list: the list of IPv4 addresses as strings returned by the DNS response.
 
         """
-        return self._resolve_addresses(name, 'A')
+        return self._resolve_addresses(name, "A")
 
     def resolve_ipv6(self, name: str) -> List[str]:
         """Perform a DNS lookup for an AAAA record for the given name.
@@ -81,7 +84,7 @@ class Dns:
         Examples:
             ::
 
-                >>> dns.resolve_ipv6('wikimedia.org')
+                >>> dns.resolve_ipv6("wikimedia.org")
                 ['2620:0:861:ed1a::1']
 
         Arguments:
@@ -91,7 +94,7 @@ class Dns:
             list: the list of IPv6 addresses as strings returned by the DNS response.
 
         """
-        return self._resolve_addresses(name, 'AAAA')
+        return self._resolve_addresses(name, "AAAA")
 
     def resolve_ips(self, name: str) -> List[str]:
         """Perform a DNS lookup for A and AAAA records for the given name.
@@ -99,7 +102,7 @@ class Dns:
         Examples:
             ::
 
-                >>> dns.resolve_ips('wikimedia.org')
+                >>> dns.resolve_ips("wikimedia.org")
                 ['208.80.154.224', '2620:0:861:ed1a::1']
 
         Arguments:
@@ -109,18 +112,16 @@ class Dns:
             list: the list of IPv4 and IPv6 addresses as strings returned by the DNS response.
 
         Raises:
-            wmflib.dns.DnsNotFound: when no address is found.
+            wmflib.dns.DnsNotFoundError: when no address is found.
 
         """
         addresses = []
-        for func in ('resolve_ipv4', 'resolve_ipv6'):
-            try:
+        for func in ("resolve_ipv4", "resolve_ipv6"):
+            with suppress(DnsNotFoundError):  # Allow single stack answers
                 addresses += getattr(self, func)(name)
-            except DnsNotFound:
-                pass  # Allow single stack answers
 
         if not addresses:
-            raise DnsNotFound(f'Record A or AAAA not found for {name}')
+            raise DnsNotFoundError(f"Record A or AAAA not found for {name}")
 
         return addresses
 
@@ -130,7 +131,7 @@ class Dns:
         Examples:
             ::
 
-                >>> dns.resolve_ptr('208.80.154.224')
+                >>> dns.resolve_ptr("208.80.154.224")
                 ['text-lb.eqiad.wikimedia.org']
 
         Arguments:
@@ -140,7 +141,7 @@ class Dns:
             list: the list of absolute target PTR records as strings, without the trailing dot.
 
         """
-        response = self.resolve(reversename.from_address(address), 'PTR')
+        response = self.resolve(reversename.from_address(address), "PTR")
         return self._parse_targets(cast(rrset.RRset, response.rrset))
 
     def resolve_cname(self, name: str) -> str:
@@ -149,7 +150,7 @@ class Dns:
         Examples:
             ::
 
-                >>> dns.resolve_cname('puppet.codfw.wmnet')
+                >>> dns.resolve_cname("puppet.codfw.wmnet")
                 'puppetmaster2001.codfw.wmnet'
 
         Arguments:
@@ -159,9 +160,9 @@ class Dns:
             str: the absolute target name for this CNAME, without the trailing dot.
 
         """
-        targets = self._parse_targets(cast(rrset.RRset, self.resolve(name, 'CNAME').rrset))
+        targets = self._parse_targets(cast(rrset.RRset, self.resolve(name, "CNAME").rrset))
         if len(targets) != 1:
-            raise DnsError(f'Found multiple CNAMEs target for {name}: {targets}')
+            raise DnsError(f"Found multiple CNAMEs target for {name}: {targets}")
 
         return targets[0]
 
@@ -171,7 +172,7 @@ class Dns:
         Examples:
             ::
 
-                >>> response = dns.resolve('wikimedia.org', 'MX')
+                >>> response = dns.resolve("wikimedia.org", "MX")
                 >>> [rdata.to_text() for rdata in response.rrset]
                 ['10 mx1001.wikimedia.org.', '50 mx2001.wikimedia.org.']
 
@@ -183,18 +184,18 @@ class Dns:
             dns.resolver.Answer: the DNS response.
 
         Raises:
-            wmflib.dns.DnsNotFound: if there are no records for the given record type but the qname has records for
+            wmflib.dns.DnsNotFoundError: if there are no records for the given record type but the qname has records for
                 different record type(s).
             wmflib.dns.DnsError: on generic error.
 
         """
         try:
             response = self._resolver.query(qname, record_type)
-            logger.debug('Resolved %s record for %s: %s', record_type, qname, response.rrset)
+            logger.debug("Resolved %s record for %s: %s", record_type, qname, response.rrset)
         except (resolver.NoAnswer, resolver.NXDOMAIN) as e:
-            raise DnsNotFound(f'Record {record_type} not found for {qname}') from e
+            raise DnsNotFoundError(f"Record {record_type} not found for {qname}") from e
         except DNSException as e:
-            raise DnsError(f'Unable to resolve {record_type} record for {qname}') from e
+            raise DnsError(f"Unable to resolve {record_type} record for {qname}") from e
 
         return response
 
@@ -228,8 +229,8 @@ class Dns:
         targets = []
         for rdata in response_set:
             target = rdata.target.to_text()
-            if target[-1] != '.':
-                raise DnsError(f'Unsupported relative target {target} found')
+            if target[-1] != ".":
+                raise DnsError(f"Unsupported relative target {target} found")
 
             targets.append(target[:-1])
 

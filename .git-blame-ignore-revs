@@ -1,0 +1,6 @@
+# Applied initial ruff format without double quotes for strings
+164c5086dfebeb27825693c7e23d787c48fd4f63
+# Applied change from single to double quote strings
+b4a5bbdf1f4d945e5f86f530588cd364b3c03f6a
+# Applied imports autoformat
+043b7441abbcf5da6efefc24086e5534f33311ff

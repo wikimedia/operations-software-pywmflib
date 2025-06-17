@@ -1,4 +1,5 @@
 """Requests module."""
+
 from typing import Any, Sequence, Tuple, Union
 
 from requests import PreparedRequest, Response, Session
@@ -7,7 +8,6 @@ from urllib3.util import Retry
 
 from wmflib import __version__
 
-
 TimeoutType = Union[float, Tuple[float, float]]
 """Type alias for the requests timeout parameter."""
 DEFAULT_TIMEOUT: TimeoutType = (3.0, 5.0)
@@ -15,7 +15,7 @@ DEFAULT_TIMEOUT: TimeoutType = (3.0, 5.0)
 DEFAULT_RETRY_STATUS_CODES: Tuple[int, ...] = (429, 500, 502, 503, 504)
 """:py:class`tuple`: the default sequence of HTTP status codes that are retried if the method is one of
    :py:const:`DEFAULT_RETRY_METHODS`."""
-DEFAULT_RETRY_METHODS: Tuple[str, ...] = ('DELETE', 'GET', 'HEAD', 'OPTIONS', 'PUT', 'TRACE')
+DEFAULT_RETRY_METHODS: Tuple[str, ...] = ("DELETE", "GET", "HEAD", "OPTIONS", "PUT", "TRACE")
 """:py:class`tuple`: the default sequence of HTTP methods that are retried if the status code is one of
    :py:const:`DEFAULT_RETRY_STATUS_CODES`."""
 
@@ -40,14 +40,17 @@ class TimeoutHTTPAdapter(HTTPAdapter):
 
         """
         self.timeout = DEFAULT_TIMEOUT
-        if 'timeout' in kwargs:
-            self.timeout = kwargs['timeout']
-            del kwargs['timeout']
+        if "timeout" in kwargs:
+            self.timeout = kwargs["timeout"]
+            del kwargs["timeout"]
 
         super().__init__(**kwargs)
 
-    def send(self, request: PreparedRequest,  # type: ignore # pylint: disable=arguments-differ
-             **kwargs: Any) -> Response:
+    def send(  # type: ignore[override] # pylint: disable=arguments-differ
+        self,
+        request: PreparedRequest,
+        **kwargs: Any,
+    ) -> Response:
         """Override the send method to pass the default timeout if not set.
 
         Params:
@@ -56,15 +59,21 @@ class TimeoutHTTPAdapter(HTTPAdapter):
             The ``noqa`` is needed unless the exact signature is replicated.
 
         """
-        if kwargs.get('timeout') is None:  # The Session will pass timeout=None when not set by the caller.
-            kwargs['timeout'] = self.timeout
+        if kwargs.get("timeout") is None:  # The Session will pass timeout=None when not set by the caller.
+            kwargs["timeout"] = self.timeout
 
         return super().send(request, **kwargs)
 
 
-def http_session(name: str, *, timeout: TimeoutType = DEFAULT_TIMEOUT, tries: int = 3, backoff: float = 1.0,
-                 retry_codes: Sequence[int] = DEFAULT_RETRY_STATUS_CODES,
-                 retry_methods: Sequence[str] = DEFAULT_RETRY_METHODS) -> Session:
+def http_session(
+    name: str,
+    *,
+    timeout: TimeoutType = DEFAULT_TIMEOUT,
+    tries: int = 3,
+    backoff: float = 1.0,
+    retry_codes: Sequence[int] = DEFAULT_RETRY_STATUS_CODES,
+    retry_methods: Sequence[str] = DEFAULT_RETRY_METHODS,
+) -> Session:
     """Return a new requests Session with User-Agent, default timeout and retry logic on failure already setup.
 
     By default the returned session will retry any :py:const:`DEFAULT_RETRY_METHODS` request that returns one of
@@ -89,15 +98,16 @@ def http_session(name: str, *, timeout: TimeoutType = DEFAULT_TIMEOUT, tries: in
         With default parameters::
 
             from wmflib.requests import http_session
-            session = http_session('AppName')  # The given name will be used in the User-Agent header, see below
+
+            session = http_session("AppName")  # The given name will be used in the User-Agent header, see below
             # At this point the session can be used as a normal requests session
 
         With customized parameters::
 
-            session = http_session('AppName', timeout=10.0, tries=5, backoff=2.0, retry_codes=(429,))
-            session = http_session('AppName', timeout=(3.0, 10.0), tries=5, backoff=2.0, retry_methods=('GET',))
+            session = http_session("AppName", timeout=10.0, tries=5, backoff=2.0, retry_codes=(429,))
+            session = http_session("AppName", timeout=(3.0, 10.0), tries=5, backoff=2.0, retry_methods=("GET",))
             # Disable the retry logic, just set the User-Agent and default timeout
-            session = http_session('AppName', tries=0)
+            session = http_session("AppName", tries=0)
 
     See Also:
         https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry
@@ -130,16 +140,16 @@ def http_session(name: str, *, timeout: TimeoutType = DEFAULT_TIMEOUT, tries: in
     # The method_whitelist parameter has been deprecated since urllib3 v1.26.0 and will be removed in v2.0.
     # It has been renamed to allowed_methods in v1.26.0. Keep backward compatibility.
     session = Session()
-    user_agent = f'pywmflib/{__version__} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib'
-    session.headers.update({'User-Agent': user_agent})
+    user_agent = f"pywmflib/{__version__} {name} +https://wikitech.wikimedia.org/wiki/Python/Wmflib"
+    session.headers.update({"User-Agent": user_agent})
 
     if tries > 0:
-        methods_param_name = 'allowed_methods' if hasattr(Retry.DEFAULT, 'allowed_methods') else 'method_whitelist'
+        methods_param_name = "allowed_methods" if hasattr(Retry.DEFAULT, "allowed_methods") else "method_whitelist"
         # TODO: add type hint with Literal once Python 3.7 support is dropped and remove the type ignore on line 145
         params = {
-            'total': tries,
-            'backoff_factor': backoff,
-            'status_forcelist': retry_codes,
+            "total": tries,
+            "backoff_factor": backoff,
+            "status_forcelist": retry_codes,
             methods_param_name: retry_methods,
         }
         retry_strategy = Retry(**params)  # type: ignore[arg-type]
@@ -147,7 +157,7 @@ def http_session(name: str, *, timeout: TimeoutType = DEFAULT_TIMEOUT, tries: in
     else:
         adapter = TimeoutHTTPAdapter(timeout=timeout)
 
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
 
     return session

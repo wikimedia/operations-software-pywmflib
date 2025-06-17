@@ -2,7 +2,6 @@
 
 import configparser
 import logging
-
 from os import PathLike
 from typing import Dict, Union
 
@@ -10,11 +9,10 @@ import yaml
 
 from wmflib.exceptions import WmflibError
 
-
 logger = logging.getLogger(__name__)
 
 
-def load_yaml_config(config_file: Union[str, PathLike], raises: bool = True) -> Dict:
+def load_yaml_config(config_file: Union[str, PathLike], *, raises: bool = True) -> Dict:
     """Parse a YAML config file and return it, optionally not failing on error.
 
     Arguments:
@@ -30,7 +28,7 @@ def load_yaml_config(config_file: Union[str, PathLike], raises: bool = True) -> 
     """
     config = {}
     try:
-        with open(config_file, 'r', encoding='utf-8') as fh:
+        with open(config_file, "r", encoding="utf-8") as fh:
             config = yaml.safe_load(fh)
 
     except Exception as e:  # pylint: disable=broad-except
@@ -46,11 +44,12 @@ def load_yaml_config(config_file: Union[str, PathLike], raises: bool = True) -> 
     return config
 
 
-def load_ini_config(config_file: Union[str, PathLike], raises: bool = True) -> configparser.ConfigParser:
+def load_ini_config(config_file: Union[str, PathLike], *, raises: bool = True) -> configparser.ConfigParser:
     """Parse an INI config file and return it.
 
     Arguments:
         config_file (str): the path of the configuration file.
+        raises (bool, optional): whether to raise exception if unable to load the config.
 
     Returns:
         configparser.ConfigParser: the parsed config.
