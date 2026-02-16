@@ -1,5 +1,6 @@
 """DNS module tests."""
 
+import re
 from collections import namedtuple
 from unittest import mock
 
@@ -138,7 +139,7 @@ class TestDns:
 
     def test_resolve_ips_not_found(self):
         """Should raise DnsNotFoundError exception if the name raises NoAnswer for both A and AAAA records."""
-        with pytest.raises(DnsNotFoundError, match="Record A or AAAA not found for missing.example.com"):
+        with pytest.raises(DnsNotFoundError, match=r"Record A or AAAA not found for missing\.example\.com"):
             self.dns.resolve_ips("missing.example.com")
 
     @pytest.mark.parametrize(
@@ -159,7 +160,7 @@ class TestDns:
 
     def test_resolve_cname_multiple_targets(self):
         """Should raise DnsError if more than one target is returned."""
-        with pytest.raises(DnsError, match="Found multiple CNAMEs target for multiservice.example.com"):
+        with pytest.raises(DnsError, match=r"Found multiple CNAMEs target for multiservice\.example\.com"):
             self.dns.resolve_cname("multiservice.example.com")
 
     def test_resolve_cname_relative_target(self):
@@ -170,7 +171,7 @@ class TestDns:
     def test_resolve_not_found(self):
         """Should raise DnsNotFoundError exception if the record type is not defined for the qname."""
         # Using the alias DnsNotFound to check it works
-        with pytest.raises(DnsNotFound, match="Record AAAA not found for host2.example.com"):
+        with pytest.raises(DnsNotFound, match=r"Record AAAA not found for host2\.example\.com"):
             self.dns.resolve("host2.example.com", "AAAA")
 
     @pytest.mark.parametrize(
@@ -184,7 +185,7 @@ class TestDns:
     )
     def test_resolve_raise(self, qname, record_type):
         """Should raise DnsError if the qname is not defined."""
-        with pytest.raises(DnsError, match=f"Unable to resolve {record_type} record for {qname}"):
+        with pytest.raises(DnsError, match=rf"Unable to resolve {re.escape(record_type)} record for {qname}"):
             self.dns.resolve(qname, record_type)
 
 

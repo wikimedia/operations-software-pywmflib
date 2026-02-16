@@ -1,6 +1,7 @@
 """Interactive module tests."""
 
 import logging
+import re
 import time
 from unittest import mock
 
@@ -146,7 +147,7 @@ def test_ask_input_no_tty(mocked_isatty):
 )
 def test_ask_input_wrong_args(choices, kwargs, message):
     """It should raise InputError if the choices argument is empty and the validator one is None."""
-    with pytest.raises(interactive.InputError, match=message):
+    with pytest.raises(interactive.InputError, match=re.escape(message)):
         interactive.ask_input("message", choices, **kwargs)
 
 
@@ -316,7 +317,7 @@ def test_get_username_ok(monkeypatch):
 def test_ensure_shell_is_durable_interactive(mocked_isatty):
     """Should raise WmflibError if in an interactive shell."""
     mocked_isatty.return_value = True
-    with pytest.raises(WmflibError, match="Must be run in non-interactive mode or inside a screen or tmux."):
+    with pytest.raises(WmflibError, match=r"Must be run in non-interactive mode or inside a screen or tmux\."):
         interactive.ensure_shell_is_durable()
 
     assert mocked_isatty.called
