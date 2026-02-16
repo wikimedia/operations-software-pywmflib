@@ -3,10 +3,6 @@
 import logging
 from pathlib import Path
 
-import pytest
-from packaging.version import parse
-
-CAPLOG_MIN_VERSION = "3.3.0"
 TESTS_BASE_PATH = Path(__file__).parent.resolve()
 
 
@@ -21,11 +17,6 @@ def get_fixture_path(*paths):
 
     """
     return Path(TESTS_BASE_PATH, "fixtures", *paths)
-
-
-require_caplog = pytest.mark.skipif(
-    parse(pytest.__version__) < parse(CAPLOG_MIN_VERSION), reason="Requires caplog fixture"
-)
 
 
 def check_logs(logs, message, level):

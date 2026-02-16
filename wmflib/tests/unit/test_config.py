@@ -7,7 +7,7 @@ import pytest
 
 from wmflib.config import load_ini_config, load_yaml_config
 from wmflib.exceptions import WmflibError
-from wmflib.tests import check_logs, get_fixture_path, require_caplog
+from wmflib.tests import check_logs, get_fixture_path
 
 
 def test_load_yaml_config_empty():
@@ -29,7 +29,6 @@ def test_load_yaml_config_raise(name, message):
         load_yaml_config(get_fixture_path("config", name))
 
 
-@require_caplog
 @pytest.mark.parametrize("name", ("invalid.yaml", "non-existent.yaml"))
 def test_load_yaml_config_no_raise(caplog, name):
     """Loading an invalid config with raises=False should return an empty dictionary."""
@@ -61,7 +60,6 @@ def test_load_invalid_ini_config(message):
         load_ini_config(get_fixture_path("config", "invalid.ini"))
 
 
-@require_caplog
 def test_load_invalid_ini_config_no_raise(caplog):
     """Loading an invalid config with raises=False should return an empty ConfigParser."""
     with caplog.at_level(DEBUG):

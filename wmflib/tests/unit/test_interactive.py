@@ -9,7 +9,7 @@ import pytest
 
 from wmflib import interactive
 from wmflib.exceptions import WmflibError
-from wmflib.tests import check_logs, require_caplog
+from wmflib.tests import check_logs
 
 
 def example_division(positional: int, *, keyword: int = 1) -> int:
@@ -227,7 +227,6 @@ def test_confirm_on_failure_ok():
     assert ret == 2
 
 
-@require_caplog
 @mock.patch("builtins.input")
 @mock.patch("wmflib.interactive.sys.stdout.isatty")
 def test_confirm_on_failure_abort(mocked_isatty, mocked_input, capsys, caplog):
@@ -243,7 +242,6 @@ def test_confirm_on_failure_abort(mocked_isatty, mocked_input, capsys, caplog):
     check_logs(caplog, "Failed to run wmflib.tests.unit.test_interactive.example_division", logging.ERROR)
 
 
-@require_caplog
 def test_confirm_on_failure_func_abort(capsys, caplog):
     """It should let an AbortError exception raised in the called function pass through, not asking the user twice."""
     caplog.set_level(logging.INFO)
@@ -260,7 +258,6 @@ def test_confirm_on_failure_func_abort(capsys, caplog):
         pass  # No log message found, as expected
 
 
-@require_caplog
 @mock.patch("builtins.input")
 @mock.patch("wmflib.interactive.sys.stdout.isatty")
 def test_confirm_on_failure_skip(mocked_isatty, mocked_input, capsys, caplog):
@@ -276,7 +273,6 @@ def test_confirm_on_failure_skip(mocked_isatty, mocked_input, capsys, caplog):
     check_logs(caplog, "Failed to run wmflib.tests.unit.test_interactive.example_division", logging.ERROR)
 
 
-@require_caplog
 @mock.patch("builtins.input")
 @mock.patch("wmflib.interactive.sys.stdout.isatty")
 def test_confirm_on_failure_retry(mocked_isatty, mocked_input, capsys, caplog):
