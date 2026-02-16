@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from argparse import ArgumentParser, Namespace
 from logging import getLogger
-from typing import List, Optional
+from typing import Optional
 
 from wmflib.exceptions import WmflibError
 
@@ -14,7 +14,7 @@ class IdmValueError(WmflibError):
 
 # We make the description optional to deal with the following issue
 # https://github.com/python/mypy/issues/9170
-def logoutd_args(description: Optional[str] = None, args: Optional[List] = None) -> Namespace:
+def logoutd_args(description: Optional[str] = None, args: Optional[list] = None) -> Namespace:
     """Logout scripts common CLI for parsing the command line arguments.
 
     When not using the higher level API :py:class:`wmflib.idm.LogoutdBase`, a user could just implement their own
@@ -86,7 +86,7 @@ class LogoutdBase(ABC):
 
     user_identifier: str = "cn"
 
-    def __init__(self, args: Optional[List] = None) -> None:
+    def __init__(self, args: Optional[list] = None) -> None:
         """Init function.
 
         Arguments:
