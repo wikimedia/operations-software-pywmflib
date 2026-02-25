@@ -2,7 +2,6 @@
 
 import logging
 from collections.abc import Hashable
-from typing import List
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +52,7 @@ class Actions:
 
         """
         self.name = name
-        self.actions: List[str] = []
+        self.actions: list[str] = []
         self.has_warnings = False
         self.has_failures = False
 

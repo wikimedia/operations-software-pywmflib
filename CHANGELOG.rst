@@ -1,6 +1,25 @@
 wmflib Changelog
 ----------------
 
+`v3.0.0`_ (2026-02-25)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Dependencies breaking changes
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+* Drop support for Python 3.7 and 3.8.
+* Update dependencies minimum version to match those in Debian Bullseye.
+* Drop support for Debian Buster.
+
+New features
+""""""""""""
+
+Minor improvements
+""""""""""""""""""
+* Use importlib.metadata instead of pkg_resources, now deprecated/removed.
+* Fix some newly reported linting issues.
+* tests: remove fixture require_caplog
+* type hints: use standard types as type hints.
+
 `v2.0.0`_ (2025-06-17)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -530,3 +549,4 @@ New features
 .. _`v1.3.1`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.1
 .. _`v1.3.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.2
 .. _`v2.0.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v2.0.0
+.. _`v3.0.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v3.0.0

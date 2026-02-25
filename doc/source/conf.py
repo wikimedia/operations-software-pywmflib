@@ -15,10 +15,10 @@ import datetime
 import importlib
 import sys
 import types
+from importlib.metadata import version as meta_version
 from pathlib import Path
 
 import sphinx_rtd_theme  # noqa: F401
-from pkg_resources import get_distribution
 from sphinx import __version__ as sphinx_version
 
 # Adjust path
@@ -69,7 +69,7 @@ author = "Riccardo Coccioli"
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = get_distribution("wmflib").version
+release = meta_version("wmflib")
 # The short X.Y version.
 version = release
 

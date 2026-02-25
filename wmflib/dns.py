@@ -2,7 +2,7 @@
 
 import logging
 from contextlib import suppress
-from typing import List, Optional, Sequence, Union, cast
+from typing import Optional, Sequence, Union, cast
 
 from dns import resolver, reversename, rrset
 from dns.exception import DNSException
@@ -60,7 +60,7 @@ class Dns:
         else:
             self._resolver = resolver.Resolver()
 
-    def resolve_ipv4(self, name: str) -> List[str]:
+    def resolve_ipv4(self, name: str) -> list[str]:
         """Perform a DNS lookup for an A record for the given name.
 
         Examples:
@@ -78,7 +78,7 @@ class Dns:
         """
         return self._resolve_addresses(name, "A")
 
-    def resolve_ipv6(self, name: str) -> List[str]:
+    def resolve_ipv6(self, name: str) -> list[str]:
         """Perform a DNS lookup for an AAAA record for the given name.
 
         Examples:
@@ -96,7 +96,7 @@ class Dns:
         """
         return self._resolve_addresses(name, "AAAA")
 
-    def resolve_ips(self, name: str) -> List[str]:
+    def resolve_ips(self, name: str) -> list[str]:
         """Perform a DNS lookup for A and AAAA records for the given name.
 
         Examples:
@@ -125,7 +125,7 @@ class Dns:
 
         return addresses
 
-    def resolve_ptr(self, address: str) -> List[str]:
+    def resolve_ptr(self, address: str) -> list[str]:
         """Perform a DNS lookup for PTR record for the given address.
 
         Examples:
@@ -199,7 +199,7 @@ class Dns:
 
         return response
 
-    def _resolve_addresses(self, name: str, record_type: str) -> List[str]:
+    def _resolve_addresses(self, name: str, record_type: str) -> list[str]:
         """Extract and return all the matching addresses for the given name and record type.
 
         Arguments:
@@ -213,7 +213,7 @@ class Dns:
         return [rdata.address for rdata in cast(rrset.RRset, self.resolve(name, record_type).rrset)]
 
     @staticmethod
-    def _parse_targets(response_set: rrset.RRset) -> List[str]:
+    def _parse_targets(response_set: rrset.RRset) -> list[str]:
         """Extract and return all the matching names from the given rrset without the trailing dot.
 
         Arguments:

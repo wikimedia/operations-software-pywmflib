@@ -1,7 +1,6 @@
 """Prometheus module."""
 
 import logging
-from typing import Dict, List
 
 import requests
 
@@ -23,7 +22,7 @@ class PrometheusBase:
         """Initialize the instance."""
         self._http_session = http_session(".".join((self.__module__, self.__class__.__name__)))
 
-    def _query(self, url: str, params: Dict[str, str], timeout: TimeoutType) -> List[Dict]:
+    def _query(self, url: str, params: dict[str, str], timeout: TimeoutType) -> list[dict]:
         """Perform a generic query.
 
         Arguments:
@@ -65,7 +64,7 @@ class Prometheus(PrometheusBase):
 
     _prometheus_api: str = "http://prometheus.svc.{site}.wmnet/{instance}/api/v1/query"
 
-    def query(self, query: str, site: str, *, instance: str = "ops", timeout: TimeoutType = 10.0) -> List[Dict]:
+    def query(self, query: str, site: str, *, instance: str = "ops", timeout: TimeoutType = 10.0) -> list[dict]:
         """Perform a generic query.
 
         Examples:
@@ -129,7 +128,7 @@ class Thanos(PrometheusBase):
 
     _thanos_api: str = "https://thanos-query.discovery.wmnet/api/v1/query"
 
-    def query(self, query: str, *, timeout: TimeoutType = 10.0) -> List[Dict]:
+    def query(self, query: str, *, timeout: TimeoutType = 10.0) -> list[dict]:
         """Perform a generic query.
 
         Examples:
