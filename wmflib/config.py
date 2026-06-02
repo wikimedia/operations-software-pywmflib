@@ -57,7 +57,7 @@ def load_ini_config(config_file: Union[str, PathLike[str]], *, raises: bool = Tr
     """
     config = configparser.ConfigParser()
     try:
-        config.read(config_file)
+        parsed_files = config.read(config_file)
 
     except configparser.Error as e:
         message = "Could not load config file %s: %s"
@@ -65,5 +65,14 @@ def load_ini_config(config_file: Union[str, PathLike[str]], *, raises: bool = Tr
             raise WmflibError(repr(e)) from e
 
         logger.debug(message, config_file, e)
+    else:
+        # configparser.read() silently ignores files it can't open (e.g. missing ones) and returns the list of the
+        # files it actually parsed, so an empty list means nothing was loaded.
+        if not parsed_files:
+            message = "Could not load config file %s: file not found or not readable"
+            if raises:
+                raise WmflibError(message % config_file)
+
+            logger.debug(message, config_file)
 
     return config
