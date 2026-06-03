@@ -96,7 +96,7 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
     prefix = "\x1b[36m==>\x1b[39m"  # Cyan ==> prefix
     print(f"{prefix} {message}")
 
-    message = f"Please type one of: {','.join(choices)}"
+    message = f"Please type one of: {','.join(choices)}" if choices else "Please type a valid response"
 
     for _ in range(3):
         # Create a notify timer for each attempt, the user might insert an invalid answer and not see it
@@ -119,7 +119,7 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
         except BaseException as e:  # noqa: BLE001
             # Treat any exception as invalid answer, including Ctrl+c and Ctrl+d as well as any exception raised by the
             # custom validator when present.
-            if validator is not None:
+            if validator is not None and str(e):
                 message = str(e)
 
         finally:
