@@ -74,7 +74,8 @@ def ask_input(message: str, choices: Sequence[str], *, validator: Optional[Calla
             like an empty string.
 
     Returns:
-        str: the selected choice or free answer if ``choices`` is set to :py:data:`None` explicitly.
+        str: the selected choice, or the free-form answer validated by ``validator`` when ``choices`` is an empty
+        sequence.
 
     Raises:
         wmflib.interactive.InputError: if not in a TTY, invalid parameters were given or too many invalid answers
