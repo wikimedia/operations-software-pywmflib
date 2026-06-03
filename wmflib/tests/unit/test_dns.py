@@ -64,8 +64,8 @@ MOCKED_RESPONSES = {
 }
 
 
-def mocked_dns_query(qname, record_type):
-    """Mock a dnspython query response."""
+def mocked_dns_resolve(qname, record_type):
+    """Mock a dnspython resolve response."""
     if record_type == "PTR":
         qname = dns.reversename.to_address(qname)
         if isinstance(qname, bytes):
@@ -94,7 +94,7 @@ class TestDns:
         """Initialize the test environment for Dns."""
         # pylint: disable=attribute-defined-outside-init
         self.mocked_resolver = mocked_resolver
-        self.mocked_resolver.return_value.query = mocked_dns_query
+        self.mocked_resolver.return_value.resolve = mocked_dns_resolve
         self.dns = Dns()
 
     def test_init(self):
