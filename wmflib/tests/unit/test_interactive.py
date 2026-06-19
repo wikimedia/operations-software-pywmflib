@@ -330,9 +330,12 @@ def test_get_username_ok(monkeypatch):
 
 
 @mock.patch("wmflib.interactive.sys.stdout.isatty")
-def test_ensure_shell_is_durable_interactive(mocked_isatty):
+def test_ensure_shell_is_durable_interactive(mocked_isatty, monkeypatch):
     """Should raise WmflibError if in an interactive shell."""
     mocked_isatty.return_value = True
+    monkeypatch.delenv("TMUX", raising=False)
+    monkeypatch.delenv("STY", raising=False)
+    monkeypatch.setenv("TERM", "xterm")
     with pytest.raises(WmflibError, match=r"Must be run in non-interactive mode or inside a screen or tmux\."):
         interactive.ensure_shell_is_durable()
 
