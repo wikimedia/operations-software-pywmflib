@@ -187,7 +187,22 @@ def test_retry_dynamic_params_callback(mocked_sleep):
         params.tries = 2
 
     func = _generate_mocked_function([WmflibError("error1"), True])
-    ret = retry(tries=1, dynamic_params_callbacks=(callback,))(func)()  # pylint: disable=no-value-for-parameter
+    ret = retry(tries=1, dynamic_params_callbacks=(callback,))(func)()
+
+    assert ret
+    assert mocked_sleep.call_count == 1
+
+
+@mock.patch("wmflib.decorators.time.sleep", return_value=None)
+def test_retry_dynamic_params_callback_exceptions(mocked_sleep):
+    """A callback that modifies params.exceptions should change which exceptions are caught and retried."""
+
+    def callback(params, _func, _args, _kwargs):
+        """Replace the retryable exceptions, the default ones (WmflibError,) would not catch the KeyError."""
+        params.exceptions = (KeyError,)
+
+    func = _generate_mocked_function([KeyError("error1"), True])
+    ret = retry(tries=2, dynamic_params_callbacks=(callback,))(func)()
 
     assert ret
     assert mocked_sleep.call_count == 1

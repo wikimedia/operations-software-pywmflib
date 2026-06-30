@@ -102,6 +102,26 @@ def test_ask_input_validator_ko(mocked_isatty, mocked_input, capsys, caplog):
 
     out, _ = capsys.readouterr()
     assert message in out
+    assert "The value must be at least 5 characters long" in out
+    assert out.count("Invalid response") == 3
+    assert "User input is" not in caplog.text
+    assert "is awaiting input" not in caplog.text
+
+
+@mock.patch("builtins.input")
+@mock.patch("wmflib.interactive.sys.stdout.isatty")
+@mock.patch("wmflib.interactive.NOTIFY_AFTER_SECONDS", 0.0)
+def test_ask_input_validator_empty_exception_message(mocked_isatty, mocked_input, capsys, caplog):
+    """Calling ask_input() with a validator should not print the empty-message artifact for empty-str exceptions."""
+    mocked_isatty.return_value = True
+    mocked_input.side_effect = EOFError  # str(EOFError()) == ""
+    message = "Test message"
+    with pytest.raises(interactive.InputError, match="Too many invalid answers"), caplog.at_level(logging.INFO):
+        interactive.ask_input(message, [], validator=len_validator)
+
+    out, _ = capsys.readouterr()
+    assert message in out
+    assert "Invalid response. Please type a valid response. After" in out
     assert out.count("Invalid response") == 3
     assert "User input is" not in caplog.text
     assert "is awaiting input" not in caplog.text
@@ -310,9 +330,12 @@ def test_get_username_ok(monkeypatch):
 
 
 @mock.patch("wmflib.interactive.sys.stdout.isatty")
-def test_ensure_shell_is_durable_interactive(mocked_isatty):
+def test_ensure_shell_is_durable_interactive(mocked_isatty, monkeypatch):
     """Should raise WmflibError if in an interactive shell."""
     mocked_isatty.return_value = True
+    monkeypatch.delenv("TMUX", raising=False)
+    monkeypatch.delenv("STY", raising=False)
+    monkeypatch.setenv("TERM", "xterm")
     with pytest.raises(WmflibError, match=r"Must be run in non-interactive mode or inside a screen or tmux\."):
         interactive.ensure_shell_is_durable()
 

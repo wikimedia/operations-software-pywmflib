@@ -96,7 +96,7 @@ def validate_task_id(task_id: str, *, allow_empty_identifiers: bool = False) -> 
         >>> validate_task_id("T1234567")
         Traceback (most recent call last):
           [...SNIP...]
-        ValueError: Invalid Phabricator task ID, expected to match pattern 'T\d{1,6}$', got 'T1234567'
+        ValueError: Invalid Phabricator task ID, expected to match pattern 'T\d{1,6}', got 'T1234567'
 
     Arguments:
         task_id: the Phabricator task ID to validate.
@@ -113,8 +113,8 @@ def validate_task_id(task_id: str, *, allow_empty_identifiers: bool = False) -> 
     if allow_empty_identifiers and not task_id:  # Accept empty strings
         return task_id
 
-    pattern = r"T\d{1,6}$"
-    if re.match(pattern, task_id) is None:
+    pattern = r"T\d{1,6}"
+    if re.fullmatch(pattern, task_id) is None:
         raise ValueError(f"Invalid Phabricator task ID, expected to match pattern '{pattern}', got '{task_id}'")
 
     return task_id

@@ -73,6 +73,7 @@ def test_validate_task_id_ok(task_id, allow_empty_identifiers):
         "T1a",
         "123",
         "T1234567",
+        "T123\n",
     ),
 )
 def test_validate_task_id_fail(task_id, allow_empty_identifiers):
@@ -82,7 +83,7 @@ def test_validate_task_id_fail(task_id, allow_empty_identifiers):
 
     with pytest.raises(
         ValueError,
-        match=re.escape(rf"Invalid Phabricator task ID, expected to match pattern 'T\d{{1,6}}$', got '{task_id}'"),
+        match=re.escape(rf"Invalid Phabricator task ID, expected to match pattern 'T\d{{1,6}}', got '{task_id}'"),
     ):
         phabricator.validate_task_id(task_id)
 

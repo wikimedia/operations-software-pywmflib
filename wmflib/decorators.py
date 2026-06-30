@@ -229,7 +229,7 @@ def retry(  # pylint: disable=too-many-arguments,useless-suppression
             try:
                 # Call the decorated function or method
                 return func(*args, **kwargs)
-            except exceptions as e:
+            except params.exceptions as e:
                 sleep = get_backoff_sleep(params.backoff_mode, params.delay.total_seconds(), attempt)
                 logger.warning(
                     "[%d/%d, retrying in %.2fs] %s: %s",

@@ -12,7 +12,7 @@ from wmflib.exceptions import WmflibError
 logger = logging.getLogger(__name__)
 
 
-def load_yaml_config(config_file: Union[str, PathLike], *, raises: bool = True) -> Dict:
+def load_yaml_config(config_file: Union[str, PathLike[str]], *, raises: bool = True) -> Dict:
     """Parse a YAML config file and return it, optionally not failing on error.
 
     Arguments:
@@ -44,7 +44,7 @@ def load_yaml_config(config_file: Union[str, PathLike], *, raises: bool = True) 
     return config
 
 
-def load_ini_config(config_file: Union[str, PathLike], *, raises: bool = True) -> configparser.ConfigParser:
+def load_ini_config(config_file: Union[str, PathLike[str]], *, raises: bool = True) -> configparser.ConfigParser:
     """Parse an INI config file and return it.
 
     Arguments:
@@ -57,7 +57,7 @@ def load_ini_config(config_file: Union[str, PathLike], *, raises: bool = True) -
     """
     config = configparser.ConfigParser()
     try:
-        config.read(config_file)
+        parsed_files = config.read(config_file)
 
     except configparser.Error as e:
         message = "Could not load config file %s: %s"
@@ -65,5 +65,14 @@ def load_ini_config(config_file: Union[str, PathLike], *, raises: bool = True) -
             raise WmflibError(repr(e)) from e
 
         logger.debug(message, config_file, e)
+    else:
+        # configparser.read() silently ignores files it can't open (e.g. missing ones) and returns the list of the
+        # files it actually parsed, so an empty list means nothing was loaded.
+        if not parsed_files:
+            message = "Could not load config file %s: file not found or not readable"
+            if raises:
+                raise WmflibError(message % config_file)
+
+            logger.debug(message, config_file)
 
     return config

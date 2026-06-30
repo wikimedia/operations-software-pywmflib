@@ -20,7 +20,10 @@ EXTRAS_REQUIRE = {
         "flake8>=3.8.4",
         "flake8-import-order>=0.18.1",
         "mypy>=0.812",
-        "pytest>=6.0.2",
+        # We run tests in `debian/rules`
+        # pytest | 7.2.1-2 | bookworm
+        # pytest | 8.3.5-2 | trixie
+        "pytest>=6.0.2, <8.4.0",
         "pytest-cov>=2.10.1",
         "pytest-xdist>=2.2.0",
         "requests-mock>=1.7.0",

@@ -67,3 +67,19 @@ def test_load_invalid_ini_config_no_raise(caplog):
 
     assert configparser.ConfigParser() == config
     check_logs(caplog, "Could not load config file", DEBUG)
+
+
+def test_load_missing_ini_config_raise():
+    """Loading a missing INI config with raises=True should raise an exception."""
+    with pytest.raises(WmflibError, match="file not found or not readable"):
+        load_ini_config(get_fixture_path("config", "non-existent.ini"))
+
+
+def test_load_missing_ini_config_no_raise(caplog):
+    """Loading a missing INI config with raises=False should return an empty ConfigParser."""
+    with caplog.at_level(DEBUG):
+        config = load_ini_config(get_fixture_path("config", "non-existent.ini"), raises=False)
+
+    assert configparser.ConfigParser() == config
+    check_logs(caplog, "Could not load config file", DEBUG)
+    check_logs(caplog, "file not found or not readable", DEBUG)

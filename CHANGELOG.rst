@@ -1,6 +1,26 @@
 wmflib Changelog
 ----------------
 
+`v3.1.0`_ (2026-06-30)
+^^^^^^^^^^^^^^^^^^^^^^
+
+Minor improvements
+""""""""""""""""""
+* decorators: fix dynamic callbacks bug in retry.
+* config: raise on missing INI file when raises=True.
+* __init__: fail clearly when unknown __version__
+* phabricator: reject trailing newline in task ID.
+* dns: resolve() instead of deprecated query().
+* actions: fix ActionsDict docstring example output.
+* interactive: fix ask_input Returns docstring.
+* interactive: improve error message with validators.
+* irc: set the handler level via setLevel().
+* durable: fix test when run in a tmux.
+
+Miscellanea
+"""""""""""
+* Pin pytest version and fix mypy errors in config.py
+
 `v3.0.0`_ (2026-02-25)
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -550,3 +570,4 @@ New features
 .. _`v1.3.2`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v1.3.2
 .. _`v2.0.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v2.0.0
 .. _`v3.0.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v3.0.0
+.. _`v3.1.0`: https://github.com/wikimedia/operations-software-pywmflib/releases/tag/v3.1.0

@@ -47,7 +47,7 @@ class SocketHandler(logging.Handler):
         super().__init__()
         self.addr: Tuple[str, int] = (host, port)
         self.username = username
-        self.level = logging.INFO
+        self.setLevel(logging.INFO)
         self.hostname = socket.gethostname()
 
     def _send_message(self, message: str, record: logging.LogRecord) -> None:

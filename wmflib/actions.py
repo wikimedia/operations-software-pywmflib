@@ -153,7 +153,7 @@ class ActionsDict(dict):
               - **Failed to restart ntp**
 
             - host2001 (**WARN**)
-              - //Host not optimal on Icinga//
+              - //Host with alerts on Icinga//
 
         It will also include a final newline at the end of the block that doesn't get rendered in this documentation.
 

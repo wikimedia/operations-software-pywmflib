@@ -25,6 +25,7 @@ class TestIrc:
         assert self.handler.addr == ("host", 123)
         assert self.handler.username == "user"
         assert self.handler.hostname == "current-hostname"
+        assert self.handler.level == logging.INFO
         assert self.mocked_hostname.call_count == 2
 
     def test_irc_socket_handler_init(self):
@@ -32,6 +33,7 @@ class TestIrc:
         assert self.sal_handler.addr == ("host", 123)
         assert self.sal_handler.username == "user"
         assert self.sal_handler.hostname == "current-hostname"
+        assert self.sal_handler.level == logging.INFO
         assert self.mocked_hostname.call_count == 2
 
     @mock.patch("wmflib.irc.socket.socket")

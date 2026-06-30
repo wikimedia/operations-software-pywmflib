@@ -190,7 +190,7 @@ class Dns:
 
         """
         try:
-            response = self._resolver.query(qname, record_type)
+            response = self._resolver.resolve(qname, record_type)
             logger.debug("Resolved %s record for %s: %s", record_type, qname, response.rrset)
         except (resolver.NoAnswer, resolver.NXDOMAIN) as e:
             raise DnsNotFoundError(f"Record {record_type} not found for {qname}") from e
