@@ -1,3 +1,9 @@
+python-wmflib (3.1.0-1) unstable; urgency=medium
+
+  * v3.1.0 upstream release.
+
+ -- Luca Toscano <ltoscano@wikimedia.org>  Tue, 30 Jun 2026 07:57:16 -0000
+
 python-wmflib (3.0.0-1) unstable; urgency=medium
 
   * v3.0.0 upstream release.
